@@ -1,6 +1,9 @@
 <?php
 declare(strict_types=1);
 
+/**
+ * 基类
+ */
 namespace App\Controller\admin\v1;
 
 use App\Controller\AbstractController;

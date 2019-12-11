@@ -1,8 +1,7 @@
 <?php
-
+declare(strict_types=1);
 
 namespace App\Controller\admin\v1;
-
 
 use App\Service\Admin\UserService;
 use Hyperf\Di\Annotation\Inject;

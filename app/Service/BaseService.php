@@ -72,7 +72,9 @@ class BaseService
             $page = $page < 1 ? 1 : $page;
             $limit = $limit > 100 ? 100 : $limit;
 
-            return self::getListByPage($this->table, (int) $page, (int) $limit, $this->condition, $this->select, $this->orderBy, $this->groupBy);
+            $data = self::getListByPage($this->table, (int) $page, (int) $limit, $this->condition, $this->select, $this->orderBy, $this->groupBy);
+            $this->resetAttributes();
+            return $data;
 
         } catch (\Exception $e) {
             throw new BusinessException((int)$e->getCode(), $e->getMessage());
@@ -87,6 +89,7 @@ class BaseService
     {
         try {
             $data = Db::table($this->table)->where($this->condition)->select($this->select)->first();
+            $this->resetAttributes();
             return $data ?? [];
 
         } catch (\Exception $e) {
@@ -102,7 +105,9 @@ class BaseService
     public function update(RequestInterface $request)
     {
         try {
-            return Db::table($this->table)->where($this->condition)->update($this->data);
+            $res = Db::table($this->table)->where($this->condition)->update($this->data);
+            $this->resetAttributes();
+            return $res;
 
         } catch (\Exception $e) {
             throw new BusinessException((int)$e->getCode(), $e->getMessage());
@@ -116,8 +121,9 @@ class BaseService
     public function delete(RequestInterface $request)
     {
         try {
-            return Db::table($this->table)->where($this->condition)->delete();
-
+            $res = Db::table($this->table)->where($this->condition)->delete();
+            $this->resetAttributes();
+            return $res;
         } catch (\Exception $e) {
             throw new BusinessException((int)$e->getCode(), $e->getMessage());
         }
@@ -131,7 +137,9 @@ class BaseService
     public function store(RequestInterface $request)
     {
         try {
-            return Db::table($this->table)->insertGetId($this->data);
+            $res = Db::table($this->table)->insertGetId($this->data);
+            $this->resetAttributes();
+            return $res;
 
         } catch (\Exception $e) {
             throw new BusinessException((int)$e->getCode(), $e->getMessage());

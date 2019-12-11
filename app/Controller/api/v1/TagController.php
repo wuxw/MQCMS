@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Controller\api\v1;
 
-use App\Service\PostService;
 use App\Service\TagService;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
@@ -17,21 +16,13 @@ class TagController extends BaseController
     public $service;
 
     /**
-     * 不需要验证token有效性
-     * @var array
-     */
-    protected $allows = ['index', 'show'];
-
-    /**
      * 标签列表
      * @param RequestInterface $request
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function index(RequestInterface $request)
     {
-        $this->condition[] = ['status', '=', 1];
-        $this->orderBy = 'is_hot DESC, id DESC';
-        return parent::index($request);
+        return $this->service->index($request);
     }
 
     /**
@@ -44,9 +35,7 @@ class TagController extends BaseController
             'id' => 'required|integer|alpha_numeric'
         ], 400, '参数错误');
 
-        $id = $request->input('id');
-        $this->condition = ['id' => $id];
-        return parent::show($request);
+        return $this->service->show($request);
     }
 
     /**
@@ -61,14 +50,7 @@ class TagController extends BaseController
             'tag_name' => 'required',
         ], 400, '参数错误');
 
-        $data = [
-            'tag_name' => $request->input('tag_name'),
-            'is_hot' => 0,
-            'status' => 1,
-            'first_create_user_id' => $this->getUserId()
-        ];
-        $this->data = $data;
-        return parent::store($request);
+        return $this->service->store($request);
     }
 
     /**
@@ -81,7 +63,6 @@ class TagController extends BaseController
             'id' => 'required',
         ], 400, '参数错误');
 
-        $this->condition = ['id' => $request->input('id')];
-        return parent::delete($request);
+        return $this->service->delete($request);
     }
 }

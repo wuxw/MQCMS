@@ -98,6 +98,8 @@ class Common
 
     /**
      * 获取当前访问的控制器的方法名称
+     * @param RequestInterface $request
+     * @param $methods
      * @return array|mixed|string
      */
     public static function getCurrentActionName(RequestInterface $request, $methods) {

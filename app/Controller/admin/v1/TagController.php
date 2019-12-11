@@ -3,9 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller\admin\v1;
 
-use App\Constants\ErrorCode;
-use App\Exception\BusinessException;
-use App\Service\TagService;
+use App\Service\Admin\TagService;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
 
@@ -23,19 +21,7 @@ class TagController extends BaseController
      */
     public function index(RequestInterface $request)
     {
-        $type = $request->input('type', 'default');
-        if ($type === 'hot') {
-            $this->condition[] = ['is_hot', '=', 1];
-        } else {
-            $this->condition = [['status', '=', 1]];
-        }
-        $data = parent::index($request);
-
-        foreach ($data['data'] as $key => &$value) {
-            $value['created_at'] = date('Y-m-d H:i:s', $value['created_at']);
-            $value['updated_at'] = date('Y-m-d H:i:s', $value['updated_at']);
-        }
-        return $data;
+        return $this->service->index($request);
     }
 
     /**
@@ -48,9 +34,7 @@ class TagController extends BaseController
             'id' => 'required|integer|alpha_numeric'
         ], 400, '参数错误');
 
-        $id = $request->input('id');
-        $this->condition = ['id' => $id];
-        return parent::show($request);
+        return $this->service->show($request);
     }
 
     /**
@@ -67,25 +51,6 @@ class TagController extends BaseController
             'status' => 'required',
         ], 400, '参数错误');
 
-        $data = [
-            'tag_name' => $request->input('tag_name'),
-            'is_hot' => $request->input('is_hot', 0),
-            'status' => $request->input('status', 0),
-            'first_create_user_id' => $this->getUserId(),
-            'tag_type' => 1,
-            'created_at' => time(),
-            'updated_at' => time(),
-        ];
-
-        $this->select = ['id'];
-        $this->condition = [['tag_name', '=', $data['tag_name']]];
-        $tagInfo = parent::show($request);
-        if ($tagInfo) {
-            throw new BusinessException(ErrorCode::BAD_REQUEST, '标签名已经存在');
-        }
-
-        $this->data = $data;
-        return parent::store($request);
     }
 
     /**
@@ -97,9 +62,7 @@ class TagController extends BaseController
         $this->validateParam($request, [
             'id' => 'required',
         ], 400, '参数错误');
-
-        $this->condition = ['id' => $request->input('id')];
-        return parent::delete($request);
+        return $this->service->delete($request);
     }
 
     /**
@@ -117,17 +80,6 @@ class TagController extends BaseController
             'status' => 'required',
         ], 400, '参数错误');
 
-        $id = $request->input('id');
-        $data = [
-            'tag_name' => $request->input('tag_name'),
-            'is_hot' => $request->input('is_hot', 0),
-            'status' => $request->input('status', 0),
-            'tag_type' => 1,
-            'updated_at' => time(),
-        ];
-
-        $this->condition = ['id' => $id];
-        $this->data = $data;
-        return parent::update($request);
+        return $this->service->update($request);
     }
 }
