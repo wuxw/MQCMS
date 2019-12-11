@@ -13,13 +13,13 @@ docker pull hyperf/hyperf
 
 进入docker运行命令：
 ```php
-# 将项目放在本地d:/web/mqcms
+# 例如：将项目放在本地d:/web/mqcms
 docker run -it -v /d/web/mqcms:/mqcms -p 9501:9501 --entrypoint /bin/sh hyperf/hyperf
 ```
 
 下载mqcms系统
 ```php
-git clone https://github.com/chenxi2015/MQCMS mqcms
+git clone https://github.com/MQEnergy/MQCMS mqcms
 ```
 
 将 Composer 镜像设置为阿里云镜像，加速国内下载速度
