@@ -16,8 +16,4 @@ class UserController extends BaseController
      * @var UserService
      */
     public $service;
-
-    protected $allows = ['index'];
-
-
 }

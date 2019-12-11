@@ -17,7 +17,7 @@ class TokenController extends BaseController
      */
     public function index(RequestInterface $request)
     {
-        return $this->validateAuthToken();
+        return $this->getTokenInfo();
     }
 
     /**
@@ -27,7 +27,7 @@ class TokenController extends BaseController
     public function store(RequestInterface $request)
     {
         $token = $this->createAuthToken(['id' => 1]);
-        return ['token' => $token, 'config' => $this->getJwtConfig()];
+        return ['token' => $token];
     }
 
 }

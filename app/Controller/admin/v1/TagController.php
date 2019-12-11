@@ -18,12 +18,6 @@ class TagController extends BaseController
     public $service;
 
     /**
-     * 不需要验证token有效性
-     * @var array
-     */
-    protected $allows = ['index', 'show'];
-
-    /**
      * @param RequestInterface $request
      * @return \Psr\Http\Message\ResponseInterface
      */

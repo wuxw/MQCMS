@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller\api\v1;
 
+use App\Service\PostService;
 use App\Service\TagService;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;

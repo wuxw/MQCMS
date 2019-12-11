@@ -11,7 +11,7 @@ use Hyperf\Paginator\Paginator;
 
 class BaseService
 {
-    protected $table = '';
+    protected $table;
 
     /**
      * 查询条件
@@ -42,6 +42,23 @@ class BaseService
      * @var array
      */
     public $data = [];
+
+    public function __construct()
+    {
+        $this->resetAttributes();
+    }
+
+    /**
+     * 重置属性值
+     */
+    public function resetAttributes()
+    {
+        $this->condition = [];
+        $this->select = ['*'];
+        $this->orderBy = 'id desc';
+        $this->groupBy = '';
+        $this->data = [];
+    }
 
     /**
      * @param RequestInterface $request

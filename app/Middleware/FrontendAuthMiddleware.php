@@ -6,6 +6,8 @@ namespace App\Middleware;
 
 use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
+use App\Utils\Common;
+use App\Utils\JWT;
 use Psr\Container\ContainerInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface as HttpResponse;
 use Hyperf\HttpServer\Contract\RequestInterface;
@@ -14,7 +16,7 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class AuthMiddleware implements MiddlewareInterface
+class FrontendAuthMiddleware implements MiddlewareInterface
 {
     /**
      * @var ContainerInterface
@@ -53,6 +55,49 @@ class AuthMiddleware implements MiddlewareInterface
     public static $authToken = '';
 
     /**
+     * @var string
+     */
+    public static $jwtKeyName = 'JWT_API_KEY';
+
+    /**
+     * @var string
+     */
+    public static $jwtKeyExp = 'JWT_API_EXP';
+
+    /**
+     * @var string
+     */
+    public static $jwtKeyAud = 'JWT_API_AUD';
+
+    /**
+     * @var string
+     */
+    public static $jwtKeyId = 'JWT_API_ID';
+
+    /**
+     * @var string
+     */
+    public static $jwtKeyIss = 'JWT_API_ISS';
+
+    /**
+     * @var array
+     */
+    public static $tokenInfo = [];
+
+    /**
+     * @return array
+     */
+    public static function getJwtConfig()
+    {
+        return [
+            'key' => env(self::$jwtKeyName),
+            'exp' => env(self::$jwtKeyExp),
+            'aud' => env(self::$jwtKeyAud),
+            'iss' => env(self::$jwtKeyIss)
+        ];
+    }
+
+    /**
      * AuthMiddleware constructor.
      * @param ContainerInterface $container
      * @param HttpResponse $response
@@ -78,6 +123,7 @@ class AuthMiddleware implements MiddlewareInterface
         if (!$isValidToken) {
             throw new BusinessException(ErrorCode::UNAUTHORIZED, 'token验证失败');
         }
+        $this->getAuthTokenInfo($this->request);
         return $handler->handle($request);
     }
 
@@ -100,7 +146,6 @@ class AuthMiddleware implements MiddlewareInterface
             if ($this->pattern !== null) {
                 if (preg_match($this->pattern, $header[0], $matches)) {
                     self::$authToken = $matches[1];
-
                 } else {
                     return null;
                 }
@@ -108,5 +153,30 @@ class AuthMiddleware implements MiddlewareInterface
             return true;
         }
         return null;
+    }
+
+    /**
+     * 验证token有效性并获取token值
+     * @param RequestInterface $request
+     * @return array|bool|object|string
+     */
+    public function getAuthTokenInfo(RequestInterface $request)
+    {
+        $currentPath = Common::getCurrentPath($request);
+        if ($currentPath !== env(self::$jwtKeyId)) {
+            throw new BusinessException(ErrorCode::UNAUTHORIZED, 'token验证失败');
+        }
+        self::$tokenInfo = JWT::getTokenInfo(self::$authToken,self::getJwtConfig());
+        return self::$tokenInfo;
+    }
+
+    /**
+     * 创建token
+     * @param $info
+     * @return string
+     */
+    public static function createAuthToken($info)
+    {
+        return JWT::createToken($info, self::getJwtConfig());
     }
 }

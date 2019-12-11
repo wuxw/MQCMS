@@ -5,6 +5,8 @@ namespace App\Utils;
 
 
 use Hyperf\HttpServer\Contract\RequestInterface;
+use Hyperf\Snowflake\IdGeneratorInterface;
+use Hyperf\Utils\ApplicationContext;
 
 class Common
 {
@@ -69,4 +71,52 @@ class Common
 
         return $salt;
     }
+
+    /**
+     * 分布式全局唯一ID生成算法
+     * @return int
+     */
+    public static function generateSnowId()
+    {
+        $container = ApplicationContext::getContainer();
+        $generator = $container->get(IdGeneratorInterface::class);
+        return $generator->generate();
+    }
+
+    /**
+     * 根据ID反推对应的Meta
+     * @param $id
+     * @return \Hyperf\Snowflake\Meta
+     */
+    public static function degenerateSnowId($id)
+    {
+        $container = ApplicationContext::getContainer();
+        $generator = $container->get(IdGeneratorInterface::class);
+
+        return $generator->degenerate($id);
+    }
+
+    /**
+     * 获取当前访问的控制器的方法名称
+     * @return array|mixed|string
+     */
+    public static function getCurrentActionName(RequestInterface $request, $methods) {
+        $pathList = explode('/', $request->decodedPath());
+        // $methods = get_class_methods(get_class($this));
+        $method = $methods && !empty($pathList) ? array_values(array_intersect($pathList, $methods)) : [];
+        $method = !empty($method) && count($method) === 1 ? $method[0] : '';
+        return $method;
+    }
+
+    /**
+     * 获取当前访问目录
+     * @return string
+     */
+    public static function getCurrentPath(RequestInterface $request)
+    {
+        $pathList = explode('/', $request->decodedPath());
+        $path = !empty($pathList) ? $pathList[0] : '';
+        return $path;
+    }
+
 }

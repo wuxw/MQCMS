@@ -28,8 +28,6 @@ class AuthController extends BaseController
      */
     public $service;
 
-    protected $allows = ['register', 'login'];
-
     /**
      * 注册
      * @param RequestInterface $request
