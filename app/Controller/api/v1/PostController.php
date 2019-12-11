@@ -17,7 +17,7 @@ class PostController extends BaseController
     public $service;
 
     /**
-     * 获取帖子列表分页
+     * 帖子列表分页
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function index(RequestInterface $request)
