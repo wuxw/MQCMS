@@ -31,7 +31,7 @@ class TokenController extends BaseController
     public function store(RequestInterface $request)
     {
         return [
-            'token' => $this->createAuthToken(['id' => 1]),
+            'token' => $this->createAuthToken(['id' => 1, 'name' => 'mqcms', 'url' => 'http://www.mqcms.net', 'from' => 'api']),
             'jwt_config' => $this->getJwtConfig()
         ];
     }
