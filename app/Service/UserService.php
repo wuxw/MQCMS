@@ -6,11 +6,60 @@ namespace App\Service;
 use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
 use App\Utils\Common;
+use Hyperf\DbConnection\Db;
 use Hyperf\HttpServer\Contract\RequestInterface;
 
 class UserService extends BaseService
 {
     protected $table = 'user';
+
+    /**
+     * 推荐用户列表
+     * @param RequestInterface $request
+     * @return \Hyperf\Contract\PaginatorInterface
+     */
+    public function index(RequestInterface $request)
+    {
+        try {
+            $page = $request->input('page', 1);
+            $limit = $request->input('limit', 10);
+            $page = $page < 1 ? 1 : $page;
+            $limit = $limit > 100 ? 100 : $limit;
+            $select = [$this->table.'.id', 'user_name', 'nick_name', 'real_name', 'phone', 'avatar', 'intro', 'like_num', 'follow_num', 'fans_num', 'post_num', 'my_like_num'];
+            $query = Db::table($this->table)->where('status', 1)->Join('user_info', 'user.id', '=', 'user_info.user_id')->select($select);
+            $count = $query->count();
+            $pagination = $query->paginate((int)$limit, $select, 'page', (int)$page)->toArray();
+            $pagination['total'] = $count;
+            return $pagination;
+
+        } catch (\Exception $e) {
+            throw new BusinessException((int)$e->getCode(), $e->getMessage());
+        }
+
+    }
+
+    /**
+     * 用户信息（查看别人）
+     * @param RequestInterface $request
+     * @return mixed
+     */
+    public function show(RequestInterface $request)
+    {
+        try {
+            $uid = $request->getAttribute('uid');
+            var_dump($uid);
+            $id = $request->input('id');
+            $select = [$this->table.'.id', 'user_name', 'nick_name', 'real_name', 'phone', 'avatar', 'intro', 'like_num', 'follow_num', 'fans_num', 'post_num', 'my_like_num'];
+            $this->condition = [
+                ['status', '=', 1],
+                [$this->table.'.id', '=', $id],
+            ];
+            $data = Db::table($this->table)->where('status', 1)->Join('user_info', 'user.id', '=', 'user_info.user_id')->select($select)->first();
+            return $data ?? [];
+        } catch (\Exception $e) {
+            throw new BusinessException((int)$e->getCode(), $e->getMessage());
+        }
+    }
 
     /**
      * 注册
@@ -53,13 +102,21 @@ class UserService extends BaseService
             'created_at' => time(),
             'updated_at' => time(),
         ];
-        $this->data = $data;
-        $lastInsertId = parent::store($request);
-
-        if (!$lastInsertId) {
+        Db::beginTransaction();
+        try{
+            $lastInsertId = Db::table('user')->insertGetId($data);
+            $userInfo = [
+                'user_id' => $lastInsertId,
+                'created_at' => time(),
+                'updated_at' => time(),
+            ];
+            Db::table('user_info')->insert($userInfo);
+            Db::commit();
+            return $lastInsertId;
+        } catch(\Throwable $ex){
+            Db::rollBack();
             throw new BusinessException(ErrorCode::BAD_REQUEST, '注册失败');
         }
-        return $lastInsertId;
     }
 
     /**

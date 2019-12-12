@@ -10,9 +10,15 @@ class PostService extends BaseService
 {
     protected $table = 'post';
 
+    /**
+     * 帖子列表分页
+     * @param RequestInterface $request
+     * @return mixed
+     */
     public function index(RequestInterface $request)
     {
-        $type = $request->input('type', 'default'); // 类型： recommend: 推荐 default: 默认
+        // 类型： recommend: 推荐 default: 默认
+        $type = $request->input('type', 'default');
 
         $this->condition = [
             ['status', '=', 1],
@@ -21,6 +27,7 @@ class PostService extends BaseService
         if ($type === 'recommend') {
             $this->condition[] = ['is_recommend', '=', 1];
         }
+        $this->orderBy = 'id DESC';
         $list = parent::index($request);
 
         foreach ($list['data'] as $key => &$value) {

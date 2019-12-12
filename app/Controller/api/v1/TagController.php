@@ -15,6 +15,17 @@ class TagController extends BaseController
      */
     public $service;
 
+
+    /**
+     * 标签列表
+     * @param RequestInterface $request
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function index(RequestInterface $request)
+    {
+        return parent::index($request);
+    }
+
     /**
      * @param RequestInterface $request
      * @return mixed
