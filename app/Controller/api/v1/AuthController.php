@@ -36,8 +36,8 @@ class AuthController extends BaseController
     {
         $this->validateParam($request, [
             'user_name' => 'required',
-            'password' => 'required|max_len,100|min_len,6'
-        ], 400, '参数错误');
+            'password' => 'required|max:100|min:6'
+        ]);
 
         $lastInsertId = $this->service->register($request);
         $token = $this->createAuthToken(['id' => $lastInsertId]);
@@ -60,8 +60,8 @@ class AuthController extends BaseController
     {
         $this->validateParam($request, [
             'user_name' => 'required',
-            'password' => 'required|max_len,100|min_len,6'
-        ], 400, '参数错误');
+            'password' => 'required|max:100|min:6'
+        ]);
 
         $userInfo = $this->service->login($request);
         $token = $this->createAuthToken(['id' => $userInfo['id']]);

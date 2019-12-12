@@ -15,11 +15,6 @@ class UserController extends BaseController
      */
     public $service;
 
-    public function index(RequestInterface $request)
-    {
-        return $this->service->index($request);
-    }
-
     /**
      * 创建用户
      * @param RequestInterface $request
@@ -32,7 +27,7 @@ class UserController extends BaseController
             'user_name' => 'required',
             'real_name' => 'required',
             'phone' => 'required',
-        ], 400, '参数错误');
+        ]);
 
         return $this->service->store($request);
     }
@@ -45,11 +40,11 @@ class UserController extends BaseController
     public function update(RequestInterface $request)
     {
         $this->validateParam($request, [
-            'id' => 'required',
+            'id' => 'required|integer',
             'user_name' => 'required',
             'real_name' => 'required',
             'phone' => 'required'
-        ], 400, '参数错误');
+        ]);
 
         return $this->service->update($request);
     }

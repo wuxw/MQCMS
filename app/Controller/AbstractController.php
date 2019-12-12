@@ -12,15 +12,11 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
-use App\Middleware\BackendAuthMiddleware;
-use App\Utils\JWT;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
-use Hyperf\Snowflake\IdGeneratorInterface;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Psr\Container\ContainerInterface;
 
 abstract class AbstractController
@@ -45,17 +41,25 @@ abstract class AbstractController
 
 
     /**
+     * @Inject()
+     * @var ValidatorFactoryInterface
+     */
+    protected $validationFactory;
+
+    /**
      * 全局参数验证
      * @param RequestInterface $request
      * @param array $valid_method
      * @param int $code
      * @param string $message
      */
-    public function validateParam(RequestInterface $request, array $valid_method, int $code, string $message)
+    public function validateParam(RequestInterface $request, array $rules, array $messages=[], int $code=0)
     {
-        $isValid = \GUMP::is_valid($request->all(), $valid_method);
-        if (!($isValid === true)) {
-            throw new BusinessException($code, $message);
+        $validator = $this->validationFactory->make($request->all(), $rules, $messages);
+        if ($validator->fails()) {
+            $errorMessage = $validator->errors()->first();
+            throw new BusinessException($code, $errorMessage);
         }
+        return $validator->validated();
     }
 }

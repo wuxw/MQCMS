@@ -16,24 +16,14 @@ class TagController extends BaseController
     public $service;
 
     /**
-     * 标签列表
-     * @param RequestInterface $request
-     * @return \Psr\Http\Message\ResponseInterface
-     */
-    public function index(RequestInterface $request)
-    {
-        return $this->service->index($request);
-    }
-
-    /**
      * @param RequestInterface $request
      * @return mixed
      */
     public function show(RequestInterface $request)
     {
         $this->validateParam($request, [
-            'id' => 'required|integer|alpha_numeric'
-        ], 400, '参数错误');
+            'id' => 'required|integer'
+        ]);
 
         return $this->service->show($request);
     }
@@ -48,7 +38,7 @@ class TagController extends BaseController
     {
         $this->validateParam($request, [
             'tag_name' => 'required',
-        ], 400, '参数错误');
+        ]);
 
         return $this->service->store($request);
     }
@@ -60,8 +50,8 @@ class TagController extends BaseController
     public function delete(RequestInterface $request)
     {
         $this->validateParam($request, [
-            'id' => 'required',
-        ], 400, '参数错误');
+            'id' => 'required|integer',
+        ]);
 
         return $this->service->delete($request);
     }

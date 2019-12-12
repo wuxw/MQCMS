@@ -22,7 +22,6 @@ use Hyperf\HttpServer\Contract\RequestInterface;
  */
 class IndexController extends BaseController
 {
-
     /**
      * @RequestMapping(path="index", methods="get, post")
      * @return array
@@ -34,7 +33,7 @@ class IndexController extends BaseController
 
         return [
             'method' => $method,
-            'message' => "Hello {$user}.",
+            'message' => "Hello {$user}."
         ];
     }
 }

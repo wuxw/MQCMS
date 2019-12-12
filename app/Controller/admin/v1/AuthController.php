@@ -31,11 +31,11 @@ class AuthController extends BaseController
      */
     public function register(RequestInterface $request)
     {
-        $this->validateParam($request, [
+        $post = $this->validateParam($request, [
             'account' => 'required',
             'phone' => 'required',
-            'password' => 'required|max_len,100|min_len,6'
-        ], 400, '参数错误');
+            'password' => 'required|max:100|min:6'
+        ]);
 
         $lastInsertId = $this->service->register($request);
         $token = $this->createAuthToken(['id' => $lastInsertId]);
@@ -44,7 +44,7 @@ class AuthController extends BaseController
             'expire_time' => JWT::$leeway,
             'uuid' => $lastInsertId,
             'info' => [
-                'name' => $request->input('account'),
+                'name' => $post['account'],
                 'avatar' => '',
                 'access' => []
             ]
@@ -58,10 +58,10 @@ class AuthController extends BaseController
      */
     public function login(RequestInterface $request)
     {
-        $this->validateParam($request, [
+        $post = $this->validateParam($request, [
             'account' => 'required',
-            'password' => 'required|max_len,100|min_len,6'
-        ], 400, '参数错误');
+            'password' => 'required|max:100|min:6'
+        ]);
 
         $adminInfo = $this->service->login($request);
         $token = $this->createAuthToken(['id' => $adminInfo['id']]);
@@ -70,7 +70,7 @@ class AuthController extends BaseController
             'expire_time' => JWT::$leeway,
             'uuid' => $adminInfo['id'],
             'info' => [
-                'name' => $request->input('account'),
+                'name' => $post['account'],
                 'avatar' => $adminInfo['avatar'],
                 'access' => []
             ]

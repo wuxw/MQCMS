@@ -51,21 +51,6 @@ class JWT extends BaseJWT
     }
 
     /**
-     * refresh token
-     * @param $token
-     * @return array|string
-     */
-    public static function refreshToken($info, $jwt_config)
-    {
-        try {
-            return self::createToken($info, $jwt_config);
-
-        } catch (\Exception $e) {
-            throw new BusinessException($e->getCode(), $e->getMessage());
-        }
-    }
-
-    /**
      * create token
      * @param $info
      * @return string
