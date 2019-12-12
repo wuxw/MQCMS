@@ -39,7 +39,6 @@ class TagController extends BaseController
         $this->validateParam($request, [
             'tag_name' => 'required',
         ]);
-
         return $this->service->store($request);
     }
 

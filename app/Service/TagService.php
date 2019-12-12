@@ -44,7 +44,7 @@ class TagService extends BaseService
             'tag_name' => $request->input('tag_name'),
             'is_hot' => 0,
             'status' => 1,
-            'first_create_user_id' => $this->getUserId()
+            'first_create_user_id' => $request->getAttribute('uid')
         ];
         $this->data = $data;
         return parent::store($request);

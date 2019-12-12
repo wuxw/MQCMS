@@ -8,6 +8,7 @@ use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
 use App\Utils\Common;
 use App\Utils\JWT;
+use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface as HttpResponse;
 use Hyperf\HttpServer\Contract\RequestInterface;
@@ -120,7 +121,8 @@ class BackendAuthMiddleware implements MiddlewareInterface
         if (!$isValidToken) {
             throw new BusinessException(ErrorCode::UNAUTHORIZED, 'token验证失败');
         }
-        $this->getAuthTokenInfo($this->request);
+        $tokenInfo = $this->getAuthTokenInfo($this->request);
+        $request = $request->withAttribute('uid', $tokenInfo['id']);
         return $handler->handle($request);
     }
 

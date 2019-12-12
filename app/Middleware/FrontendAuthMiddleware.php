@@ -123,7 +123,8 @@ class FrontendAuthMiddleware implements MiddlewareInterface
         if (!$isValidToken) {
             throw new BusinessException(ErrorCode::UNAUTHORIZED, 'token验证失败');
         }
-        $this->getAuthTokenInfo($this->request);
+        $tokenInfo = $this->getAuthTokenInfo($this->request);
+        $request = $request->withAttribute('uid', $tokenInfo['id']);
         return $handler->handle($request);
     }
 
