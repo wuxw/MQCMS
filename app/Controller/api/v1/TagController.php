@@ -23,7 +23,7 @@ class TagController extends BaseController
      */
     public function index(RequestInterface $request)
     {
-        return parent::index($request);
+        return $this->service->index($request);
     }
 
     /**

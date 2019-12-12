@@ -46,6 +46,7 @@ class UserService extends BaseService
     public function show(RequestInterface $request)
     {
         try {
+            //todo!!!!
             $uid = $request->getAttribute('uid');
             var_dump($uid);
             $id = $request->input('id');

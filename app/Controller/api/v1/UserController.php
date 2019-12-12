@@ -25,11 +25,11 @@ class UserController extends BaseController
      */
     public function index(RequestInterface $request)
     {
-        return parent::index($request);
+        return $this->service->index($request);
     }
 
     /**
-     * 用户信息
+     * 用户信息（查看别人）
      * @param RequestInterface $request
      * @return mixed
      */
@@ -39,6 +39,6 @@ class UserController extends BaseController
             'id' => 'required|integer'
         ]);
 
-        return parent::show($request);
+        return $this->service->show($request);
     }
 }
