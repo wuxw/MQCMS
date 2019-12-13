@@ -58,12 +58,15 @@ class UserService extends BaseService
             $count = $query->count();
             $pagination = $query->paginate((int)$limit, $this->select, 'page', (int)$page)->toArray();
             $pagination['total'] = $count;
+            foreach ($pagination['data'] as $key => &$value) {
+                $value['created_at'] = $value['created_at'] ? date('Y-m-d H:i:s', $value['created_at']) : '';
+                $value['updated_at'] = $value['updated_at'] ? date('Y-m-d H:i:s', $value['updated_at']) : '';
+            }
             return $pagination;
 
         } catch (\Exception $e) {
             throw new BusinessException((int)$e->getCode(), $e->getMessage());
         }
-
     }
 
     /**

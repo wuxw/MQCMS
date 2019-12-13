@@ -28,7 +28,6 @@ class UserController extends BaseController
             'real_name' => 'required',
             'phone' => 'required',
         ]);
-
         return $this->service->store($request);
     }
 
@@ -45,7 +44,6 @@ class UserController extends BaseController
             'real_name' => 'required',
             'phone' => 'required'
         ]);
-
         return $this->service->update($request);
     }
 }

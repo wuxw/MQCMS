@@ -103,7 +103,6 @@ class BaseController extends AbstractController
         return $info['id'];
     }
 
-
     /**
      * @return array
      */

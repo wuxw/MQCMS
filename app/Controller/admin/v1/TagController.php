@@ -24,7 +24,6 @@ class TagController extends BaseController
         $this->validateParam($request, [
             'id' => 'required|integer'
         ]);
-
         return $this->service->show($request);
     }
 
@@ -70,7 +69,6 @@ class TagController extends BaseController
             'is_hot' => 'required',
             'status' => 'required',
         ]);
-
         return $this->service->update($request);
     }
 }
