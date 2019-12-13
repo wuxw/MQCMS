@@ -12,7 +12,7 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 
 class UserService extends BaseService
 {
-    protected $table = 'user';
+    public $table = 'user';
 
     /**
      * @param RequestInterface $request

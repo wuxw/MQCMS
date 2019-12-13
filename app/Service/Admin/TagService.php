@@ -10,7 +10,7 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 
 class TagService extends BaseService
 {
-    protected $table = 'tag';
+    public $table = 'tag';
 
     /**
      * @param RequestInterface $request

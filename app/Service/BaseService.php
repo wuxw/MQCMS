@@ -11,11 +11,31 @@ use Hyperf\Paginator\Paginator;
 
 class BaseService
 {
-    protected $table;
+    /**
+     * @var string
+     */
+    public $table = '';
+
+    /**
+     * join表查询参数
+     * @var array
+     * 用法：
+     * [
+     *    join表名 => [主表.字段, '=', join表名.字段],
+     *    join表名 => [主表.字段, '=', join表名.字段],
+     *    join表名 => [主表.字段, '=', join表名.字段],
+     * ]
+     */
+    public $joinTables = [];
 
     /**
      * 查询条件
      * @var array
+     * 用法：
+     * [
+     *    [表名.字段, '=', 值],
+     *    [表名.字段, '=', 值],
+     * ]
      */
     public $condition = [];
 
@@ -28,14 +48,23 @@ class BaseService
     /**
      * 排序
      * @var string
+     * 用法：
+     * 1、单表排序的格式是字符串 "字段 DESC/ASC"
+     * 2、多表排序的格式是数据
+     * [
+     *    表名 => [字段 => 'DESC/ASC'],
+     *    表名 => [字段 => 'DESC/ASC'],
+     * ]
      */
     public $orderBy = 'id desc';
 
     /**
      * 分组
-     * @var string
+     * @var array
+     * 用法：
+     * [字段，字段...]
      */
-    public $groupBy = '';
+    public $groupBy = [];
 
     /**
      * 存储数组
@@ -53,6 +82,7 @@ class BaseService
      */
     public function resetAttributes()
     {
+        $this->joinTables = [];
         $this->condition = [];
         $this->select = ['*'];
         $this->orderBy = 'id desc';
@@ -153,7 +183,7 @@ class BaseService
      * @param array $condition
      * @return \Hyperf\Contract\PaginatorInterface
      */
-    public static function getListByPage(string $table, int $page, int $limit, array $condition, array $select, string $order_by, string $group_by)
+    public static function getListByPage(string $table, int $page, int $limit, array $condition, array $select, string $order_by, array $group_by)
     {
         $query = Db::table($table);
         if (!empty($condition)) {
@@ -184,6 +214,45 @@ class BaseService
     public static function lists($data, $per_page, $current_page)
     {
         return new Paginator($data, $per_page, $current_page);
+    }
+
+    /**
+     * 多表关联查询构造器
+     * @return \Hyperf\Database\Query\Builder
+     */
+    public function multiTableJoinQueryBuilder()
+    {
+        $query = Db::table($this->table);
+        if (!empty($this->joinTables)) {
+            array_walk($this->joinTables, function (&$item) use (&$query) {
+                $key = array_search($item, $this->joinTables);
+                $query = $query->leftJoin($key, $item[0], $item[1], $item[2]);
+            });
+        }
+        if (!empty($this->condition)) {
+            $query = $query->where($this->condition);
+        }
+        if (!empty($this->select)) {
+            $query = $query->select($this->select);
+        }
+        if (is_array($this->orderBy) && !empty($this->orderBy)) {
+            $orderBy = [];
+            foreach ($this->orderBy as $key => $value) {
+                $orderKey = array_keys($value);
+                foreach ($orderKey as $k => $v) {
+                    $orderBy[$key] = env('DB_PREFIX') . "{$key}.{$v} {$value[$v]}";
+                }
+            }
+            $orderBy = implode(',', $orderBy);
+        } else {
+            $orderBy = $this->orderBy;
+        }
+        $query = $query->orderByRaw($orderBy);
+        if (!empty($this->groupBy)) {
+            $query = $query->groupBy(implode(',', $this->groupBy));
+        }
+        $this->resetAttributes();
+        return $query;
     }
 
 }

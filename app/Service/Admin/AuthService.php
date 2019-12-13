@@ -11,7 +11,7 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 
 class AuthService extends BaseService
 {
-    protected $table = 'admin';
+    public $table = 'admin';
 
     /**
      * 注册

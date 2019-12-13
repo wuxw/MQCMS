@@ -8,7 +8,7 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 
 class PostService extends BaseService
 {
-    protected $table = 'post';
+    public $table = 'post';
 
     /**
      * 帖子列表分页

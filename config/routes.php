@@ -39,7 +39,7 @@ Router::addGroup('/api/', function () {
         // 用户
         Router::addGroup('user/', function () {
             Router::get('index', 'App\Controller\api\v1\UserController@index');
-            Router::post('show', 'App\Controller\api\v1\UserController@show');
+            Router::get('show', 'App\Controller\api\v1\UserController@show');
             Router::post('store', 'App\Controller\api\v1\UserController@store');
         });
 

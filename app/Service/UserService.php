@@ -7,11 +7,18 @@ use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
 use App\Utils\Common;
 use Hyperf\DbConnection\Db;
+use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
 
 class UserService extends BaseService
 {
-    protected $table = 'user';
+    public $table = 'user';
+
+    /**
+     * @Inject()
+     * @var UserInfoService
+     */
+    public $userInfoService;
 
     /**
      * 推荐用户列表
@@ -25,10 +32,31 @@ class UserService extends BaseService
             $limit = $request->input('limit', 10);
             $page = $page < 1 ? 1 : $page;
             $limit = $limit > 100 ? 100 : $limit;
-            $select = [$this->table.'.id', 'user_name', 'nick_name', 'real_name', 'phone', 'avatar', 'intro', 'like_num', 'follow_num', 'fans_num', 'post_num', 'my_like_num'];
-            $query = Db::table($this->table)->where('status', 1)->Join('user_info', 'user.id', '=', 'user_info.user_id')->select($select);
+
+            $this->select = [
+                $this->table.'.id',
+                'user_name',
+                'nick_name',
+                'real_name',
+                'phone',
+                'avatar',
+                'intro',
+                'like_num',
+                'follow_num',
+                'fans_num',
+                'post_num',
+                'my_like_num'
+            ];
+            $this->condition = [
+                [$this->table.'.status', '=', 1]
+            ];
+            $this->joinTables = [
+                $this->userInfoService->table => [$this->table . '.id', '=', $this->userInfoService->table . '.user_id']
+            ];
+            $query = $this->multiTableJoinQueryBuilder();
+
             $count = $query->count();
-            $pagination = $query->paginate((int)$limit, $select, 'page', (int)$page)->toArray();
+            $pagination = $query->paginate((int)$limit, $this->select, 'page', (int)$page)->toArray();
             $pagination['total'] = $count;
             return $pagination;
 
@@ -46,17 +74,39 @@ class UserService extends BaseService
     public function show(RequestInterface $request)
     {
         try {
-            //todo!!!!
-            $uid = $request->getAttribute('uid');
-            var_dump($uid);
+            $uid = $request->getAttribute('uid', 0);
             $id = $request->input('id');
-            $select = [$this->table.'.id', 'user_name', 'nick_name', 'real_name', 'phone', 'avatar', 'intro', 'like_num', 'follow_num', 'fans_num', 'post_num', 'my_like_num'];
+
+            $this->select = [
+                $this->table.'.id',
+                'user_name',
+                'nick_name',
+                'real_name',
+                'phone',
+                'avatar',
+                'intro',
+                'like_num',
+                'follow_num',
+                'fans_num',
+                'post_num',
+                'my_like_num'
+            ];
             $this->condition = [
-                ['status', '=', 1],
+                [$this->table.'.status', '=', 1],
                 [$this->table.'.id', '=', $id],
             ];
-            $data = Db::table($this->table)->where('status', 1)->Join('user_info', 'user.id', '=', 'user_info.user_id')->select($select)->first();
+            $this->joinTables = [
+                $this->userInfoService->table => [$this->table . '.id', '=', $this->userInfoService->table . '.user_id']
+            ];
+            $this->orderBy = [
+                $this->table => ["id" => "DESC"],
+                $this->userInfoService->table => ["id" => "ASC"],
+            ];
+
+            $query = $this->multiTableJoinQueryBuilder();
+            $data = $query->first();
             return $data ?? [];
+
         } catch (\Exception $e) {
             throw new BusinessException((int)$e->getCode(), $e->getMessage());
         }
