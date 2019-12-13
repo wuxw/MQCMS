@@ -50,6 +50,9 @@ class TagService extends BaseService
      */
     public function store(RequestInterface $request)
     {
+        if (!$request->getAttribute('uid')) {
+            throw new BusinessException(ErrorCode::BAD_REQUEST, '用户不存在');
+        }
         $data = [
             'tag_name' => $request->input('tag_name'),
             'is_hot' => $request->input('is_hot', 0),
@@ -61,7 +64,7 @@ class TagService extends BaseService
         ];
 
         $this->select = ['id'];
-        $this->condition = [['tag_name', '=', $data['tag_name']]];
+        $this->condition = ['tag_name' => $data['tag_name']];
         $tagInfo = parent::show($request);
         if ($tagInfo) {
             throw new BusinessException(ErrorCode::BAD_REQUEST, '标签名已经存在');

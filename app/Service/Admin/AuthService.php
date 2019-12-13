@@ -27,7 +27,7 @@ class AuthService extends BaseService
         $ip = $request->getHeader('Host')[0];
 
         $this->select = ['id', 'status', 'avatar'];
-        $this->condition = [['account', '=', $account]];
+        $this->condition = ['account' => $account];
         $adminInfo = parent::show($request);
 
         if ($adminInfo) {
@@ -73,7 +73,7 @@ class AuthService extends BaseService
         $password = $request->input('password');
 
         $this->select = ['id', 'salt', 'avatar', 'password'];
-        $this->condition = [['status', '=', 1], ['account', '=', $account]];
+        $this->condition = ['status' => 1, 'account' => $account];
         $adminInfo = parent::show($request);
 
         if (empty($adminInfo)) {

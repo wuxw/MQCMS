@@ -16,7 +16,7 @@ class TagService extends BaseService
      */
     public function index(RequestInterface $request)
     {
-        $this->condition[] = ['status', '=', 1];
+        $this->condition = ['status' => 1];
         $this->orderBy = 'is_hot DESC, id DESC';
         $data = parent::index($request);
 

@@ -34,7 +34,6 @@ class PostService extends BaseService
             $value['attach_urls'] = $value['attach_urls'] ? json_decode($value['attach_urls'], true) : [];
             $value['relation_tags_list'] = explode(',', $value['relation_tags']);
         }
-
         $list['data'] = Common::calculateList($request, $list['data']);
         return $list;
     }

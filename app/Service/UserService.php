@@ -54,7 +54,6 @@ class UserService extends BaseService
                 $this->userInfoService->table => [$this->table . '.id', '=', $this->userInfoService->table . '.user_id']
             ];
             $query = $this->multiTableJoinQueryBuilder();
-
             $count = $query->count();
             $pagination = $query->paginate((int)$limit, $this->select, 'page', (int)$page)->toArray();
             $pagination['total'] = $count;
@@ -125,10 +124,10 @@ class UserService extends BaseService
     {
         $userName = $request->input('user_name');
         $password = $request->input('password');
-        $ip = $request->getHeader('Host')[0];
+        $ip = $request->getServerParams()['remote_addr'];
 
         $this->select = ['id', 'status', 'avatar'];
-        $this->condition = [['user_name', '=', $userName]];
+        $this->condition = ['user_name' => $userName];
         $userInfo = parent::show($request);
 
         if ($userInfo) {
@@ -139,7 +138,7 @@ class UserService extends BaseService
             }
         }
         $salt = Common::generateSalt();
-        $data = [
+        $this->data = [
             'user_no' => Common::generateSnowId(),
             'user_name' => $userName,
             'real_name' => '',
@@ -158,18 +157,19 @@ class UserService extends BaseService
         ];
         Db::beginTransaction();
         try{
-            $lastInsertId = Db::table('user')->insertGetId($data);
-            $userInfo = [
+            $lastInsertId = parent::store($request);
+            $userInfoData = [
                 'user_id' => $lastInsertId,
                 'created_at' => time(),
                 'updated_at' => time(),
             ];
-            Db::table('user_info')->insert($userInfo);
+            Db::table($this->userInfoService->table)->insert($userInfoData);
             Db::commit();
             return $lastInsertId;
-        } catch(\Throwable $ex){
+
+        } catch(\Exception $e) {
             Db::rollBack();
-            throw new BusinessException(ErrorCode::BAD_REQUEST, '注册失败');
+            throw new BusinessException((int)$e->getCode(), '注册失败');
         }
     }
 
@@ -184,7 +184,7 @@ class UserService extends BaseService
         $password = $request->input('password');
 
         $this->select = ['id', 'salt', 'password'];
-        $this->condition = [['status', '=', 1], ['user_name', '=', $userName]];
+        $this->condition = ['status' => 1, 'user_name' => $userName];
         $userInfo = parent::show($request);
 
         if (!$userInfo) {
@@ -194,6 +194,14 @@ class UserService extends BaseService
         if ($userInfo['password'] != Common::generatePasswordHash($password, $userInfo['salt'])) {
             throw new BusinessException(ErrorCode::BAD_REQUEST, '密码不正确');
         }
+        $ip = $request->getServerParams()['remote_addr'];
+        $this->data = [
+            'login_ip' => $ip,
+            'login_time' => time()
+        ];
+        $this->condition = ['id' => $userInfo['id']];
+        parent::update($request);
+
         return $userInfo;
     }
 }

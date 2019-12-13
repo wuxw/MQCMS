@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace App\Service\Admin;
 
-
 use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
 use App\Service\BaseService;
 use App\Service\UserInfoService;
 use App\Utils\Common;
+use Hyperf\DbConnection\Db;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
 
@@ -34,6 +34,16 @@ class UserService extends BaseService
             $page = $page < 1 ? 1 : $page;
             $limit = $limit > 100 ? 100 : $limit;
 
+            $this->select = [
+                $this->table.'.*',
+                $this->userInfoService->table.'.intro',
+                $this->userInfoService->table.'.like_num',
+                $this->userInfoService->table.'.follow_num',
+                $this->userInfoService->table.'.fans_num',
+                $this->userInfoService->table.'.post_num',
+                $this->userInfoService->table.'.my_like_num',
+            ];
+
             $this->orderBy = [
                 $this->table => ['id' => 'DESC']
             ];
@@ -41,7 +51,6 @@ class UserService extends BaseService
                 $this->userInfoService->table => [$this->table . '.id', '=', $this->userInfoService->table . '.user_id']
             ];
             $query = $this->multiTableJoinQueryBuilder();
-
             $count = $query->count();
             $pagination = $query->paginate((int)$limit, $this->select, 'page', (int)$page)->toArray();
             $pagination['total'] = $count;
@@ -75,9 +84,9 @@ class UserService extends BaseService
             throw new BusinessException(ErrorCode::BAD_REQUEST, '用户名已经存在');
         }
 
-        $ip = $request->getHeader('Host')[0];
+        $ip = $request->getServerParams()['remote_addr'];
         $salt = Common::generateSalt();
-        $data = [
+        $this->data = [
             'user_no' => Common::generateSnowId(),
             'user_name' => $userName,
             'real_name' => $realName,
@@ -94,8 +103,22 @@ class UserService extends BaseService
             'created_at' => time(),
             'updated_at' => time(),
         ];
-        $this->data = $data;
-        return parent::store($request);
+        Db::beginTransaction();
+        try{
+            $lastInsertId = parent::store($request);
+            $userInfoData = [
+                'user_id' => $lastInsertId,
+                'created_at' => time(),
+                'updated_at' => time(),
+            ];
+            Db::table($this->userInfoService->table)->insert($userInfoData);
+            Db::commit();
+            return $lastInsertId;
+
+        } catch(\Exception $e) {
+            Db::rollBack();
+            throw new BusinessException((int)$e->getCode(), '添加失败');
+        }
     }
 
     /**

@@ -8,6 +8,7 @@ use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
 use App\Utils\Common;
 use App\Utils\JWT;
+use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface as HttpResponse;
 use Hyperf\HttpServer\Contract\RequestInterface;
@@ -125,6 +126,7 @@ class FrontendAuthMiddleware implements MiddlewareInterface
         }
         $tokenInfo = $this->getAuthTokenInfo($this->request);
         $request = $request->withAttribute('uid', $tokenInfo['id']);
+        Context::set(ServerRequestInterface::class, $request);
         return $handler->handle($request);
     }
 

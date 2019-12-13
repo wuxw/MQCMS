@@ -36,6 +36,8 @@ class BaseService
      *    [表名.字段, '=', 值],
      *    [表名.字段, '=', 值],
      * ]
+     *
+     * [字段 => 值, 字段 => 值 ...]
      */
     public $condition = [];
 
@@ -86,7 +88,7 @@ class BaseService
         $this->condition = [];
         $this->select = ['*'];
         $this->orderBy = 'id desc';
-        $this->groupBy = '';
+        $this->groupBy = [];
         $this->data = [];
     }
 
@@ -101,7 +103,6 @@ class BaseService
             $limit = $request->input('limit', 10);
             $page = $page < 1 ? 1 : $page;
             $limit = $limit > 100 ? 100 : $limit;
-
             $data = self::getListByPage($this->table, (int) $page, (int) $limit, $this->condition, $this->select, $this->orderBy, $this->groupBy);
             $this->resetAttributes();
             return $data;

@@ -80,6 +80,9 @@ class BackendAuthMiddleware implements MiddlewareInterface
      */
     public static $jwtKeyIss = 'JWT_ADMIN_ISS';
 
+    /**
+     * @var array
+     */
     public static $tokenInfo = [];
 
     /**
@@ -123,6 +126,7 @@ class BackendAuthMiddleware implements MiddlewareInterface
         }
         $tokenInfo = $this->getAuthTokenInfo($this->request);
         $request = $request->withAttribute('uid', $tokenInfo['id']);
+        Context::set(ServerRequestInterface::class, $request);
         return $handler->handle($request);
     }
 
