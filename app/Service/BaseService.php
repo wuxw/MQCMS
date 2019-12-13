@@ -229,11 +229,11 @@ class BaseService
                 $query = $query->leftJoin($key, $item[0], $item[1], $item[2]);
             });
         }
-        if (!empty($this->condition)) {
-            $query = $query->where($this->condition);
-        }
         if (!empty($this->select)) {
             $query = $query->select($this->select);
+        }
+        if (!empty($this->condition)) {
+            $query = $query->where($this->condition);
         }
         if (is_array($this->orderBy) && !empty($this->orderBy)) {
             $orderBy = [];
@@ -248,6 +248,7 @@ class BaseService
             $orderBy = $this->orderBy;
         }
         $query = $query->orderByRaw($orderBy);
+
         if (!empty($this->groupBy)) {
             $query = $query->groupBy(implode(',', $this->groupBy));
         }
