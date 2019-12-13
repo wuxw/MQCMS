@@ -19,6 +19,7 @@ class CreateAttachmentTable extends Migration
                 $table->unsignedInteger('user_id')->nullable(false)->comment('附件上传的用户id');
                 $table->string('attach_url', 255)->nullable(false)->comment('附件地址');
                 $table->unsignedTinyInteger('attach_type')->nullable(false)->default(1)->comment('附件类型 1：图片 2：视频 3：文件');
+                $table->unsignedTinyInteger('status')->nullable(false)->default(1)->comment('状态 1：正常 0：删除');
                 $table->unsignedBigInteger('created_at')->nullable();
                 $table->unsignedBigInteger('updated_at')->nullable();
             });

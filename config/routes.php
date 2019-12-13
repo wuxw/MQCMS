@@ -93,6 +93,32 @@ Router::addGroup('/admin/', function () {
             Router::post('update', 'App\Controller\admin\v1\TagController@update');
         }, ['middleware' => [BackendAuthMiddleware::class]]);
 
+        // 内容
+        Router::addGroup('post/', function () {
+            Router::get('index', 'App\Controller\admin\v1\PostController@index');
+            Router::get('show', 'App\Controller\admin\v1\PostController@show');
+            Router::post('store', 'App\Controller\admin\v1\PostController@store');
+            Router::post('delete', 'App\Controller\admin\v1\PostController@delete');
+            Router::post('update', 'App\Controller\admin\v1\PostController@update');
+        }, ['middleware' => [BackendAuthMiddleware::class]]);
+
+        // 附件
+        Router::addGroup('attachment/', function () {
+            Router::get('index', 'App\Controller\admin\v1\AttachmentController@index');
+            Router::get('show', 'App\Controller\admin\v1\AttachmentController@show');
+            Router::post('store', 'App\Controller\admin\v1\AttachmentController@store');
+            Router::post('delete', 'App\Controller\admin\v1\AttachmentController@delete');
+            Router::post('update', 'App\Controller\admin\v1\AttachmentController@update');
+        }, ['middleware' => [BackendAuthMiddleware::class]]);
+
+        // 评价
+        Router::addGroup('comment/', function () {
+            Router::get('index', 'App\Controller\admin\v1\CommentController@index');
+            Router::get('show', 'App\Controller\admin\v1\CommentController@show');
+            Router::post('store', 'App\Controller\admin\v1\CommentController@store');
+            Router::post('delete', 'App\Controller\admin\v1\CommentController@delete');
+            Router::post('update', 'App\Controller\admin\v1\CommentController@update');
+        }, ['middleware' => [BackendAuthMiddleware::class]]);
     });
 });
 
