@@ -53,7 +53,7 @@ abstract class AbstractController
      * @param int $code
      * @param string $message
      */
-    public function validateParam(RequestInterface $request, array $rules, array $messages=[], int $code=0)
+    public function validateParam(RequestInterface $request, array $rules, array $messages=[], int $code=400)
     {
         $validator = $this->validationFactory->make($request->all(), $rules, $messages);
         if ($validator->fails()) {

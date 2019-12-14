@@ -45,7 +45,9 @@ class UserService extends BaseService
                 'follow_num',
                 'fans_num',
                 'post_num',
-                'my_like_num'
+                'my_like_num',
+                $this->table.'.created_at',
+                $this->table.'.updated_at',
             ];
             $this->condition = [
                 [$this->table.'.status', '=', 1]
