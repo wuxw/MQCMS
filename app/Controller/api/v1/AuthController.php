@@ -39,16 +39,7 @@ class AuthController extends BaseController
             'password' => 'required|max:100|min:6'
         ]);
 
-        $lastInsertId = $this->service->register($request);
-        $token = $this->createAuthToken(['id' => $lastInsertId]);
-        return $this->response->json([
-            'code' => ErrorCode::OK,
-            'message' => '注册成功',
-            'data' => [
-                'token' => $token,
-                'expire_time' => JWT::$leeway
-            ]
-        ]);
+        return $this->service->register($request);
     }
 
     /**
@@ -64,7 +55,7 @@ class AuthController extends BaseController
         ]);
 
         $userInfo = $this->service->login($request);
-        $token = $this->createAuthToken(['id' => $userInfo['id']]);
+        $token = $this->createAuthToken(['id' => $userInfo['id']], $request);
         return $this->response->json([
             'token' => $token,
             'expire_time' => JWT::$leeway

@@ -43,7 +43,7 @@ class JWT extends BaseJWT
             return (array)$payLoad->sub;
 
         } catch (\Exception $e) {
-            throw new BusinessException($e->getCode(), $e->getMessage());
+            throw new BusinessException(ErrorCode::BAD_REQUEST, $e->getMessage());
         }
     }
 

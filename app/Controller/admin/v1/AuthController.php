@@ -31,24 +31,13 @@ class AuthController extends BaseController
      */
     public function register(RequestInterface $request)
     {
-        $post = $this->validateParam($request, [
+        $this->validateParam($request, [
             'account' => 'required',
             'phone' => 'required',
             'password' => 'required|max:100|min:6'
         ]);
 
-        $lastInsertId = $this->service->register($request);
-        $token = $this->createAuthToken(['id' => $lastInsertId]);
-        return $this->response->json([
-            'token' => $token,
-            'expire_time' => JWT::$leeway,
-            'uuid' => $lastInsertId,
-            'info' => [
-                'name' => $post['account'],
-                'avatar' => '',
-                'access' => []
-            ]
-        ]);
+        return $this->service->register($request);
     }
 
     /**
@@ -64,7 +53,7 @@ class AuthController extends BaseController
         ]);
 
         $adminInfo = $this->service->login($request);
-        $token = $this->createAuthToken(['id' => $adminInfo['id']]);
+        $token = $this->createAuthToken(['id' => $adminInfo['id']], $request);
         return $this->response->json([
             'token' => $token,
             'expire_time' => JWT::$leeway,
