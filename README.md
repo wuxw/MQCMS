@@ -1,10 +1,13 @@
 # MQCMS
 MQCMS是一款现代化，快速，高效，灵活，前后端分离，扩展性强的CMS系统。
 MQCMS中的MQ取麻雀拼音首字母。寓意麻雀虽小五脏俱全。
+### 特别感谢
+本项目基于hyperf框架开发的应用，感谢hyperf的作者提供了这么优秀的框架
 
 ### 本地开发
 在docker环境下开发，window10环境安装docker desktop for window,
-window10以下环境安装docker toolbox
+window10以下环境安装docker toolbox。
+
 
 下载hyperf框架docker镜像
 ```php
