@@ -21,7 +21,7 @@ class TokenController extends BaseController
         return [
             'info' => $this->getTokenInfo(),
             'token' => $this->getAuthToken(),
-            'user_id' => $this->getUserId(),
+            'uid' => $request->getAttribute('uid')
         ];
     }
 
