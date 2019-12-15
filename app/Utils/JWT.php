@@ -38,7 +38,7 @@ class JWT extends BaseJWT
     public static function getTokenInfo($token, $jwt_config)
     {
         if (!$token) {
-            throw new BusinessException(ErrorCode::UNAUTHORIZED, 'token验证失败');
+            throw new BusinessException(ErrorCode::UNAUTHORIZED, 'Signature verification failed');
         }
         try {
             self::setLeeway((int)$jwt_config['exp']);

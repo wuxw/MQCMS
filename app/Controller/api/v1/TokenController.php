@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller\api\v1;
 
+use App\Utils\Common;
 use Hyperf\HttpServer\Contract\RequestInterface;
 
 /**
@@ -20,7 +21,7 @@ class TokenController extends BaseController
         return [
             'info' => $this->getTokenInfo(),
             'token' => $this->getAuthToken(),
-            'user_id' => $this->getUserId()
+            'user_id' => $this->getUserId(),
         ];
     }
 
@@ -35,9 +36,11 @@ class TokenController extends BaseController
                 'id' => 1,
                 'name' => 'mqcms',
                 'url' => 'http://www.mqcms.net',
-                'from' => 'api'
-            ]),
-            'jwt_config' => $this->getJwtConfig()
+                'from' => Common::getCurrentPath($request),
+                'action' => Common::getCurrentActionName($request, get_class_methods(get_class($this)))
+            ], $request),
+            'jwt_config' => $this->getJwtConfig($request),
+            'uid' => $request->getAttribute('uid')
         ];
     }
 

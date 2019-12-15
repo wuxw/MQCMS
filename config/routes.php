@@ -11,8 +11,7 @@ declare(strict_types=1);
  */
 
 use Hyperf\HttpServer\Router\Router;
-use App\Middleware\FrontendAuthMiddleware;
-use App\Middleware\BackendAuthMiddleware;
+use App\Middleware\AuthMiddleware;
 
 Router::addRoute(['GET', 'POST', 'HEAD'], '/', 'App\Controller\api\v1\IndexController@index');
 
@@ -25,15 +24,15 @@ Router::addGroup('/api/', function () {
             // 创建token
             Router::post('store', 'App\Controller\api\v1\tokencontroller@store');
             // 获取token信息
-            Router::get('index', 'App\Controller\api\v1\TokenController@index', ['middleware' => [FrontendAuthMiddleware::class]]);
+            Router::get('index', 'App\Controller\api\v1\TokenController@index', ['middleware' => [AuthMiddleware::class]]);
         });
 
         // 标签
         Router::addGroup('tag/', function () {
             Router::get('index', 'App\Controller\api\v1\TagController@index');
             Router::get('show', 'App\Controller\api\v1\TagController@show');
-            Router::post('store', 'App\Controller\api\v1\TagController@store', ['middleware' => [FrontendAuthMiddleware::class]]);
-            Router::delete('delete', 'App\Controller\api\v1\TagController@delete', ['middleware' => [FrontendAuthMiddleware::class]]);
+            Router::post('store', 'App\Controller\api\v1\TagController@store', ['middleware' => [AuthMiddleware::class]]);
+            Router::delete('delete', 'App\Controller\api\v1\TagController@delete', ['middleware' => [AuthMiddleware::class]]);
         });
 
         // 用户
@@ -68,7 +67,7 @@ Router::addGroup('/admin/', function () {
             // 创建token
             Router::post('store', 'App\Controller\admin\v1\tokencontroller@store');
             // 获取token信息
-            Router::get('index', 'App\Controller\admin\v1\TokenController@index', ['middleware' => [BackendAuthMiddleware::class]]);
+            Router::get('index', 'App\Controller\admin\v1\TokenController@index', ['middleware' => [\App\Middleware\AuthMiddleware::class]]);
         });
 
         // auth
@@ -82,7 +81,7 @@ Router::addGroup('/admin/', function () {
             Router::get('index', 'App\Controller\admin\v1\UserController@index');
             Router::post('store', 'App\Controller\admin\v1\UserController@store');
             Router::post('update', 'App\Controller\admin\v1\UserController@update');
-        }, ['middleware' => [BackendAuthMiddleware::class]]);
+        }, ['middleware' => [AuthMiddleware::class]]);
 
         // 标签
         Router::addGroup('tag/', function () {
@@ -91,7 +90,7 @@ Router::addGroup('/admin/', function () {
             Router::post('store', 'App\Controller\admin\v1\TagController@store');
             Router::post('delete', 'App\Controller\admin\v1\TagController@delete');
             Router::post('update', 'App\Controller\admin\v1\TagController@update');
-        }, ['middleware' => [BackendAuthMiddleware::class]]);
+        }, ['middleware' => [AuthMiddleware::class]]);
 
         // 内容
         Router::addGroup('post/', function () {
@@ -100,7 +99,7 @@ Router::addGroup('/admin/', function () {
             Router::post('store', 'App\Controller\admin\v1\PostController@store');
             Router::post('delete', 'App\Controller\admin\v1\PostController@delete');
             Router::post('update', 'App\Controller\admin\v1\PostController@update');
-        }, ['middleware' => [BackendAuthMiddleware::class]]);
+        }, ['middleware' => [AuthMiddleware::class]]);
 
         // 附件
         Router::addGroup('attachment/', function () {
@@ -109,7 +108,7 @@ Router::addGroup('/admin/', function () {
             Router::post('store', 'App\Controller\admin\v1\AttachmentController@store');
             Router::post('delete', 'App\Controller\admin\v1\AttachmentController@delete');
             Router::post('update', 'App\Controller\admin\v1\AttachmentController@update');
-        }, ['middleware' => [BackendAuthMiddleware::class]]);
+        }, ['middleware' => [AuthMiddleware::class]]);
 
         // 评价
         Router::addGroup('comment/', function () {
@@ -118,7 +117,7 @@ Router::addGroup('/admin/', function () {
             Router::post('store', 'App\Controller\admin\v1\CommentController@store');
             Router::post('delete', 'App\Controller\admin\v1\CommentController@delete');
             Router::post('update', 'App\Controller\admin\v1\CommentController@update');
-        }, ['middleware' => [BackendAuthMiddleware::class]]);
+        }, ['middleware' => [AuthMiddleware::class]]);
     });
 });
 
