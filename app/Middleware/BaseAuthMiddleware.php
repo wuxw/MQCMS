@@ -80,11 +80,11 @@ class BaseAuthMiddleware implements MiddlewareInterface
     {
         $currentPath = Common::getCurrentPath($request);
         return [
-            'key' => env('JWT_' . strtoupper($currentPath) . '_KEY', 'JWT_API_KEY'),
-            'id' => env('JWT_' . strtoupper($currentPath) . '_ID', 'JWT_API_ID'),
-            'exp' => env('JWT_' . strtoupper($currentPath) . '_EXP', 'JWT_API_EXP'),
-            'aud' => env('JWT_' . strtoupper($currentPath) . '_AUD', 'JWT_API_AUD'),
-            'iss' => env('JWT_' . strtoupper($currentPath) . '_ISS', 'JWT_API_ISS')
+            'key' => env('JWT_' . strtoupper($currentPath) . '_KEY', 'mqcms'),
+            'id' => env('JWT_' . strtoupper($currentPath) . '_ID', 'api'),
+            'exp' => env('JWT_' . strtoupper($currentPath) . '_EXP', '86400'),
+            'aud' => env('JWT_' . strtoupper($currentPath) . '_AUD', 'api.mqcms.net'),
+            'iss' => env('JWT_' . strtoupper($currentPath) . '_ISS', 'api.mqcms.net')
         ];
     }
 

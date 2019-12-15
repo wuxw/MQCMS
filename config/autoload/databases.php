@@ -14,7 +14,7 @@ return [
     'default' => [
         'driver' => env('DB_DRIVER', 'mysql'),
         'host' => env('DB_HOST', 'localhost'),
-        'database' => env('DB_DATABASE', 'mq_db'),
+        'database' => env('DB_DATABASE', 'mq'),
         'username' => env('DB_USERNAME', 'root'),
         'password' => env('DB_PASSWORD', '123456'),
         'charset' => env('DB_CHARSET', 'utf8'),
