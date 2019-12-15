@@ -95,16 +95,6 @@ abstract class AbstractController
     }
 
     /**
-     * 获取用户id
-     * @return mixed
-     */
-    public function getUserId(): int
-    {
-        $info = $this->getTokenInfo();
-        return $info['id'] ?? 0;
-    }
-
-    /**
      * @return array
      */
     public function getJwtConfig(RequestInterface $request): array

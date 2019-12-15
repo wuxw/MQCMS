@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Middleware;
 
+use App\Constants\ErrorCode;
+use App\Exception\BusinessException;
 use App\Utils\Common;
 use App\Utils\JWT;
 use Hyperf\Utils\Context;
@@ -98,7 +100,7 @@ class BaseAuthMiddleware implements MiddlewareInterface
         $this->challenge();
         $header = $request->getHeader($this->header);
         $tokenInfo = $this->authenticate($header);
-        $uid = $tokenInfo && $tokenInfo['id'] ? $tokenInfo['id'] : 0;
+        $uid = $tokenInfo && $tokenInfo['sub'] ? $tokenInfo['sub']->id : 0;
         $request = $request->withAttribute('uid', $uid);
         Context::set(ServerRequestInterface::class, $request);
         return $handler->handle($request);
@@ -142,6 +144,9 @@ class BaseAuthMiddleware implements MiddlewareInterface
     {
         $config = self::getJwtConfig($this->request);
         self::$tokenInfo = JWT::getTokenInfo(self::$authToken, $config);
+        if (self::$tokenInfo['exp'] - time() > $config['exp']) {
+            throw new BusinessException(ErrorCode::UNAUTHORIZED, 'Expired token');
+        }
         return self::$tokenInfo;
     }
 

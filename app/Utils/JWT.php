@@ -40,10 +40,10 @@ class JWT extends BaseJWT
         try {
             self::setLeeway((int)$jwt_config['exp']);
             $payLoad = self::decode($token, $jwt_config['key'], [self::JWT_ALGORITHM_METHOD]);
-            return (array)$payLoad->sub;
+            return (array)$payLoad;
 
         } catch (\Exception $e) {
-            throw new BusinessException(ErrorCode::BAD_REQUEST, $e->getMessage());
+            throw new BusinessException(ErrorCode::UNAUTHORIZED, $e->getMessage());
         }
     }
 
