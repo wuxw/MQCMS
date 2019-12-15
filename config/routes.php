@@ -72,6 +72,14 @@ Router::addGroup('/admin/', function () {
             Router::get('index', 'App\Controller\admin\v1\TokenController@index', ['middleware' => [\App\Middleware\AuthMiddleware::class]]);
         });
 
+        // 管理员
+        Router::addGroup('admin/', function () {
+            Router::get('index', 'App\Controller\admin\v1\AdminController@index');
+            Router::post('store', 'App\Controller\admin\v1\AdminController@store');
+            Router::post('update', 'App\Controller\admin\v1\AdminController@update');
+            Router::post('delete', 'App\Controller\admin\v1\AdminController@delete');
+        }, ['middleware' => [AuthMiddleware::class]]);
+
         // auth
         Router::addGroup('auth/', function () {
             Router::post('login', 'App\Controller\admin\v1\AuthController@login');
