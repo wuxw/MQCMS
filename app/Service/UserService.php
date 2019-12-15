@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Service;
 
@@ -19,102 +19,6 @@ class UserService extends BaseService
      * @var UserInfoService
      */
     public $userInfoService;
-
-    /**
-     * 推荐用户列表
-     * @param RequestInterface $request
-     * @return \Hyperf\Contract\PaginatorInterface
-     */
-    public function index(RequestInterface $request)
-    {
-        try {
-            $page = $request->input('page', 1);
-            $limit = $request->input('limit', 10);
-            $page = $page < 1 ? 1 : $page;
-            $limit = $limit > 100 ? 100 : $limit;
-
-            $this->select = [
-                $this->table.'.id',
-                'user_name',
-                'nick_name',
-                'real_name',
-                'phone',
-                'avatar',
-                'intro',
-                'like_num',
-                'follow_num',
-                'fans_num',
-                'post_num',
-                'my_like_num',
-                $this->table.'.created_at',
-                $this->table.'.updated_at',
-            ];
-            $this->condition = [
-                [$this->table.'.status', '=', 1]
-            ];
-            $this->joinTables = [
-                $this->userInfoService->table => [$this->table . '.id', '=', $this->userInfoService->table . '.user_id']
-            ];
-            $query = $this->multiTableJoinQueryBuilder();
-            $count = $query->count();
-            $pagination = $query->paginate((int)$limit, $this->select, 'page', (int)$page)->toArray();
-            $pagination['total'] = $count;
-            foreach ($pagination['data'] as $key => &$value) {
-                $value['created_at'] = $value['created_at'] ? date('Y-m-d H:i:s', $value['created_at']) : '';
-                $value['updated_at'] = $value['updated_at'] ? date('Y-m-d H:i:s', $value['updated_at']) : '';
-            }
-            return $pagination;
-
-        } catch (\Exception $e) {
-            throw new BusinessException((int)$e->getCode(), $e->getMessage());
-        }
-    }
-
-    /**
-     * 用户信息（查看别人）
-     * @param RequestInterface $request
-     * @return mixed
-     */
-    public function show(RequestInterface $request)
-    {
-        try {
-            $uid = $request->getAttribute('uid', 0);
-            $id = $request->input('id');
-
-            $this->select = [
-                $this->table.'.id',
-                'user_name',
-                'nick_name',
-                'real_name',
-                'phone',
-                'avatar',
-                'intro',
-                'like_num',
-                'follow_num',
-                'fans_num',
-                'post_num',
-                'my_like_num'
-            ];
-            $this->condition = [
-                [$this->table.'.status', '=', 1],
-                [$this->table.'.id', '=', $id],
-            ];
-            $this->joinTables = [
-                $this->userInfoService->table => [$this->table . '.id', '=', $this->userInfoService->table . '.user_id']
-            ];
-            $this->orderBy = [
-                $this->table => ["id" => "DESC"],
-                $this->userInfoService->table => ["id" => "ASC"],
-            ];
-
-            $query = $this->multiTableJoinQueryBuilder();
-            $data = $query->first();
-            return $data ?? [];
-
-        } catch (\Exception $e) {
-            throw new BusinessException((int)$e->getCode(), $e->getMessage());
-        }
-    }
 
     /**
      * 注册
@@ -158,7 +62,7 @@ class UserService extends BaseService
             'updated_at' => time(),
         ];
         Db::beginTransaction();
-        try{
+        try {
             $lastInsertId = parent::store($request);
             $userInfoData = [
                 'user_id' => $lastInsertId,
@@ -169,7 +73,7 @@ class UserService extends BaseService
             Db::commit();
             return $lastInsertId;
 
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             Db::rollBack();
             throw new BusinessException((int)$e->getCode(), '注册失败');
         }
@@ -206,4 +110,211 @@ class UserService extends BaseService
 
         return $userInfo;
     }
+
+    /**
+     * 推荐用户列表
+     * @param RequestInterface $request
+     * @return \Hyperf\Contract\PaginatorInterface
+     */
+    public function index(RequestInterface $request)
+    {
+        try {
+            $page = $request->input('page', 1);
+            $limit = $request->input('limit', 10);
+            $page = $page < 1 ? 1 : $page;
+            $limit = $limit > 100 ? 100 : $limit;
+
+            $this->select = [
+                $this->table . '.id',
+                'user_name',
+                'nick_name',
+                'real_name',
+                'phone',
+                'avatar',
+                'intro',
+                'like_num',
+                'follow_num',
+                'fans_num',
+                'post_num',
+                'my_like_num',
+                $this->table . '.created_at',
+                $this->table . '.updated_at',
+            ];
+            $this->condition = [
+                [$this->table . '.status', '=', 1]
+            ];
+            $this->joinTables = [
+                $this->userInfoService->table => [$this->table . '.id', '=', $this->userInfoService->table . '.user_id']
+            ];
+            $query = $this->multiTableJoinQueryBuilder();
+            $count = $query->count();
+            $pagination = $query->paginate((int)$limit, $this->select, 'page', (int)$page)->toArray();
+            $pagination['total'] = $count;
+            foreach ($pagination['data'] as $key => &$value) {
+                $value['created_at'] = $value['created_at'] ? date('Y-m-d H:i:s', $value['created_at']) : '';
+                $value['updated_at'] = $value['updated_at'] ? date('Y-m-d H:i:s', $value['updated_at']) : '';
+            }
+            return $pagination;
+
+        } catch (\Exception $e) {
+            throw new BusinessException((int)$e->getCode(), $e->getMessage());
+        }
+    }
+
+    /**
+     * 用户信息（查看别人）
+     * @param RequestInterface $request
+     * @return mixed
+     */
+    public function show(RequestInterface $request)
+    {
+        try {
+            $uid = $request->getAttribute('uid', 0);
+            $id = $request->input('id');
+
+            $this->select = [
+                $this->table . '.id',
+                'user_name',
+                'nick_name',
+                'real_name',
+                'phone',
+                'avatar',
+                'intro',
+                'like_num',
+                'follow_num',
+                'fans_num',
+                'post_num',
+                'my_like_num'
+            ];
+            $this->condition = [
+                [$this->table . '.status', '=', 1],
+                [$this->table . '.id', '=', $id],
+            ];
+            $this->joinTables = [
+                $this->userInfoService->table => [$this->table . '.id', '=', $this->userInfoService->table . '.user_id']
+            ];
+
+            $query = $this->multiTableJoinQueryBuilder();
+            $data = $query->first();
+            $data['is_follow'] = 0;
+            if ($uid) {
+                $exist = Db::table('user_follow')->where([['user_id', $uid], ['be_user_id', $id]])->exists();
+                if ($exist) {
+                    $data['is_follow'] = 1;
+                }
+            }
+            return $data ?? [];
+
+        } catch (\Exception $e) {
+            throw new BusinessException((int)$e->getCode(), $e->getMessage());
+        }
+    }
+
+    /**
+     * 用户信息（查看自己）
+     * @param RequestInterface $request
+     * @return mixed
+     */
+    public function showSelf(RequestInterface $request)
+    {
+        try {
+            $uid = $request->getAttribute('uid', 0);
+
+            $this->select = [
+                $this->table . '.id',
+                'user_name',
+                'nick_name',
+                'real_name',
+                'phone',
+                'avatar',
+                'intro',
+                'like_num',
+                'follow_num',
+                'fans_num',
+                'post_num',
+                'my_like_num'
+            ];
+            $this->condition = [
+                [$this->table . '.status', '=', 1],
+                [$this->table . '.id', '=', $uid],
+            ];
+            $this->joinTables = [
+                $this->userInfoService->table => [$this->table . '.id', '=', $this->userInfoService->table . '.user_id']
+            ];
+
+            $query = $this->multiTableJoinQueryBuilder();
+            $data = $query->first();
+            return $data ?? [];
+
+        } catch (\Exception $e) {
+            throw new BusinessException((int)$e->getCode(), $e->getMessage());
+        }
+    }
+
+
+    /**
+     * 用户帖子列表
+     * @param RequestInterface $request
+     * @return mixed
+     */
+    public function postList(RequestInterface $request)
+    {
+        try {
+            $id = $request->input('id');
+            $type = $request->input('type', 1);
+            $page = $request->input('page', 1);
+            $limit = $request->input('limit', 10);
+            $page = $page < 1 ? 1 : $page;
+            $limit = $limit > 100 ? 100 : $limit;
+
+            $this->condition = [
+                ['status', '=', 1],
+                ['is_publish', '=', 1],
+            ];
+
+            $query = Db::table('post');
+
+            switch ($type) {
+                //用户发布的帖子列表
+                case 1:
+                    $this->condition[] = ['user_id', '=', $id];
+                    $query->where($this->condition);
+                    break;
+
+                //用户点赞的帖子列表
+                case 2:
+                    $postIds = Db::table('user_like')->where('user_id', $id)->pluck('post_id');
+                    $query->where($this->condition);
+                    $query->whereIn('id', $postIds);
+                    break;
+
+                //用户收藏的帖子列表
+                case 3:
+                    $postIds = Db::table('user_favorite')->where('user_id', $id)->pluck('post_id');
+                    $query->where($this->condition);
+                    $query->whereIn('id', $postIds);
+                    break;
+
+                //用户发布且含有商品的帖子列表
+                case 4:
+                    $this->condition[] = ['user_id', '=', $id];
+                    $this->condition[] = ['is_good', '=', 1];
+                    $query->where($this->condition);
+                    break;
+            }
+            $query->select($this->select);
+            $count = $query->count();
+            $pagination = $query->paginate((int)$limit, $this->select, 'page', (int)$page)->toArray();
+            foreach ($pagination['data'] as $key => &$value) {
+                $value['attach_urls'] = $value['attach_urls'] ? json_decode($value['attach_urls'], true) : [];
+                $value['relation_tags_list'] = explode(',', $value['relation_tags']);
+            }
+            $pagination['total'] = $count;
+            return $pagination;
+
+        } catch (\Exception $e) {
+            throw new BusinessException((int)$e->getCode(), $e->getMessage());
+        }
+    }
+
 }

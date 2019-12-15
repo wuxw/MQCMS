@@ -41,4 +41,29 @@ class UserController extends BaseController
 
         return $this->service->show($request);
     }
+
+    /**
+     * 用户信息（查看别人）
+     * @param RequestInterface $request
+     * @return mixed
+     */
+    public function showSelf(RequestInterface $request)
+    {
+        return $this->service->showSelf($request);
+    }
+
+    /**
+     * 用户帖子列表
+     * @param RequestInterface $request
+     * @return mixed
+     */
+    public function postList(RequestInterface $request)
+    {
+        $this->validateParam($request, [
+            'id' => 'required|integer',
+            'type' => 'integer'
+        ]);
+
+        return $this->service->postList($request);
+    }
 }

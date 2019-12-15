@@ -28,4 +28,27 @@ class PostController extends BaseController
 
         return $this->service->index($request);
     }
+
+    /**
+     * 新增
+     * @param RequestInterface $request
+     * @return mixed
+     */
+    public function store(RequestInterface $request)
+    {
+        $this->validateParam($request, [
+            'post_content' => 'required',
+            'link_url' => 'url',
+            'label_type' => 'required',
+            'relation_tags' => 'required',
+            'relation_tag_ids' => 'required',
+            'address' => 'required',
+            'addr_lat' => 'required',
+            'addr_lng' => 'required',
+            'attach_urls' => 'required',
+            'attach_ids' => 'required',
+            'is_publish' => 'required|integer',
+        ]);
+        return $this->service->store($request);
+    }
 }

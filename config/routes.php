@@ -39,6 +39,8 @@ Router::addGroup('/api/', function () {
         Router::addGroup('user/', function () {
             Router::get('index', 'App\Controller\api\v1\UserController@index');
             Router::get('show', 'App\Controller\api\v1\UserController@show');
+            Router::get('show-self', 'App\Controller\api\v1\UserController@showSelf', ['middleware' => [AuthMiddleware::class]]);
+            Router::get('post-list', 'App\Controller\api\v1\UserController@postList');
             Router::post('store', 'App\Controller\api\v1\UserController@store');
         });
 
@@ -51,7 +53,7 @@ Router::addGroup('/api/', function () {
         // 帖子
         Router::addGroup('post/', function () {
            Router::get('index', 'App\Controller\api\v1\PostController@index');
-           Router::post('store', 'App\Controller\api\v1\PostController@store');
+           Router::post('store', 'App\Controller\api\v1\PostController@store', ['middleware' => [AuthMiddleware::class]]);
            Router::delete('delete', 'App\Controller\api\v1\PostController@delete');
            Router::post('update', 'App\Controller\api\v1\PostController@update');
         });
