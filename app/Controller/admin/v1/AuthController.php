@@ -31,13 +31,23 @@ class AuthController extends BaseController
      */
     public function register(RequestInterface $request)
     {
-        $this->validateParam($request, [
+        $post = $this->validateParam($request, [
             'account' => 'required',
             'phone' => 'required',
             'password' => 'required|max:100|min:6'
         ]);
-
-        return $this->service->register($request);
+        $lastInsertId = $this->service->register($request);
+        $token = $this->createAuthToken(['id' => $lastInsertId], $request);
+        return $this->response->json([
+            'token' => $token,
+            'expire_time' => JWT::$leeway,
+            'uuid' => $lastInsertId,
+            'info' => [
+                'name' => $post['account'],
+                'avatar' => '',
+                'access' => []
+            ]
+        ]);
     }
 
     /**
