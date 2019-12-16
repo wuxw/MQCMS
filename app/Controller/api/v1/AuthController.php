@@ -6,7 +6,6 @@ declare(strict_types=1);
  */
 namespace App\Controller\api\v1;
 
-use App\Constants\ErrorCode;
 use App\Service\UserService;
 use App\Utils\JWT;
 use Hyperf\Di\Annotation\Inject;
@@ -46,7 +45,7 @@ class AuthController extends BaseController
             'expire_time' => JWT::$leeway,
             'uuid' => $lastInsertId,
             'info' => [
-                'name' => $post['account'],
+                'name' => $post['user_name'],
                 'avatar' => '',
                 'access' => []
             ]

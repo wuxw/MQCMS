@@ -21,6 +21,30 @@ class UserService extends BaseService
     public $userInfoService;
 
     /**
+     * @Inject()
+     * @var PostService
+     */
+    public $postService;
+
+    /**
+     * @Inject()
+     * @var UserFollowService
+     */
+    public $userFollowService;
+
+    /**
+     * @Inject()
+     * @var UserLikeService
+     */
+    public $userLikeService;
+
+    /**
+     * @Inject()
+     * @var UserFavoriteService
+     */
+    public $userFavoriteService;
+
+    /**
      * 注册
      * @param RequestInterface $request
      * @return int
@@ -64,12 +88,12 @@ class UserService extends BaseService
         Db::beginTransaction();
         try {
             $lastInsertId = parent::store($request);
-            $userInfoData = [
+            $this->userInfoService->data = [
                 'user_id' => $lastInsertId,
                 'created_at' => time(),
                 'updated_at' => time(),
             ];
-            Db::table($this->userInfoService->table)->insert($userInfoData);
+            $this->userInfoService->store($request);
             Db::commit();
             return $lastInsertId;
 
@@ -106,8 +130,9 @@ class UserService extends BaseService
             'login_time' => time()
         ];
         $this->condition = ['id' => $userInfo['id']];
-        parent::update($request);
-
+        if (!parent::update($request)) {
+            throw new BusinessException(ErrorCode::BAD_REQUEST, '登录失败');
+        }
         return $userInfo;
     }
 
@@ -184,7 +209,13 @@ class UserService extends BaseService
 
             $data['is_follow'] = 0;
             if ($uid) {
-                $exist = Db::table('user_follow')->where([['user_id', $uid], ['be_user_id', $id]])->exists();
+
+                // 查询是否关注
+                $this->userFollowService->condition = [
+                    ['user_id', '=', $uid],
+                    ['be_user_id', '=', $id]
+                ];
+                $exist = $this->userFollowService->multiTableJoinQueryBuilder()->exists();
                 if ($exist) {
                     $data['is_follow'] = 1;
                 }
@@ -252,44 +283,46 @@ class UserService extends BaseService
             $page = $page < 1 ? 1 : $page;
             $limit = $limit > 100 ? 100 : $limit;
 
-            $this->condition = [
+            $this->postService->condition = [
                 ['status', '=', 1],
                 ['is_publish', '=', 1],
             ];
-
-            $query = Db::table('post');
-
+            $postIds = [];
             switch ($type) {
                 //用户发布的帖子列表
                 case 1:
-                    $this->condition[] = ['user_id', '=', $id];
-                    $query->where($this->condition);
+                    $this->postService->condition[] = ['user_id', '=', $id];
                     break;
 
                 //用户点赞的帖子列表
                 case 2:
-                    $postIds = Db::table('user_like')->where('user_id', $id)->pluck('post_id');
-                    $query->where($this->condition);
-                    $query->whereIn('id', $postIds);
+                    $this->userLikeService->condition = ['user_id' => $id];
+                    $postIds = $this->userLikeService->multiTableJoinQueryBuilder()->pluck('post_id')->toArray();
                     break;
 
                 //用户收藏的帖子列表
                 case 3:
-                    $postIds = Db::table('user_favorite')->where('user_id', $id)->pluck('post_id');
-                    $query->where($this->condition);
-                    $query->whereIn('id', $postIds);
+                    $this->userFavoriteService->condition = ['user_id' => $id];
+                    $postIds = $this->userFavoriteService->multiTableJoinQueryBuilder()->pluck('post_id')->toArray();
                     break;
 
                 //用户发布且含有商品的帖子列表
                 case 4:
-                    $this->condition[] = ['user_id', '=', $id];
-                    $this->condition[] = ['is_good', '=', 1];
-                    $query->where($this->condition);
+                    $this->postService->condition[] = ['user_id', '=', $id];
+                    $this->postService->condition[] = ['is_good', '=', 1];
+                    break;
+
+                default:
+                    throw new BusinessException(ErrorCode::BAD_REQUEST, '参数错误');
                     break;
             }
-            $query = $query->select($this->select);
+            $query = $this->postService->multiTableJoinQueryBuilder();
+            if (in_array($type, [2, 3])) {
+                $query = $query->whereIn('id', $postIds);
+            }
             $count = $query->count();
             $pagination = $query->paginate((int)$limit, $this->select, 'page', (int)$page)->toArray();
+
             foreach ($pagination['data'] as $key => &$value) {
                 $value['attach_urls'] = $value['attach_urls'] ? json_decode($value['attach_urls'], true) : [];
                 $value['relation_tags_list'] = explode(',', $value['relation_tags']);

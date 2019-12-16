@@ -105,11 +105,8 @@ class BaseService
             $page = $page < 1 ? 1 : $page;
             $limit = $limit > 100 ? 100 : $limit;
 
-            if (empty($this->joinTables)) {
-                $pagination = $this->getListByPage((int) $page, (int) $limit);
-            } else {
-                $pagination = $this->getMultiTablesListByPage((int) $page, (int) $limit);
-            }
+            $pagination = $this->getListByPage((int) $page, (int) $limit);
+
             foreach ($pagination['data'] as $key => &$value) {
                 $value['created_at'] = $value['created_at'] ? date('Y-m-d H:i:s', $value['created_at']) : '';
                 $value['updated_at'] = $value['updated_at'] ? date('Y-m-d H:i:s', $value['updated_at']) : '';
@@ -135,7 +132,7 @@ class BaseService
                 $data = $this->multiTableJoinQueryBuilder()->first();
             }
             $this->resetAttributes();
-            return $data ?? [];
+            return (array)$data ?? [];
 
         } catch (\Exception $e) {
             throw new BusinessException((int)$e->getCode(), $e->getMessage());
@@ -200,32 +197,6 @@ class BaseService
      */
     public function getListByPage(int $page, int $limit)
     {
-        $query = Db::table($this->table);
-        if (!empty($this->condition)) {
-            $query = $query->where($this->condition);
-        }
-        if (!empty($this->select)) {
-            $query = $query->select($this->select);
-        }
-        if (is_string($this->orderBy)) {
-            $query = $query->orderByRaw($this->orderBy);
-        }
-        if (!empty($this->groupBy)) {
-            $query = $query->groupBy(implode(',', $this->groupBy));
-        }
-        $count = $query->count();
-        $pagination = $query->paginate($limit, $this->select, 'page', $page)->toArray();
-        $pagination['total'] = $count;
-        return $pagination;
-    }
-
-    /**
-     * 获取多表查询
-     * @param RequestInterface $request
-     * @return mixed
-     */
-    public function getMultiTablesListByPage(int $page, int $limit)
-    {
         $query = $this->multiTableJoinQueryBuilder();
         $count = $query->count();
         $pagination = $query->paginate($limit, $this->select, 'page', $page)->toArray();
@@ -246,7 +217,7 @@ class BaseService
     }
 
     /**
-     * 多表关联查询构造器
+     * 单多表关联查询构造器
      * @return \Hyperf\Database\Query\Builder
      */
     public function multiTableJoinQueryBuilder()
