@@ -5,6 +5,7 @@ namespace App\Service;
 
 use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
+use App\Model\User;
 use App\Utils\Common;
 use Hyperf\DbConnection\Db;
 use Hyperf\Di\Annotation\Inject;
@@ -12,7 +13,11 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 
 class UserService extends BaseService
 {
-    public $table = 'user';
+    /**
+     * @Inject()
+     * @var User
+     */
+    public $table;
 
     /**
      * @Inject()

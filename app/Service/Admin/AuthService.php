@@ -5,13 +5,19 @@ namespace App\Service\Admin;
 
 use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
+use App\Model\Admin;
 use App\Service\BaseService;
 use App\Utils\Common;
+use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
 
 class AuthService extends BaseService
 {
-    public $table = 'admin';
+    /**
+     * @Inject()
+     * @var Admin
+     */
+    public $table;
 
     /**
      * 注册

@@ -5,12 +5,18 @@ namespace App\Service\Admin;
 
 use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
+use App\Model\Post;
 use App\Service\BaseService;
+use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
 
 class PostService extends BaseService
 {
-    public $table = 'post';
+    /**
+     * @Inject()
+     * @var Post
+     */
+    public $table;
 
     /**
      * @param RequestInterface $request

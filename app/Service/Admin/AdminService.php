@@ -3,12 +3,18 @@ declare(strict_types=1);
 
 namespace App\Service\Admin;
 
+use App\Model\Admin;
 use App\Service\BaseService;
+use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
 
 class AdminService extends BaseService
 {
-    public $table = 'admin';
+    /**
+     * @Inject()
+     * @var Admin
+     */
+    public $table;
 
     /**
      * @param RequestInterface $request

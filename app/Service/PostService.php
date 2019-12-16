@@ -3,13 +3,26 @@ declare(strict_types = 1);
 
 namespace App\Service;
 
+use App\Exception\BusinessException;
+use App\Model\Post;
 use App\Utils\Common;
 use Hyperf\DbConnection\Db;
+use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
 
 class PostService extends BaseService
 {
-    public $table = 'post';
+    /**
+     * @Inject()
+     * @var Post
+     */
+    public $table;
+
+    /**
+     * @Inject()
+     * @var TagPostRelationService
+     */
+    public $tagPostRelationService;
 
     /**
      * 帖子列表分页
@@ -28,7 +41,6 @@ class PostService extends BaseService
         if ($type === 'recommend') {
             $this->condition[] = ['is_recommend', '=', 1];
         }
-        $this->orderBy = 'id DESC';
         $list = parent::index($request);
 
         foreach ($list['data'] as $key => &$value) {
@@ -49,12 +61,12 @@ class PostService extends BaseService
         $relationTagIds = explode(',', $request->input('relation_tag_ids', ''));
         $uid = $request->getAttribute('uid', 0);
         $isPublish = $request->input('is_publish', 1);
-        $data = [
+        $this->data = [
             'user_id' => $uid,
             'post_content' => $request->input('post_content'),
             'link_url' => $request->input('link_url', ''),
             'label_type' => $request->input('label_type', 1),
-            'is_good' => $request->input('link_url', '') ? 1 : 0,
+            'is_good' => $request->has('link_url') ? 1 : 0,
             'relation_tags' => $request->input('relation_tags', ''),
             'address' => $request->input('address', ''),
             'addr_lat' => $request->input('addr_lat', ''),
@@ -65,20 +77,23 @@ class PostService extends BaseService
             'created_at' => time(),
             'updated_at' => time(),
         ];
-        $this->data = $data;
         Db::beginTransaction();
         try {
             $lastInsertId = parent::store($request);
-            foreach ($relationTagIds as $value) {
-                $relationData[] = [
-                    'user_id' => $uid,
-                    'tag_id' => $value,
-                    'post_id' => $lastInsertId,
-                    'created_at' => time(),
-                    'updated_at' => time()
-                ];
+
+            // 存储tag
+            if ($request->has('relation_tag_ids') && $request->has('relation_tags')) {
+                foreach ($relationTagIds as $value) {
+                    $this->tagPostRelationService->data[] = [
+                        'user_id' => $uid,
+                        'tag_id' => $value,
+                        'post_id' => $lastInsertId,
+                        'created_at' => time(),
+                        'updated_at' => time()
+                    ];
+                }
+                $this->tagPostRelationService->insert($request);
             }
-            Db::table('tag_post_relation')->insert($relationData);
             Db::commit();
             return $lastInsertId;
 
@@ -87,7 +102,6 @@ class PostService extends BaseService
             $message = $isPublish ? '发布失败' : '保存失败';
             throw new BusinessException((int)$e->getCode(), $message);
         }
-        return parent::store($request);
     }
 
 }

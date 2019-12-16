@@ -3,7 +3,14 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Model\UserLike;
+use Hyperf\Di\Annotation\Inject;
+
 class UserLikeService extends BaseService
 {
-    public $table = 'user_like';
+    /**
+     * @Inject()
+     * @var UserLike
+     */
+    public $table;
 }

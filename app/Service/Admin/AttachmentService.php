@@ -5,12 +5,18 @@ namespace App\Service\Admin;
 
 use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
+use App\Model\Attachment;
 use App\Service\BaseService;
+use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
 
 class AttachmentService extends BaseService
 {
-    public $table = 'attachment';
+    /**
+     * @Inject()
+     * @var Attachment
+     */
+    public $table;
 
     /**
      * @param RequestInterface $request

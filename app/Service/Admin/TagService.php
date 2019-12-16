@@ -5,12 +5,18 @@ namespace App\Service\Admin;
 
 use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
+use App\Model\Tag;
 use App\Service\BaseService;
+use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
 
 class TagService extends BaseService
 {
-    public $table = 'tag';
+    /**
+     * @Inject()
+     * @var Tag
+     */
+    public $table;
 
     /**
      * @param RequestInterface $request

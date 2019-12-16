@@ -38,10 +38,7 @@ class PostController extends BaseController
     {
         $this->validateParam($request, [
             'post_content' => 'required',
-            'link_url' => 'url',
             'label_type' => 'required',
-            'relation_tags' => 'required',
-            'relation_tag_ids' => 'required',
             'address' => 'required',
             'addr_lat' => 'required',
             'addr_lng' => 'required',

@@ -3,11 +3,17 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Model\Tag;
+use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
 
 class TagService extends BaseService
 {
-    public $table = 'tag';
+    /**
+     * @Inject()
+     * @var Tag
+     */
+    public $table;
 
     /**
      * 标签列表

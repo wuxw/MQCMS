@@ -3,14 +3,14 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Model\UserInfo;
+use App\Model\Attachment;
 use Hyperf\Di\Annotation\Inject;
 
-class UserInfoService extends BaseService
+class AttachmentService extends BaseService
 {
     /**
      * @Inject()
-     * @var UserInfo
+     * @var Attachment
      */
     public $table;
 }

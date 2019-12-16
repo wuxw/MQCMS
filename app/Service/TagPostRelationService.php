@@ -3,14 +3,14 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Model\UserInfo;
+use App\Model\TagPostRelation;
 use Hyperf\Di\Annotation\Inject;
 
-class UserInfoService extends BaseService
+class TagPostRelationService extends BaseService
 {
     /**
      * @Inject()
-     * @var UserInfo
+     * @var TagPostRelation
      */
     public $table;
 }
