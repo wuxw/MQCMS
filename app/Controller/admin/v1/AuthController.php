@@ -8,6 +8,7 @@ namespace App\Controller\admin\v1;
 
 use App\Service\Admin\AuthService;
 use App\Utils\JWT;
+use App\Utils\Redis;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
 
@@ -64,6 +65,8 @@ class AuthController extends BaseController
 
         $adminInfo = $this->service->login($request);
         $token = $this->createAuthToken(['id' => $adminInfo['id']], $request);
+        Redis::getRedis()->set('admin_token_' . $adminInfo['id'], $token);
+
         return $this->response->json([
             'token' => $token,
             'expire_time' => JWT::$leeway,
@@ -76,4 +79,12 @@ class AuthController extends BaseController
         ]);
     }
 
+    /**
+     * 退出登录
+     * @param RequestInterface $request
+     */
+    public function logout(RequestInterface $request)
+    {
+        return Redis::getRedis()->del('admin_token_' . $request->getAttributes('uid'));
+    }
 }

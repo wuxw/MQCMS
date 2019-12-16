@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Utils;
 
-
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Snowflake\IdGeneratorInterface;
 use Hyperf\Utils\ApplicationContext;
