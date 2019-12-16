@@ -26,14 +26,10 @@ class UserService extends BaseService
      * @param RequestInterface $request
      * @return \Hyperf\Contract\PaginatorInterface
      */
+
     public function index(RequestInterface $request)
     {
         try {
-            $page = $request->input('page', 1);
-            $limit = $request->input('limit', 10);
-            $page = $page < 1 ? 1 : $page;
-            $limit = $limit > 100 ? 100 : $limit;
-
             $this->select = [
                 $this->table.'.*',
                 $this->userInfoService->table.'.intro',
@@ -50,15 +46,7 @@ class UserService extends BaseService
             $this->joinTables = [
                 $this->userInfoService->table => [$this->table . '.id', '=', $this->userInfoService->table . '.user_id']
             ];
-            $query = $this->multiTableJoinQueryBuilder();
-            $count = $query->count();
-            $pagination = $query->paginate((int)$limit, $this->select, 'page', (int)$page)->toArray();
-            $pagination['total'] = $count;
-            foreach ($pagination['data'] as $key => &$value) {
-                $value['created_at'] = $value['created_at'] ? date('Y-m-d H:i:s', $value['created_at']) : '';
-                $value['updated_at'] = $value['updated_at'] ? date('Y-m-d H:i:s', $value['updated_at']) : '';
-            }
-            return $pagination;
+            return parent::index($request);
 
         } catch (\Exception $e) {
             throw new BusinessException((int)$e->getCode(), $e->getMessage());

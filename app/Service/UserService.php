@@ -119,11 +119,6 @@ class UserService extends BaseService
     public function index(RequestInterface $request)
     {
         try {
-            $page = $request->input('page', 1);
-            $limit = $request->input('limit', 10);
-            $page = $page < 1 ? 1 : $page;
-            $limit = $limit > 100 ? 100 : $limit;
-
             $this->select = [
                 $this->table . '.id',
                 'user_name',
@@ -146,15 +141,7 @@ class UserService extends BaseService
             $this->joinTables = [
                 $this->userInfoService->table => [$this->table . '.id', '=', $this->userInfoService->table . '.user_id']
             ];
-            $query = $this->multiTableJoinQueryBuilder();
-            $count = $query->count();
-            $pagination = $query->paginate((int)$limit, $this->select, 'page', (int)$page)->toArray();
-            $pagination['total'] = $count;
-            foreach ($pagination['data'] as $key => &$value) {
-                $value['created_at'] = $value['created_at'] ? date('Y-m-d H:i:s', $value['created_at']) : '';
-                $value['updated_at'] = $value['updated_at'] ? date('Y-m-d H:i:s', $value['updated_at']) : '';
-            }
-            return $pagination;
+            return parent::index($request);
 
         } catch (\Exception $e) {
             throw new BusinessException((int)$e->getCode(), $e->getMessage());
@@ -193,9 +180,8 @@ class UserService extends BaseService
             $this->joinTables = [
                 $this->userInfoService->table => [$this->table . '.id', '=', $this->userInfoService->table . '.user_id']
             ];
+            $data = parent::show($request);
 
-            $query = $this->multiTableJoinQueryBuilder();
-            $data = $query->first();
             $data['is_follow'] = 0;
             if ($uid) {
                 $exist = Db::table('user_follow')->where([['user_id', $uid], ['be_user_id', $id]])->exists();
@@ -242,8 +228,7 @@ class UserService extends BaseService
                 $this->userInfoService->table => [$this->table . '.id', '=', $this->userInfoService->table . '.user_id']
             ];
 
-            $query = $this->multiTableJoinQueryBuilder();
-            $data = $query->first();
+            $data = parent::show($request);
             return $data ?? [];
 
         } catch (\Exception $e) {
@@ -302,7 +287,7 @@ class UserService extends BaseService
                     $query->where($this->condition);
                     break;
             }
-            $query->select($this->select);
+            $query = $query->select($this->select);
             $count = $query->count();
             $pagination = $query->paginate((int)$limit, $this->select, 'page', (int)$page)->toArray();
             foreach ($pagination['data'] as $key => &$value) {

@@ -49,7 +49,7 @@ class BaseService
 
     /**
      * 排序
-     * @var string
+     * @var string|array
      * 用法：
      * 1、单表排序的格式是字符串 "字段 DESC/ASC"
      * 2、多表排序的格式是数据
@@ -94,7 +94,8 @@ class BaseService
 
     /**
      * @param RequestInterface $request
-     * @return \Hyperf\Contract\PaginatorInterface
+     * @param int $type  1：单表查询分页，2：多表查询分页
+     * @return \Hyperf\Contract\PaginatorInterface|mixed
      */
     public function index(RequestInterface $request)
     {
@@ -103,9 +104,18 @@ class BaseService
             $limit = $request->input('limit', 10);
             $page = $page < 1 ? 1 : $page;
             $limit = $limit > 100 ? 100 : $limit;
-            $data = self::getListByPage($this->table, (int) $page, (int) $limit, $this->condition, $this->select, $this->orderBy, $this->groupBy);
+
+            if (empty($this->joinTables)) {
+                $pagination = $this->getListByPage((int) $page, (int) $limit);
+            } else {
+                $pagination = $this->getMultiTablesListByPage((int) $page, (int) $limit);
+            }
+            foreach ($pagination['data'] as $key => &$value) {
+                $value['created_at'] = $value['created_at'] ? date('Y-m-d H:i:s', $value['created_at']) : '';
+                $value['updated_at'] = $value['updated_at'] ? date('Y-m-d H:i:s', $value['updated_at']) : '';
+            }
             $this->resetAttributes();
-            return $data;
+            return $pagination;
 
         } catch (\Exception $e) {
             throw new BusinessException((int)$e->getCode(), $e->getMessage());
@@ -119,7 +129,11 @@ class BaseService
     public function show(RequestInterface $request)
     {
         try {
-            $data = Db::table($this->table)->where($this->condition)->select($this->select)->first();
+            if (empty($this->joinTables)) {
+                $data = Db::table($this->table)->where($this->condition)->select($this->select)->first();
+            } else {
+                $data = $this->multiTableJoinQueryBuilder()->first();
+            }
             $this->resetAttributes();
             return $data ?? [];
 
@@ -184,23 +198,37 @@ class BaseService
      * @param array $condition
      * @return \Hyperf\Contract\PaginatorInterface
      */
-    public static function getListByPage(string $table, int $page, int $limit, array $condition, array $select, string $order_by, array $group_by)
+    public function getListByPage(int $page, int $limit)
     {
-        $query = Db::table($table);
-        if (!empty($condition)) {
-            $query = $query->where($condition);
+        $query = Db::table($this->table);
+        if (!empty($this->condition)) {
+            $query = $query->where($this->condition);
         }
-        if (!empty($select)) {
-            $query = $query->select($select);
+        if (!empty($this->select)) {
+            $query = $query->select($this->select);
         }
-        if ($order_by) {
-            $query = $query->orderByRaw($order_by);
+        if (is_string($this->orderBy)) {
+            $query = $query->orderByRaw($this->orderBy);
         }
-        if (!empty($group_by)) {
-            $query = $query->groupBy(implode(',', $group_by));
+        if (!empty($this->groupBy)) {
+            $query = $query->groupBy(implode(',', $this->groupBy));
         }
         $count = $query->count();
-        $pagination = $query->paginate($limit, $select, 'page', $page)->toArray();
+        $pagination = $query->paginate($limit, $this->select, 'page', $page)->toArray();
+        $pagination['total'] = $count;
+        return $pagination;
+    }
+
+    /**
+     * 获取多表查询
+     * @param RequestInterface $request
+     * @return mixed
+     */
+    public function getMultiTablesListByPage(int $page, int $limit)
+    {
+        $query = $this->multiTableJoinQueryBuilder();
+        $count = $query->count();
+        $pagination = $query->paginate($limit, $this->select, 'page', $page)->toArray();
         $pagination['total'] = $count;
         return $pagination;
     }
@@ -241,7 +269,7 @@ class BaseService
             foreach ($this->orderBy as $key => $value) {
                 $orderKey = array_keys($value);
                 foreach ($orderKey as $k => $v) {
-                    $orderBy[$key] = env('DB_PREFIX') . "{$key}.{$v} {$value[$v]}";
+                    $orderBy[$key] = env('DB_PREFIX', 'mq_') . "{$key}.{$v} {$value[$v]}";
                 }
             }
             $orderBy = implode(',', $orderBy);
