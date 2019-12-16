@@ -35,11 +35,6 @@ class AttachmentController extends BaseController
      */
     public function store(RequestInterface $request)
     {
-        $this->validateParam($request, [
-            'tag_name' => 'required',
-            'is_hot' => 'required|integer',
-            'status' => 'required',
-        ]);
         return $this->service->store($request);
     }
 
