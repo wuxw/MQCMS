@@ -65,7 +65,7 @@ class AuthController extends BaseController
 
         $adminInfo = $this->service->login($request);
         $token = $this->createAuthToken(['id' => $adminInfo['id']], $request);
-        Redis::getRedis()->set('admin_token_' . $adminInfo['id'], $token);
+        Redis::getContainer()->set('admin_token_' . $adminInfo['id'], $token);
 
         return $this->response->json([
             'token' => $token,
@@ -85,6 +85,6 @@ class AuthController extends BaseController
      */
     public function logout(RequestInterface $request)
     {
-        return Redis::getRedis()->del('admin_token_' . $request->getAttributes('uid'));
+        return Redis::getContainer()->del('admin_token_' . $request->getAttributes('uid'));
     }
 }

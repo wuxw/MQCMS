@@ -40,7 +40,7 @@ class TokenController extends BaseController
             'action' => Common::getCurrentActionName($request, get_class_methods(get_class($this)))
         ], $request);
 
-        Redis::getRedis()->set('admin_token_1', $token);
+        Redis::getContainer()->set('admin_token_1', $token);
 
         return [
             'token' => $token,
