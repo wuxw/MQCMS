@@ -155,8 +155,8 @@ class UserService extends BaseService
             $userInfoTable = $this->userInfoService->table->getTable();
 
             $this->select = [
-                $table => ['id', 'created_at', 'updated_at'],
-                $userInfoTable => ['user_name', 'nick_name', 'real_name', 'phone', 'avatar', 'intro', 'like_num', 'follow_num', 'fans_num', 'post_num', 'my_like_num'],
+                $table => ['id', 'created_at', 'updated_at', 'user_name', 'nick_name', 'real_name', 'phone', 'avatar'],
+                $userInfoTable => ['intro', 'like_num', 'follow_num', 'fans_num', 'post_num', 'my_like_num'],
             ];
             $this->condition = [
                 [$table . '.status', '=', 1]
@@ -187,8 +187,8 @@ class UserService extends BaseService
             $userInfoTable = $this->userInfoService->table->getTable();
 
             $this->select = [
-                $table => ['id'],
-                $userInfoTable => ['user_name', 'nick_name', 'real_name', 'phone', 'avatar', 'intro', 'like_num', 'follow_num', 'fans_num', 'post_num', 'my_like_num'],
+                $table => ['id', 'user_name', 'nick_name', 'real_name', 'phone', 'avatar'],
+                $userInfoTable => ['intro', 'like_num', 'follow_num', 'fans_num', 'post_num', 'my_like_num'],
             ];
             $this->condition = [
                 [$table . '.status', '=', 1],
@@ -231,8 +231,8 @@ class UserService extends BaseService
             $userInfoTable = $this->userInfoService->table->getTable();
 
             $this->select = [
-                $table => ['id'],
-                $userInfoTable => ['user_name', 'real_name', 'phone', 'avatar', 'intro', 'like_num', 'follow_num', 'fans_num', 'post_num', 'my_like_num'],
+                $table => ['id', 'user_name', 'real_name', 'phone', 'avatar', 'intro'],
+                $userInfoTable => ['like_num', 'follow_num', 'fans_num', 'post_num', 'my_like_num'],
             ];
             $this->condition = [
                 [$table . '.status', '=', 1],
