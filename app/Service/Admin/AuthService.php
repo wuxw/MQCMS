@@ -30,7 +30,7 @@ class AuthService extends BaseService
         $account = $request->input('account');
         $phone = $request->input('phone');
         $password = $request->input('password');
-        $ip = $request->getHeader('Host')[0];
+        $ip = $request->getServerParams()['remote_addr'];
 
         $this->select = ['id', 'status', 'avatar'];
         $this->condition = ['account' => $account];
