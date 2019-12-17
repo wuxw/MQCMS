@@ -77,7 +77,7 @@ class UserService extends BaseService
         $ip = $request->getServerParams()['remote_addr'];
         $salt = Common::generateSalt();
         $this->data = [
-            'user_no' => Common::generateSnowId(),
+            'uuid' => Common::generateSnowId(),
             'user_name' => $userName,
             'real_name' => $realName,
             'nick_name' => $userName . generateRandomString(6),

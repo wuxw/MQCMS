@@ -75,7 +75,7 @@ class UserService extends BaseService
         $salt = Common::generateSalt();
         $uuid = Common::generateSnowId();
         $this->data = [
-            'user_no' => $uuid,
+            'uuid' => $uuid,
             'user_name' => $userName,
             'real_name' => '',
             'nick_name' => $userName . generateRandomString(6),

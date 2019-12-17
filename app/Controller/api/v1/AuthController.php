@@ -8,6 +8,7 @@ namespace App\Controller\api\v1;
 
 use App\Service\UserService;
 use App\Utils\JWT;
+use App\Utils\Redis;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Contract\RequestInterface;
@@ -40,6 +41,7 @@ class AuthController extends BaseController
 
         list($lastInsertId, $uuid) = $this->service->register($request);
         $token = $this->createAuthToken(['id' => $lastInsertId, 'uuid' => $uuid], $request);
+
         return $this->response->json([
             'token' => $token,
             'expire_time' => JWT::$leeway,
@@ -66,6 +68,8 @@ class AuthController extends BaseController
 
         $userInfo = $this->service->login($request);
         $token = $this->createAuthToken(['id' => $userInfo['id'], 'uuid' => $userInfo['uuid']], $request);
+        Redis::getContainer()->set('api_token_' . $userInfo['uuid'], $token);
+
         return $this->response->json([
             'token' => $token,
             'expire_time' => JWT::$leeway

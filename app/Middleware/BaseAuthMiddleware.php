@@ -101,10 +101,22 @@ class BaseAuthMiddleware implements MiddlewareInterface
         $this->challenge();
         $header = $request->getHeader($this->header);
         $tokenInfo = $this->authenticate($header);
-        $uid = $tokenInfo && $tokenInfo['sub'] ? $tokenInfo['sub']->id : 0;
-        $uuid = $tokenInfo && $tokenInfo['sub'] ? $tokenInfo['sub']->uuid : 0;
+        $request = $this->withTokenAttributes($tokenInfo, $request);
+        Context::set(ServerRequestInterface::class, $request);
+        return $handler->handle($request);
+    }
+
+    /**
+     * @param $tokenInfo
+     * @param ServerRequestInterface $request
+     * @return ServerRequestInterface
+     */
+    public function withTokenAttributes($tokenInfo, ServerRequestInterface $request)
+    {
+        $uid = isset($tokenInfo['sub']->id) ? $tokenInfo['sub']->id : 0;
+        $uuid = isset($tokenInfo['sub']->uuid) ? $tokenInfo['sub']->uuid : 0;
         $request = $request->withAttribute('uid', $uid); // 用户id
-        $request = $request->withAttribute('uuid', $uid); // 全局唯一ID
+        $request = $request->withAttribute('uuid', $uuid); // 全局唯一ID
 
         // 登录互斥判断
         $currentPath = Common::getCurrentPath($this->request);
@@ -115,8 +127,7 @@ class BaseAuthMiddleware implements MiddlewareInterface
                 throw new BusinessException(ErrorCode::UNAUTHORIZED, '您已在其他设备登录');
             }
         }
-        Context::set(ServerRequestInterface::class, $request);
-        return $handler->handle($request);
+        return $request;
     }
 
     /**

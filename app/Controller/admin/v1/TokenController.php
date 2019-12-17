@@ -22,7 +22,8 @@ class TokenController extends BaseController
         return [
             'info' => $this->getTokenInfo(),
             'token' => $this->getAuthToken(),
-            'uid' => $request->getAttribute('uid')
+            'uid' => $request->getAttribute('uid'),
+            'uuid' => $request->getAttribute('uuid')
         ];
     }
 
@@ -34,18 +35,20 @@ class TokenController extends BaseController
     {
         $token = $this->createAuthToken([
             'id' => 1,
+            'uuid' => 123,
             'name' => 'mqcms',
             'url' => 'http://www.mqcms.net',
             'from' => Common::getCurrentPath($request),
             'action' => Common::getCurrentActionName($request, get_class_methods(get_class($this)))
         ], $request);
 
-        Redis::getContainer()->set('admin_token_1', $token);
+        Redis::getContainer()->set('admin_token_123', $token);
 
         return [
             'token' => $token,
             'jwt_config' => $this->getJwtConfig($request),
-            'uid' => $request->getAttribute('uid')
+            'uid' => $request->getAttribute('uid'),
+            'uuid' => $request->getAttribute('uuid')
         ];
     }
 

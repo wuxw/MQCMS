@@ -5,9 +5,6 @@ namespace App\Middleware;
 
 use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
-use App\Utils\Common;
-use App\Utils\Redis;
-use Hyperf\Utils\Context;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -27,9 +24,6 @@ class AuthMiddleware extends BaseAuthMiddleware
         if (!$tokenInfo) {
             throw new BusinessException(ErrorCode::UNAUTHORIZED, 'Signature verification failed');
         }
-        $uid = $tokenInfo && $tokenInfo['sub'] ? $tokenInfo['sub']->uuid : 0;
-        $request = $request->withAttribute('uid', $uid);
-        Context::set(ServerRequestInterface::class, $request);
         return $handler->handle($request);
     }
 }
