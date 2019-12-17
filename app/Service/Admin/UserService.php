@@ -35,21 +35,18 @@ class UserService extends BaseService
     public function index(RequestInterface $request)
     {
         try {
-            $this->select = [
-                $this->table.'.*',
-                $this->userInfoService->table.'.intro',
-                $this->userInfoService->table.'.like_num',
-                $this->userInfoService->table.'.follow_num',
-                $this->userInfoService->table.'.fans_num',
-                $this->userInfoService->table.'.post_num',
-                $this->userInfoService->table.'.my_like_num',
-            ];
+            $table = $this->table->getTable();
+            $userInfoTable = $this->userInfoService->table->getTable();
 
+            $this->select = [
+                $table => ['*'],
+                $userInfoTable => ['intro', 'like_num', 'follow_num', 'fans_num', 'post_num', 'my_like_num'],
+            ];
             $this->orderBy = [
-                $this->table => ['id' => 'DESC']
+                $table => ['id' => 'DESC']
             ];
             $this->joinTables = [
-                $this->userInfoService->table => [$this->table . '.id', '=', $this->userInfoService->table . '.user_id']
+                $userInfoTable => [$table . '.id', '=', $userInfoTable . '.user_id']
             ];
             return parent::index($request);
 
@@ -99,12 +96,12 @@ class UserService extends BaseService
         Db::beginTransaction();
         try{
             $lastInsertId = parent::store($request);
-            $userInfoData = [
+             $this->userInfoService->data = [
                 'user_id' => $lastInsertId,
                 'created_at' => time(),
                 'updated_at' => time(),
             ];
-            Db::table($this->userInfoService->table)->insert($userInfoData);
+            $this->userInfoService->insert($request);
             Db::commit();
             return $lastInsertId;
 

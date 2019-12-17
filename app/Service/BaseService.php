@@ -6,6 +6,7 @@ namespace App\Service;
 use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
 use App\Model\Model;
+use App\Utils\Common;
 use Hyperf\DbConnection\Db;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Paginator\Paginator;
@@ -45,6 +46,18 @@ class BaseService
     /**
      * 查询数据
      * @var array
+     * 用法：
+     * 单表（如果连表查单表数据）：
+     * ['*']
+     * ['字段', ...]
+     * [
+     *    table::class => ['字段', ....],
+     * ]
+     * 多表：
+     * [
+     *    table::class => ['字段', ....],
+     *    otherTable::class => ['字段', ....]
+     * ]
      */
     public $select = ['*'];
 
@@ -75,6 +88,9 @@ class BaseService
      */
     public $data = [];
 
+    /**
+     * BaseService constructor.
+     */
     public function __construct()
     {
         $this->resetAttributes();
@@ -244,15 +260,39 @@ class BaseService
             throw new BusinessException(ErrorCode::SERVER_ERROR);
         }
         $query = Db::table($this->table->getTable());
-        if (!empty($this->joinTables)) {
+
+        if (is_array($this->joinTables) && !empty($this->joinTables)) {
             array_walk($this->joinTables, function (&$item) use (&$query) {
                 $key = array_search($item, $this->joinTables);
                 if (count($item) === 3) {
                     $query = $query->leftJoin($key, $item[0], $item[1], $item[2]);
                 }
             });
-        }
-        if (!empty($this->select)) {
+
+            if (is_array($this->select) && !empty($this->select)) {
+                $arrCount = Common::getArrCountRecursive($this->select, 1);
+                $select = [];
+                if ($arrCount === 1) {
+                    array_walk($this->select, function ($item) use (&$select) {
+                       if ($this->table instanceof Model) {
+                        $select[] = $this->table->getTable() . '.' . $item;
+                       }
+                    });
+                } else {
+                    foreach ($this->select as $key => $value) {
+                        if (is_array($value)) {
+                            array_walk($value, function ($item) use ($key, &$select) {
+                                $select[] = $key . '.' . $item;
+                            });
+                        } else {
+                            $select[] = $key . '.' . $value;
+                        }
+                    }
+                    $select = !empty($select) ? $select : $this->select;
+                }
+                $query = $query->select($select);
+            }
+        } else {
             $query = $query->select($this->select);
         }
         if (!empty($this->condition)) {
@@ -261,16 +301,19 @@ class BaseService
         if (is_array($this->orderBy) && !empty($this->orderBy)) {
             $orderBy = [];
             foreach ($this->orderBy as $key => $value) {
-                $orderKey = array_keys($value);
-                foreach ($orderKey as $k => $v) {
-                    $orderBy[$key] = env('DB_PREFIX', 'mq_') . "{$key}.{$v} {$value[$v]}";
+                if (is_array($value)) {
+                    $orderKey = array_keys($value);
+                    foreach ($orderKey as $k => $v) {
+                        $orderBy[] = env('DB_PREFIX', 'mq_') . "{$key}.{$v} {$value[$v]}";
+                    }
                 }
             }
-            $orderBy = implode(',', $orderBy);
+            $orderBy = !empty($orderBy) ? implode(',', $orderBy) : $this->orderBy;
+            $query = $query->orderByRaw($orderBy);
         } else {
             $orderBy = $this->orderBy;
+            $query = $query->orderByRaw($orderBy);
         }
-        $query = $query->orderByRaw($orderBy);
 
         if (!empty($this->groupBy)) {
             $query = $query->groupBy(implode(',', $this->groupBy));

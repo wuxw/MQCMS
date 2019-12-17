@@ -149,8 +149,12 @@ class UserService extends BaseService
     public function index(RequestInterface $request)
     {
         try {
+
+            $table = $this->table->getTable();
+            $userInfoTable = $this->userInfoService->table->getTable();
+
             $this->select = [
-                $this->table . '.id',
+                $table . '.id',
                 'user_name',
                 'nick_name',
                 'real_name',
@@ -162,14 +166,16 @@ class UserService extends BaseService
                 'fans_num',
                 'post_num',
                 'my_like_num',
-                $this->table . '.created_at',
-                $this->table . '.updated_at',
+                $table . '.created_at',
+                $table . '.updated_at',
             ];
             $this->condition = [
-                [$this->table . '.status', '=', 1]
+                [$table . '.status', '=', 1]
             ];
             $this->joinTables = [
-                $this->userInfoService->table => [$this->table . '.id', '=', $this->userInfoService->table . '.user_id']
+                $userInfoTable => [
+                    $table . '.id', '=', $userInfoTable . '.user_id'
+                ]
             ];
             return parent::index($request);
 
@@ -241,9 +247,11 @@ class UserService extends BaseService
     {
         try {
             $uid = $request->getAttribute('uid', 0);
+            $table = $this->table->getTable();
+            $userInfoTable = $this->userInfoService->table->getTable();
 
             $this->select = [
-                $this->table . '.id',
+                $table . '.id',
                 'user_name',
                 'nick_name',
                 'real_name',
@@ -257,11 +265,11 @@ class UserService extends BaseService
                 'my_like_num'
             ];
             $this->condition = [
-                [$this->table . '.status', '=', 1],
-                [$this->table . '.id', '=', $uid],
+                [$table . '.status', '=', 1],
+                [$table . '.id', '=', $uid],
             ];
             $this->joinTables = [
-                $this->userInfoService->table => [$this->table . '.id', '=', $this->userInfoService->table . '.user_id']
+                $userInfoTable => [$table . '.id', '=', $userInfoTable . '.user_id']
             ];
 
             $data = parent::show($request);

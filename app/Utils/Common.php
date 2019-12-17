@@ -120,4 +120,18 @@ class Common
         return $path;
     }
 
+    /**
+     * 获取n位数组深度
+     * @param $arr
+     * @param int $depth
+     * @return int
+     */
+    public static function getArrCountRecursive($arr, $depth=1) {
+        if (!is_array($arr) || !$depth) return 0;
+        $count = count($arr);
+        foreach ($arr as $in_ar) {
+            $count += self::getArrCountRecursive($in_ar, $depth-1);
+        }
+        return $count;
+    }
 }

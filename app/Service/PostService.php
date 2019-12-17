@@ -84,7 +84,7 @@ class PostService extends BaseService
             // 存储tag
             if ($request->has('relation_tag_ids') && $request->has('relation_tags')) {
                 foreach ($relationTagIds as $value) {
-                    $this->tagPostRelationService->data[] = [
+                    $this->tagPostRelationService->data = [
                         'user_id' => $uid,
                         'tag_id' => $value,
                         'post_id' => $lastInsertId,

@@ -29,13 +29,6 @@ class AuthMiddleware extends BaseAuthMiddleware
         }
         $uid = $tokenInfo && $tokenInfo['sub'] ? $tokenInfo['sub']->id : 0;
         $request = $request->withAttribute('uid', $uid);
-
-        // 登录判断
-        $currentPath = Common::getCurrentPath($this->request);
-        $redisToken = Redis::getRedis()->get(strtolower($currentPath) . '_token_' . $uid);
-        if ($redisToken !== self::$authToken) {
-            throw new BusinessException(ErrorCode::UNAUTHORIZED, '您已在其他设备登录');
-        }
         Context::set(ServerRequestInterface::class, $request);
         return $handler->handle($request);
     }

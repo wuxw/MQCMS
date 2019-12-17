@@ -8,6 +8,7 @@ use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
 use App\Utils\Common;
 use App\Utils\JWT;
+use App\Utils\Redis;
 use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface as HttpResponse;
@@ -102,6 +103,16 @@ class BaseAuthMiddleware implements MiddlewareInterface
         $tokenInfo = $this->authenticate($header);
         $uid = $tokenInfo && $tokenInfo['sub'] ? $tokenInfo['sub']->id : 0;
         $request = $request->withAttribute('uid', $uid);
+
+        // 登录互斥判断
+        $currentPath = Common::getCurrentPath($this->request);
+        $appMutex = env('APP_' . strtoupper($currentPath) . '_MUTEX', true);
+        if ($appMutex) {
+            $redisToken = Redis::getContainer()->get(strtolower($currentPath) . '_token_' . $uid);
+            if ($redisToken && $redisToken !== self::$authToken) {
+                throw new BusinessException(ErrorCode::UNAUTHORIZED, '您已在其他设备登录');
+            }
+        }
         Context::set(ServerRequestInterface::class, $request);
         return $handler->handle($request);
     }

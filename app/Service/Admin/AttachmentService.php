@@ -44,26 +44,6 @@ class AttachmentService extends BaseService
      */
     public function store(RequestInterface $request)
     {
-        if (!$request->getAttribute('uid')) {
-            throw new BusinessException(ErrorCode::BAD_REQUEST, '用户不存在');
-        }
-        $data = [
-            'tag_name' => $request->input('tag_name'),
-            'is_hot' => $request->input('is_hot', 0),
-            'status' => $request->input('status', 0),
-            'first_create_user_id' => $request->getAttribute('uid'),
-            'tag_type' => 1,
-            'created_at' => time(),
-            'updated_at' => time(),
-        ];
-
-        $this->select = ['id'];
-        $this->condition = ['tag_name' => $data['tag_name']];
-        $tagInfo = parent::show($request);
-        if ($tagInfo) {
-            throw new BusinessException(ErrorCode::BAD_REQUEST, '标签名已经存在');
-        }
-        $this->data = $data;
         return parent::store($request);
     }
 
@@ -73,17 +53,6 @@ class AttachmentService extends BaseService
      */
     public function update(RequestInterface $request)
     {
-        $id = $request->input('id');
-        $data = [
-            'tag_name' => $request->input('tag_name'),
-            'is_hot' => $request->input('is_hot', 0),
-            'status' => $request->input('status', 0),
-            'tag_type' => 1,
-            'updated_at' => time(),
-        ];
-
-        $this->condition = ['id' => $id];
-        $this->data = $data;
         return parent::update($request);
     }
 
@@ -93,7 +62,6 @@ class AttachmentService extends BaseService
      */
     public function delete(RequestInterface $request)
     {
-        $this->condition = ['id' => $request->input('id')];
         return parent::delete($request);
     }
 }
