@@ -51,12 +51,12 @@ class BaseService
      * ['*']
      * ['字段', ...]
      * [
-     *    table::class => ['字段', ....],
+     *    表名 => ['字段', ....],
      * ]
      * 多表：
      * [
-     *    table::class => ['字段', ....],
-     *    otherTable::class => ['字段', ....]
+     *    主表 => ['字段', ....],
+     *    其他表 => ['字段', ....]
      * ]
      */
     public $select = ['*'];
@@ -270,7 +270,7 @@ class BaseService
             });
 
             if (is_array($this->select) && !empty($this->select)) {
-                $arrCount = Common::getArrCountRecursive($this->select, 1);
+                $arrCount = Common::getArrCountRecursive($this->select);
                 $select = [];
                 if ($arrCount === 1) {
                     array_walk($this->select, function ($item) use (&$select) {

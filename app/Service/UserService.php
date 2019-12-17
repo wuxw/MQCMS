@@ -154,20 +154,8 @@ class UserService extends BaseService
             $userInfoTable = $this->userInfoService->table->getTable();
 
             $this->select = [
-                $table . '.id',
-                'user_name',
-                'nick_name',
-                'real_name',
-                'phone',
-                'avatar',
-                'intro',
-                'like_num',
-                'follow_num',
-                'fans_num',
-                'post_num',
-                'my_like_num',
-                $table . '.created_at',
-                $table . '.updated_at',
+                $table => ['id', 'created_at', 'updated_at'],
+                $userInfoTable => ['user_name', 'nick_name', 'real_name', 'phone', 'avatar', 'intro', 'like_num', 'follow_num', 'fans_num', 'post_num', 'my_like_num'],
             ];
             $this->condition = [
                 [$table . '.status', '=', 1]
@@ -194,27 +182,19 @@ class UserService extends BaseService
         try {
             $uid = $request->getAttribute('uid', 0);
             $id = $request->input('id');
+            $table = $this->table->getTable();
+            $userInfoTable = $this->userInfoService->table->getTable();
 
             $this->select = [
-                $this->table . '.id',
-                'user_name',
-                'nick_name',
-                'real_name',
-                'phone',
-                'avatar',
-                'intro',
-                'like_num',
-                'follow_num',
-                'fans_num',
-                'post_num',
-                'my_like_num'
+                $table => ['id'],
+                $userInfoTable => ['user_name', 'nick_name', 'real_name', 'phone', 'avatar', 'intro', 'like_num', 'follow_num', 'fans_num', 'post_num', 'my_like_num'],
             ];
             $this->condition = [
-                [$this->table . '.status', '=', 1],
-                [$this->table . '.id', '=', $id],
+                [$table . '.status', '=', 1],
+                [$table . '.id', '=', $id],
             ];
             $this->joinTables = [
-                $this->userInfoService->table => [$this->table . '.id', '=', $this->userInfoService->table . '.user_id']
+                $userInfoTable => [$table . '.id', '=', $userInfoTable . '.user_id']
             ];
             $data = parent::show($request);
 
@@ -251,18 +231,8 @@ class UserService extends BaseService
             $userInfoTable = $this->userInfoService->table->getTable();
 
             $this->select = [
-                $table . '.id',
-                'user_name',
-                'nick_name',
-                'real_name',
-                'phone',
-                'avatar',
-                'intro',
-                'like_num',
-                'follow_num',
-                'fans_num',
-                'post_num',
-                'my_like_num'
+                $table => ['id'],
+                $userInfoTable => ['user_name', 'real_name', 'phone', 'avatar', 'intro', 'like_num', 'follow_num', 'fans_num', 'post_num', 'my_like_num'],
             ];
             $this->condition = [
                 [$table . '.status', '=', 1],

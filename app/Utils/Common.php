@@ -126,12 +126,17 @@ class Common
      * @param int $depth
      * @return int
      */
-    public static function getArrCountRecursive($arr, $depth=1) {
-        if (!is_array($arr) || !$depth) return 0;
-        $count = count($arr);
-        foreach ($arr as $in_ar) {
-            $count += self::getArrCountRecursive($in_ar, $depth-1);
+    public static function getArrCountRecursive(array $array) {
+        $maxDep = 1;
+        $dep = 1;
+        foreach ($array as $k => $v) {
+            if (is_array($v)) {
+                $dep = self::getArrCountRecursive($v) + 1;
+            }
+            if ($dep > $maxDep) {
+                $maxDep = $dep;
+            }
         }
-        return $count;
+        return $maxDep;
     }
 }
