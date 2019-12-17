@@ -85,6 +85,6 @@ class AuthController extends BaseController
      */
     public function logout(RequestInterface $request)
     {
-        return Redis::getContainer()->del('admin_token_' . $request->getAttributes('uuid'));
+        return Redis::getContainer()->del('admin_token_' . $request->getAttribute('uuid'));
     }
 }

@@ -69,7 +69,7 @@ Router::addGroup('/admin/', function () {
             // 创建token
             Router::post('store', 'App\Controller\admin\v1\tokencontroller@store');
             // 获取token信息
-            Router::get('index', 'App\Controller\admin\v1\TokenController@index', ['middleware' => [\App\Middleware\AuthMiddleware::class]]);
+            Router::get('index', 'App\Controller\admin\v1\TokenController@index', ['middleware' => [AuthMiddleware::class]]);
         });
 
         // 管理员
@@ -84,6 +84,7 @@ Router::addGroup('/admin/', function () {
         Router::addGroup('auth/', function () {
             Router::post('login', 'App\Controller\admin\v1\AuthController@login');
             Router::post('register', 'App\Controller\admin\v1\AuthController@register');
+            Router::post('logout', 'App\Controller\admin\v1\AuthController@logout', ['middleware' => [AuthMiddleware::class]]);
         });
 
         // 用户
