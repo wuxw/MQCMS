@@ -119,7 +119,7 @@ class UserService extends BaseService
         $userName = $request->input('user_name');
         $password = $request->input('password');
 
-        $this->select = ['id', 'salt', 'password'];
+        $this->select = ['id', 'uuid', 'salt', 'password'];
         $this->condition = ['status' => 1, 'user_name' => $userName];
         $userInfo = parent::show($request);
 

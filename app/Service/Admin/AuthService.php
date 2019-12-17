@@ -79,7 +79,7 @@ class AuthService extends BaseService
         $account = $request->input('account');
         $password = $request->input('password');
 
-        $this->select = ['id', 'salt', 'avatar', 'password'];
+        $this->select = ['id', 'uuid', 'salt', 'avatar', 'password'];
         $this->condition = ['status' => 1, 'account' => $account];
         $adminInfo = parent::show($request);
 

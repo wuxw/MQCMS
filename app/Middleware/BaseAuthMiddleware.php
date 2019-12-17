@@ -101,14 +101,16 @@ class BaseAuthMiddleware implements MiddlewareInterface
         $this->challenge();
         $header = $request->getHeader($this->header);
         $tokenInfo = $this->authenticate($header);
-        $uid = $tokenInfo && $tokenInfo['sub'] ? $tokenInfo['sub']->uuid : 0;
-        $request = $request->withAttribute('uid', $uid);
+        $uid = $tokenInfo && $tokenInfo['sub'] ? $tokenInfo['sub']->id : 0;
+        $uuid = $tokenInfo && $tokenInfo['sub'] ? $tokenInfo['sub']->uuid : 0;
+        $request = $request->withAttribute('uid', $uid); // 用户id
+        $request = $request->withAttribute('uuid', $uid); // 全局唯一ID
 
         // 登录互斥判断
         $currentPath = Common::getCurrentPath($this->request);
         $appMutex = env('APP_' . strtoupper($currentPath) . '_MUTEX', true);
         if ($appMutex) {
-            $redisToken = Redis::getContainer()->get(strtolower($currentPath) . '_token_' . $uid);
+            $redisToken = Redis::getContainer()->get(strtolower($currentPath) . '_token_' . $uuid);
             if ($redisToken && $redisToken !== self::$authToken) {
                 throw new BusinessException(ErrorCode::UNAUTHORIZED, '您已在其他设备登录');
             }
