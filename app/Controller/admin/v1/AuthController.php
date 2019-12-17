@@ -37,12 +37,12 @@ class AuthController extends BaseController
             'phone' => 'required',
             'password' => 'required|max:100|min:6'
         ]);
-        $lastInsertId = $this->service->register($request);
-        $token = $this->createAuthToken(['id' => $lastInsertId], $request);
+        list($lastInsertId, $uuid) = $this->service->register($request);
+        $token = $this->createAuthToken(['id' => $lastInsertId, 'uuid' => $uuid], $request);
         return $this->response->json([
             'token' => $token,
             'expire_time' => JWT::$leeway,
-            'uuid' => $lastInsertId,
+            'uuid' => $uuid,
             'info' => [
                 'name' => $post['account'],
                 'avatar' => '',

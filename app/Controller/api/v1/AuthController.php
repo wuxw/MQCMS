@@ -38,8 +38,8 @@ class AuthController extends BaseController
             'password' => 'required|max:100|min:6'
         ]);
 
-        $lastInsertId = $this->service->register($request);
-        $token = $this->createAuthToken(['id' => $lastInsertId], $request);
+        list($lastInsertId, $uuid) = $this->service->register($request);
+        $token = $this->createAuthToken(['id' => $lastInsertId, 'uuid' => $uuid], $request);
         return $this->response->json([
             'token' => $token,
             'expire_time' => JWT::$leeway,
@@ -65,7 +65,7 @@ class AuthController extends BaseController
         ]);
 
         $userInfo = $this->service->login($request);
-        $token = $this->createAuthToken(['id' => $userInfo['id']], $request);
+        $token = $this->createAuthToken(['id' => $userInfo['id'], 'uuid' => $userInfo['uuid']], $request);
         return $this->response->json([
             'token' => $token,
             'expire_time' => JWT::$leeway

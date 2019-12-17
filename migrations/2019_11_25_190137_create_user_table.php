@@ -16,7 +16,7 @@ class CreateUserTable extends Migration
         if (!Schema::hasTable('user')) {
             Schema::create('user', function (Blueprint $table) {
                 $table->bigIncrements('id');
-                $table->string('user_no', 32)->nullable(false)->comment('唯一id号');
+                $table->string('uuid', 32)->nullable(false)->comment('唯一id号');
                 $table->string('user_name', 64)->nullable(false)->comment('用户名');
                 $table->string('nick_name', 64)->nullable(false)->comment('昵称');
                 $table->string('real_name', 64)->nullable(false)->default('')->comment('真实姓名');

@@ -73,8 +73,9 @@ class UserService extends BaseService
             }
         }
         $salt = Common::generateSalt();
+        $uuid = Common::generateSnowId();
         $this->data = [
-            'user_no' => Common::generateSnowId(),
+            'user_no' => $uuid,
             'user_name' => $userName,
             'real_name' => '',
             'nick_name' => $userName . generateRandomString(6),
@@ -100,7 +101,7 @@ class UserService extends BaseService
             ];
             $this->userInfoService->store($request);
             Db::commit();
-            return $lastInsertId;
+            return [$lastInsertId, $uuid];
 
         } catch (\Exception $e) {
             Db::rollBack();
@@ -200,7 +201,6 @@ class UserService extends BaseService
 
             $data['is_follow'] = 0;
             if ($uid) {
-
                 // 查询是否关注
                 $this->userFollowService->condition = [
                     ['user_id', '=', $uid],

@@ -45,7 +45,9 @@ class AuthService extends BaseService
         }
         // 新建用户
         $salt = Common::generateSalt();
-        $data = [
+        $uuid = Common::generateSnowId();
+        $this->data = [
+            'uuid' => $uuid,
             'account' => $account,
             'password' => Common::generatePasswordHash($password, $salt),
             'phone' => $phone,
@@ -59,13 +61,12 @@ class AuthService extends BaseService
             'created_at' => time(),
             'updated_at' => time(),
         ];
-        $this->data = $data;
         $lastInsertId = parent::store($request);
 
         if (!$lastInsertId) {
             throw new BusinessException(ErrorCode::BAD_REQUEST, '注册失败');
         }
-        return $lastInsertId;
+        return [$lastInsertId, $uuid];
     }
 
     /**

@@ -27,7 +27,7 @@ class AuthMiddleware extends BaseAuthMiddleware
         if (!$tokenInfo) {
             throw new BusinessException(ErrorCode::UNAUTHORIZED, 'Signature verification failed');
         }
-        $uid = $tokenInfo && $tokenInfo['sub'] ? $tokenInfo['sub']->id : 0;
+        $uid = $tokenInfo && $tokenInfo['sub'] ? $tokenInfo['sub']->uuid : 0;
         $request = $request->withAttribute('uid', $uid);
         Context::set(ServerRequestInterface::class, $request);
         return $handler->handle($request);

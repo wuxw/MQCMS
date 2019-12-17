@@ -39,8 +39,7 @@ class TagService extends BaseService
      */
     public function show(RequestInterface $request)
     {
-        $id = $request->input('id');
-        $this->condition = ['id' => $id];
+        $this->condition = ['id' => $request->input('id')];
         return parent::show($request);
     }
 
@@ -52,7 +51,7 @@ class TagService extends BaseService
      */
     public function store(RequestInterface $request)
     {
-        $data = [
+        $this->data = [
             'tag_name' => $request->input('tag_name'),
             'is_hot' => 0,
             'status' => 1,
@@ -60,7 +59,6 @@ class TagService extends BaseService
             'created_at' => time(),
             'updated_at' => time(),
         ];
-        $this->data = $data;
         return parent::store($request);
     }
 

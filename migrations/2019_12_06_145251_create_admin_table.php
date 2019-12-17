@@ -16,6 +16,7 @@ class CreateAdminTable extends Migration
         if (!Schema::hasTable('admin')) {
             Schema::create('admin', function (Blueprint $table) {
                 $table->bigIncrements('id');
+                $table->string('uuid', 32)->nullable(false)->comment('唯一id号');
                 $table->string('account', 64)->nullable(false)->comment('账号');
                 $table->string('password', 64)->nullable(false)->default('')->comment('密码');
                 $table->string('phone', 16)->nullable(false)->default('')->comment('手机号');

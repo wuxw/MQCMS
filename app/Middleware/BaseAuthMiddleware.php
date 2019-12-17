@@ -101,7 +101,7 @@ class BaseAuthMiddleware implements MiddlewareInterface
         $this->challenge();
         $header = $request->getHeader($this->header);
         $tokenInfo = $this->authenticate($header);
-        $uid = $tokenInfo && $tokenInfo['sub'] ? $tokenInfo['sub']->id : 0;
+        $uid = $tokenInfo && $tokenInfo['sub'] ? $tokenInfo['sub']->uuid : 0;
         $request = $request->withAttribute('uid', $uid);
 
         // 登录互斥判断
