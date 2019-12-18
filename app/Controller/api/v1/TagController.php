@@ -27,6 +27,7 @@ class TagController extends BaseController
     }
 
     /**
+     * 标签详情
      * @param RequestInterface $request
      * @return mixed
      */
