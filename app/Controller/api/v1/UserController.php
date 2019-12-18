@@ -66,4 +66,15 @@ class UserController extends BaseController
 
         return $this->service->postList($request);
     }
+
+    /**
+     * 我的关注用户列表
+     * @param RequestInterface $request
+     * @return mixed
+     */
+    public function myFollowedUserList(RequestInterface $request)
+    {
+        return $this->service->myFollowedUserList($request);
+    }
+
 }

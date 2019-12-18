@@ -150,7 +150,6 @@ class UserService extends BaseService
     public function index(RequestInterface $request)
     {
         try {
-
             $table = $this->table->getTable();
             $userInfoTable = $this->userInfoService->table->getTable();
 
@@ -318,4 +317,35 @@ class UserService extends BaseService
         }
     }
 
+    /**
+     * 我的关注用户列表
+     * @param RequestInterface $request
+     * @return mixed
+     */
+    public function myFollowedUserList(RequestInterface $request)
+    {
+        try {
+            $page = $request->input('page', 1);
+            $limit = $request->input('limit', 10);
+            $page = $page < 1 ? 1 : $page;
+            $limit = $limit > 100 ? 100 : $limit;
+            $uid = $request->getAttribute('uid');
+
+            $this->userFollowService->condition = ['user_id' => $uid];
+            $ids = $this->userFollowService->multiTableJoinQueryBuilder()->pluck('be_user_id')->toArray();
+            $this->select = ['id', 'user_name', 'nick_name', 'avatar'];
+            $this->condition = [
+                ['status', '=', 1],
+            ];
+            $query = $this->multiTableJoinQueryBuilder();
+            $query->whereIn('id', $ids);
+            $count = $query->count();
+            $pagination = $query->paginate((int)$limit, $this->select, 'page', (int)$page)->toArray();
+            $pagination['total'] = $count;
+            return $pagination;
+
+        } catch (\Exception $e) {
+            throw new BusinessException((int)$e->getCode(), $e->getMessage());
+        }
+    }
 }

@@ -41,6 +41,7 @@ Router::addGroup('/api/', function () {
             Router::get('show', 'App\Controller\api\v1\UserController@show');
             Router::get('show-self', 'App\Controller\api\v1\UserController@showSelf', ['middleware' => [AuthMiddleware::class]]);
             Router::get('post-list', 'App\Controller\api\v1\UserController@postList');
+            Router::get('my-followed-user-list', 'App\Controller\api\v1\UserController@myFollowedUserList', ['middleware' => [AuthMiddleware::class]]);
             Router::post('store', 'App\Controller\api\v1\UserController@store');
         });
 
