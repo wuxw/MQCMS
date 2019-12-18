@@ -66,4 +66,20 @@ class TagController extends BaseController
 
         return $this->service->delete($request);
     }
+
+    /**
+     * 标签下帖子列表
+     * @param RequestInterface $request
+     * @return mixed
+     */
+    public function postList(RequestInterface $request)
+    {
+        $this->validateParam($request, [
+            'id' => 'required|integer',
+            'type' => 'integer'
+        ]);
+
+        return $this->service->postList($request);
+    }
+
 }

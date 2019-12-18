@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Exception\BusinessException;
 use App\Model\Tag;
+use App\Utils\Common;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
 
@@ -26,6 +28,12 @@ class TagService extends BaseService
      * @var TagPostRelationService
      */
     public $tagPostRelationService;
+
+    /**
+     * @Inject()
+     * @var PostService
+     */
+    public $postService;
 
 
     /**
@@ -121,4 +129,48 @@ class TagService extends BaseService
         $this->condition = ['id' => $request->input('id')];
         return parent::delete($request);
     }
+
+    /**
+     * 标签下帖子列表
+     * @param RequestInterface $request
+     * @return mixed
+     */
+    public function postList(RequestInterface $request)
+    {
+        try {
+            $id = $request->input('id');
+            $type = $request->input('type', 1);
+            $page = $request->input('page', 1);
+            $limit = $request->input('limit', 10);
+            $page = $page < 1 ? 1 : $page;
+            $limit = $limit > 100 ? 100 : $limit;
+
+            $this->tagPostRelationService->condition = ['tag_id' => $id];
+            $postIds = $this->tagPostRelationService->multiTableJoinQueryBuilder()->pluck('post_id')->toArray();
+
+            $this->postService->condition = [
+                ['status', '=', 1],
+                ['is_publish', '=', 1],
+            ];
+            //推荐的帖子
+            if ($type == 2) {
+                $this->postService->orderBy = 'is_recommend DESC, id DESC';
+            }
+            $query = $this->postService->multiTableJoinQueryBuilder();
+            $query = $query->whereIn('id', $postIds);
+            $count = $query->count();
+            $pagination = $query->paginate((int)$limit, $this->select, 'page', (int)$page)->toArray();
+            $pagination['data'] = Common::calculateList($request, $pagination['data']);
+            foreach ($pagination['data'] as $key => &$value) {
+                $value['attach_urls'] = $value['attach_urls'] ? json_decode($value['attach_urls'], true) : [];
+                $value['relation_tags_list'] = explode(',', $value['relation_tags']);
+            }
+            $pagination['total'] = $count;
+            return $pagination;
+
+        } catch (\Exception $e) {
+            throw new BusinessException((int)$e->getCode(), $e->getMessage());
+        }
+    }
+
 }
