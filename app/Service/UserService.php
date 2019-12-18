@@ -350,8 +350,7 @@ class UserService extends BaseService
             $this->condition = [
                 ['status', '=', 1],
             ];
-            $query = $this->multiTableJoinQueryBuilder();
-            $query->whereIn('id', $ids);
+            $query = $this->multiTableJoinQueryBuilder()->whereIn('id', $ids);
             $count = $query->count();
             $pagination = $query->paginate((int)$limit, $this->select, 'page', (int)$page)->toArray();
             $pagination['total'] = $count;
@@ -382,8 +381,7 @@ class UserService extends BaseService
             $this->condition = [
                 ['status', '=', 1],
             ];
-            $query = $this->tagService->multiTableJoinQueryBuilder();
-            $query->whereIn('id', $ids);
+            $query = $this->tagService->multiTableJoinQueryBuilder()->whereIn('id', $ids);
             $count = $query->count();
             $pagination = $query->paginate((int)$limit, $this->select, 'page', (int)$page)->toArray();
             $pagination['total'] = $count;
