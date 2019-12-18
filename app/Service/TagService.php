@@ -156,11 +156,11 @@ class TagService extends BaseService
             if ($type == 2) {
                 $this->postService->orderBy = 'is_recommend DESC, id DESC';
             }
-            $query = $this->postService->multiTableJoinQueryBuilder();
-            $query = $query->whereIn('id', $postIds);
+            $query = $this->postService->multiTableJoinQueryBuilder()->whereIn('id', $postIds);
             $count = $query->count();
             $pagination = $query->paginate((int)$limit, $this->select, 'page', (int)$page)->toArray();
             $pagination['data'] = Common::calculateList($request, $pagination['data']);
+
             foreach ($pagination['data'] as $key => &$value) {
                 $value['attach_urls'] = $value['attach_urls'] ? json_decode($value['attach_urls'], true) : [];
                 $value['relation_tags_list'] = explode(',', $value['relation_tags']);
