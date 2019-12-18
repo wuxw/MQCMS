@@ -128,7 +128,21 @@ class AuthService extends BaseService
     public function miniProgram(RequestInterface $request)
     {
         $code = $request->input('code');
+        $url = 'https://api.weixin.qq.com/sns/jscode2session?appid=' . env('MINI_APP_ID') . '&secret=' . env('MINI_APP_SECRET') . '&js_code=' . $code . '&grant_type=authorization_code';
+        $response = $this->httpClient->getClient()->get($url);
+        $body = json_decode($response->getBody());
+        if ($body->errcode !== 0) {
+            throw new BusinessException(ErrorCode::BAD_REQUEST, '微信授权失败 code: ' . $body->errocode . ' msg: ' . $body->errmsg);
+        }
 
-        return $this->httpClient->getClient()->get('http://www.baidu.com')->getStatusCode();
+        $this->condition = ['open_id' => $body->openid];
+        $userInfo = parent::show($request);
+
+        try {
+
+        } catch (\Exception $e) {
+            throw new BusinessException((int)$e->getCode(), $e->getMessage());
+        }
+
     }
 }
