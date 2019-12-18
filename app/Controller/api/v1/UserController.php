@@ -77,4 +77,13 @@ class UserController extends BaseController
         return $this->service->myFollowedUserList($request);
     }
 
+    /**
+     * 我的关注标签列表
+     * @param RequestInterface $request
+     * @return mixed
+     */
+    public function myFollowedTagList(RequestInterface $request)
+    {
+        return $this->service->myFollowedTagList($request);
+    }
 }

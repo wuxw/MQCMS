@@ -45,9 +45,22 @@ class UserService extends BaseService
 
     /**
      * @Inject()
+     * @var UserTagService
+     */
+    public $userTagService;
+
+    /**
+     * @Inject()
      * @var UserFavoriteService
      */
     public $userFavoriteService;
+
+    /**
+     * @Inject()
+     * @var TagService
+     */
+    public $tagService;
+
 
     /**
      * 注册
@@ -338,6 +351,38 @@ class UserService extends BaseService
                 ['status', '=', 1],
             ];
             $query = $this->multiTableJoinQueryBuilder();
+            $query->whereIn('id', $ids);
+            $count = $query->count();
+            $pagination = $query->paginate((int)$limit, $this->select, 'page', (int)$page)->toArray();
+            $pagination['total'] = $count;
+            return $pagination;
+
+        } catch (\Exception $e) {
+            throw new BusinessException((int)$e->getCode(), $e->getMessage());
+        }
+    }
+
+    /**
+     * 我的关注标签列表
+     * @param RequestInterface $request
+     * @return mixed
+     */
+    public function myFollowedTagList(RequestInterface $request)
+    {
+        try {
+            $page = $request->input('page', 1);
+            $limit = $request->input('limit', 10);
+            $page = $page < 1 ? 1 : $page;
+            $limit = $limit > 100 ? 100 : $limit;
+            $uid = $request->getAttribute('uid');
+
+            $this->userTagService->condition = ['user_id' => $uid];
+            $ids = $this->userTagService->multiTableJoinQueryBuilder()->pluck('tag_id')->toArray();
+            $this->select = ['id', 'tag_name'];
+            $this->condition = [
+                ['status', '=', 1],
+            ];
+            $query = $this->tagService->multiTableJoinQueryBuilder();
             $query->whereIn('id', $ids);
             $count = $query->count();
             $pagination = $query->paginate((int)$limit, $this->select, 'page', (int)$page)->toArray();
