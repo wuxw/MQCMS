@@ -25,6 +25,24 @@ class PostService extends BaseService
     public $tagPostRelationService;
 
     /**
+     * @Inject()
+     * @var UserLikeService
+     */
+    public $userLikeService;
+
+    /**
+     * @Inject()
+     * @var UserFavoriteService
+     */
+    public $userFavoriteService;
+
+    /**
+     * @Inject()
+     * @var UserInfoService
+     */
+    public $userInfoService;
+
+    /**
      * 帖子列表分页
      * @param RequestInterface $request
      * @return mixed
@@ -94,6 +112,9 @@ class PostService extends BaseService
                 }
                 $this->tagPostRelationService->insert($request);
             }
+            //更新我的发帖数
+            Db::table($this->userInfoService->getTable())->where(['user_id' => $uid])->increment('post_num');
+
             Db::commit();
             return $lastInsertId;
 
@@ -101,6 +122,75 @@ class PostService extends BaseService
             Db::rollBack();
             $message = $isPublish ? '发布失败' : '保存失败';
             throw new BusinessException((int)$e->getCode(), $message);
+        }
+    }
+
+    /**
+     * 点赞帖子
+     * @param RequestInterface $request
+     * @return mixed
+     */
+    public function like(RequestInterface $request)
+    {
+        try {
+            $uid = $request->getAttribute('uid');
+            $id = $request->input('id');
+            $this->userLikeService->data = [
+                'user_id' => $uid,
+                'post_id' => $id,
+                'created_at' => time(),
+                'updated_at' => time(),
+            ];
+            Db::beginTransaction();
+
+            $this->userLikeService->insert($request);
+            //更新帖子点赞数 +1
+            $this->condition = ['id' => $id];
+            Db::table($this->table->getTable())->where($this->condition)->increment('like_total');
+            //更新帖子用户获赞数
+            $userId = Db::table($this->table->getTable())->value('user_id');
+            Db::table($this->userInfoService->getTable())->where(['user_id' => $userId])->increment('like_num');
+            //更新我点赞数
+            Db::table($this->userInfoService->getTable())->where(['user_id' => $uid])->increment('my_like_num');
+
+            Db::commit();
+            return true;
+
+        } catch (\Exception $e) {
+            Db::rollBack();
+            throw new BusinessException((int)$e->getCode(), '操作失败');
+        }
+    }
+
+    /**
+     * 收藏帖子
+     * @param RequestInterface $request
+     * @return mixed
+     */
+    public function favorite(RequestInterface $request)
+    {
+        try {
+            $uid = $request->getAttribute('uid');
+            $id = $request->input('id');
+            $this->userFavoriteService->data = [
+                'user_id' => $uid,
+                'post_id' => $id,
+                'created_at' => time(),
+                'updated_at' => time(),
+            ];
+            Db::beginTransaction();
+
+            $this->userFavoriteService->insert($request);
+            //更新帖子收藏数 +1
+            $this->condition = ['id' => $id];
+            Db::table($this->table->getTable())->where($this->condition)->increment('favorite_total');
+
+            Db::commit();
+            return true;
+
+        } catch (\Exception $e) {
+            Db::rollBack();
+            throw new BusinessException((int)$e->getCode(), '操作失败');
         }
     }
 
