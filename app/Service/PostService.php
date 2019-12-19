@@ -113,7 +113,8 @@ class PostService extends BaseService
                 $this->tagPostRelationService->insert($request);
             }
             //更新我的发帖数
-            Db::table($this->userInfoService->getTable())->where(['user_id' => $uid])->increment('post_num');
+            $this->userInfoService->condition = ['user_id' => $uid];
+            $this->userInfoService->multiTableJoinQueryBuilder()->increment('post_num');
 
             Db::commit();
             return $lastInsertId;
@@ -141,17 +142,24 @@ class PostService extends BaseService
                 'created_at' => time(),
                 'updated_at' => time(),
             ];
+            $this->condition = ['id' => $id];
+
+            // 获取userid
+            $userId = $this->multiTableJoinQueryBuilder()->value('user_id');
+
             Db::beginTransaction();
 
+            // 插入
             $this->userLikeService->insert($request);
+
             //更新帖子点赞数 +1
-            $this->condition = ['id' => $id];
-            Db::table($this->table->getTable())->where($this->condition)->increment('like_total');
+            $this->multiTableJoinQueryBuilder()->increment('like_total');
+
             //更新帖子用户获赞数
-            $userId = Db::table($this->table->getTable())->value('user_id');
-            Db::table($this->userInfoService->getTable())->where(['user_id' => $userId])->increment('like_num');
+            $this->userInfoService->multiTableJoinQueryBuilder()->increment('like_num', 1, ['user_id' => $userId]);
+
             //更新我点赞数
-            Db::table($this->userInfoService->getTable())->where(['user_id' => $uid])->increment('my_like_num');
+            $this->userInfoService->multiTableJoinQueryBuilder()->increment('my_like_num', 1, ['user_id' => $userId]);
 
             Db::commit();
             return true;

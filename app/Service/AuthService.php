@@ -28,9 +28,9 @@ class AuthService extends BaseService
 
     /**
      * @Inject()
-     * @var HttpClient
+     * @var UserAuthService
      */
-    public $httpClient;
+    public $userAuthService;
 
     /**
      * 注册
@@ -128,21 +128,60 @@ class AuthService extends BaseService
     public function miniProgram(RequestInterface $request)
     {
         $code = $request->input('code');
-        $url = 'https://api.weixin.qq.com/sns/jscode2session?appid=' . env('MINI_APP_ID') . '&secret=' . env('MINI_APP_SECRET') . '&js_code=' . $code . '&grant_type=authorization_code';
-        $response = $this->httpClient->getClient()->get($url);
-        $body = json_decode($response->getBody());
-        if ($body->errcode !== 0) {
-            throw new BusinessException(ErrorCode::BAD_REQUEST, '微信授权失败 code: ' . $body->errocode . ' msg: ' . $body->errmsg);
+        $nickName = $request->has('nick_name', '');
+        $avatarUrl = $request->has('avatar_url', '');
+        $gender = $request->has('gender', 1);
+        $country = $request->has('country', '');
+        $province = $request->has('province', '');
+        $city = $request->has('city', '');
+        $version = $request->has('version', '1.0.0');
+        $ip = $request->getServerParams()['remote_addr'];
+
+        $url = 'https://api.weixin.qq.com/sns/jscode2session?';
+        $url .= 'appid=' . env('MINI_APP_ID') . '&secret=' . env('MINI_APP_SECRET') . '&js_code=' . $code . '&grant_type=authorization_code';
+
+        $client = make(HttpClient::class, [
+            'option' => []
+        ]);
+        $response = $client->getClient()->get($url);
+        $body = json_decode($response->getBody(), true);
+        if ($body['errcode'] !== 0) {
+            throw new BusinessException(ErrorCode::BAD_REQUEST, '微信授权失败 code: ' . $body['errocode'] . ' msg: ' . $body['errmsg']);
         }
 
-        $this->condition = ['open_id' => $body->openid];
-        $userInfo = parent::show($request);
+        $this->userAuthService->condition = ['oauth_id' => $body['openid']];
+        $userAuthInfo = $this->userAuthService->show($request);
 
         try {
+            Db::beginTransaction();
+            if ($userAuthInfo) {
+                // 更新用户
+                $this->data = [
+                    'user_name' => $nickName . generateRandomString(6),
+                    'nick_name' => $nickName,
+                    'avatar' => $avatarUrl,
+                    'login_time' => time(),
+                    'login_ip' => $ip,
+                    'updated_at' => time()
+                ];
+                $this->condition = ['id' => $userAuthInfo['user_id']];
+                $res = parent::update($request);
+                if (!$res) {
+                    throw new BusinessException(ErrorCode::BAD_REQUEST, '用户登录失败 code: 10001');
+                }
+            } else {
+                // 插入user_auth表
+                $this->userAuthService->data = [
+                    'user_id' => 0
+                ];
+            }
+
+            Db::commit();
+            return $userAuthInfo;
 
         } catch (\Exception $e) {
+            Db::rollBack();
             throw new BusinessException((int)$e->getCode(), $e->getMessage());
         }
-
     }
 }
