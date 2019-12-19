@@ -41,7 +41,7 @@ class TokenController extends BaseController
             'from' => Common::getCurrentPath($request),
             'action' => Common::getCurrentActionName($request, get_class_methods(get_class($this)))
         ], $request);
-        Redis::getContainer()->set('api_token_123', $token);
+        Redis::getContainer()->set('api:token:123', $token);
 
         return [
             'token' => $token,

@@ -6,7 +6,7 @@ declare(strict_types=1);
  */
 namespace App\Controller\api\v1;
 
-use App\Service\UserService;
+use App\Service\AuthService;
 use App\Utils\JWT;
 use App\Utils\Redis;
 use Hyperf\Di\Annotation\Inject;
@@ -22,7 +22,7 @@ class AuthController extends BaseController
 {
     /**
      * @Inject()
-     * @var UserService
+     * @var AuthService
      */
     public $service;
 
@@ -68,7 +68,7 @@ class AuthController extends BaseController
 
         $userInfo = $this->service->login($request);
         $token = $this->createAuthToken(['id' => $userInfo['id'], 'uuid' => $userInfo['uuid']], $request);
-        Redis::getContainer()->set('api_token_' . $userInfo['uuid'], $token);
+        Redis::getContainer()->set('api:token:' . $userInfo['uuid'], $token);
 
         return $this->response->json([
             'token' => $token,
@@ -76,4 +76,11 @@ class AuthController extends BaseController
         ]);
     }
 
+    public function miniProgram(RequestInterface $request)
+    {
+        $this->validateParam($request, [
+            'code' => 'required'
+        ]);
+        return $this->service->miniProgram($request);
+    }
 }

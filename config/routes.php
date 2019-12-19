@@ -51,6 +51,7 @@ Router::addGroup('/api/', function () {
         Router::addGroup('auth/', function () {
             Router::post('login', 'App\Controller\api\v1\AuthController@login');
             Router::post('register', 'App\Controller\api\v1\AuthController@register');
+            Router::post('mini-program', 'App\Controller\api\v1\AuthController@miniProgram');
         });
 
         // 帖子
