@@ -60,6 +60,8 @@ Router::addGroup('/api/', function () {
            Router::post('store', 'App\Controller\api\v1\PostController@store', ['middleware' => [AuthMiddleware::class]]);
            Router::delete('delete', 'App\Controller\api\v1\PostController@delete');
            Router::post('update', 'App\Controller\api\v1\PostController@update');
+           Router::post('like', 'App\Controller\api\v1\PostController@like', ['middleware' => [AuthMiddleware::class]]);
+           Router::post('favorite', 'App\Controller\api\v1\PostController@favorite', ['middleware' => [AuthMiddleware::class]]);
         });
     });
 });

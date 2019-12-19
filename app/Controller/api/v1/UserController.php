@@ -86,4 +86,18 @@ class UserController extends BaseController
     {
         return $this->service->myFollowedTagList($request);
     }
+
+    /**
+     * 关注用户
+     * @param RequestInterface $request
+     * @return mixed
+     */
+    public function follow(RequestInterface $request)
+    {
+        $this->validateParam($request, [
+            'uid' => 'required|integer',
+        ]);
+
+        return $this->service->follow($request);
+    }
 }

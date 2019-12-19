@@ -48,4 +48,46 @@ class PostController extends BaseController
         ]);
         return $this->service->store($request);
     }
+
+    /**
+     * 帖子详情
+     * @param RequestInterface $request
+     * @return mixed
+     */
+    public function show(RequestInterface $request)
+    {
+        $this->validateParam($request, [
+            'id' => 'required|integer'
+        ]);
+
+        return $this->service->show($request);
+    }
+
+    /**
+     * 点赞帖子
+     * @param RequestInterface $request
+     * @return mixed
+     */
+    public function like(RequestInterface $request)
+    {
+        $this->validateParam($request, [
+            'id' => 'required|integer'
+        ]);
+
+        return $this->service->like($request);
+    }
+
+    /**
+     * 收藏帖子
+     * @param RequestInterface $request
+     * @return mixed
+     */
+    public function favorite(RequestInterface $request)
+    {
+        $this->validateParam($request, [
+            'id' => 'required|integer'
+        ]);
+
+        return $this->service->favorite($request);
+    }
 }
