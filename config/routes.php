@@ -61,7 +61,9 @@ Router::addGroup('/api/', function () {
            Router::delete('delete', 'App\Controller\api\v1\PostController@delete');
            Router::post('update', 'App\Controller\api\v1\PostController@update');
            Router::post('like', 'App\Controller\api\v1\PostController@like', ['middleware' => [AuthMiddleware::class]]);
+           Router::post('cancel-like', 'App\Controller\api\v1\PostController@cancelLike', ['middleware' => [AuthMiddleware::class]]);
            Router::post('favorite', 'App\Controller\api\v1\PostController@favorite', ['middleware' => [AuthMiddleware::class]]);
+           Router::post('cancel-favorite', 'App\Controller\api\v1\PostController@cancelFavorite', ['middleware' => [AuthMiddleware::class]]);
         });
     });
 });

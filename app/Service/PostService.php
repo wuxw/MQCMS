@@ -144,7 +144,7 @@ class PostService extends BaseService
             ];
             $this->condition = ['id' => $id];
 
-            // 获取userid
+            // 获取userId
             $userId = $this->multiTableJoinQueryBuilder()->value('user_id');
 
             Db::beginTransaction();
@@ -171,6 +171,47 @@ class PostService extends BaseService
     }
 
     /**
+     * 取消点赞帖子
+     * @param RequestInterface $request
+     * @return mixed
+     */
+    public function cancelLike(RequestInterface $request)
+    {
+        try {
+            $uid = $request->getAttribute('uid');
+            $id = $request->input('id');
+
+            // 获取userId
+            $userId = $this->multiTableJoinQueryBuilder()->value('user_id');
+
+            Db::beginTransaction();
+            $this->userLikeService->condition = [
+                ['user_id' => $uid],
+                ['post_id' => $id],
+            ];
+            // 删除帖子点赞
+            $this->userLikeService->delete($request);
+
+            //更新帖子点赞数 -1
+            $this->condition = ['id' => $id];
+            $this->multiTableJoinQueryBuilder()->decrement('like_total');
+
+            //更新帖子用户获赞数
+            $this->userInfoService->multiTableJoinQueryBuilder()->decrement('like_num', 1, ['user_id' => $userId]);
+
+            //更新我点赞数
+            $this->userInfoService->multiTableJoinQueryBuilder()->decrement('my_like_num', 1, ['user_id' => $userId]);
+
+            Db::commit();
+            return true;
+
+        } catch (\Exception $e) {
+            Db::rollBack();
+            throw new BusinessException((int)$e->getCode(), '操作失败');
+        }
+    }
+
+    /**
      * 收藏帖子
      * @param RequestInterface $request
      * @return mixed
@@ -180,7 +221,7 @@ class PostService extends BaseService
         try {
             $uid = $request->getAttribute('uid');
             $id = $request->input('id');
-            $this->userFavoriteService->data = [
+            $this->userFavoriteService->condition = [
                 'user_id' => $uid,
                 'post_id' => $id,
                 'created_at' => time(),
@@ -192,6 +233,36 @@ class PostService extends BaseService
             //更新帖子收藏数 +1
             $this->condition = ['id' => $id];
             Db::table($this->table->getTable())->where($this->condition)->increment('favorite_total');
+
+            Db::commit();
+            return true;
+
+        } catch (\Exception $e) {
+            Db::rollBack();
+            throw new BusinessException((int)$e->getCode(), '操作失败');
+        }
+    }
+
+    /**
+     * 取消收藏帖子
+     * @param RequestInterface $request
+     * @return mixed
+     */
+    public function cancelFavorite(RequestInterface $request)
+    {
+        try {
+            $uid = $request->getAttribute('uid');
+            $id = $request->input('id');
+            $this->userFavoriteService->data = [
+                ['user_id' => $uid],
+                ['post_id' => $id],
+            ];
+            Db::beginTransaction();
+
+            $this->userFavoriteService->delete($request);
+            //更新帖子收藏数 -1
+            $this->condition = ['id' => $id];
+            Db::table($this->table->getTable())->where($this->condition)->decrement('favorite_total');
 
             Db::commit();
             return true;
