@@ -78,6 +78,20 @@ class PostController extends BaseController
     }
 
     /**
+     * 取消点赞帖子
+     * @param RequestInterface $request
+     * @return mixed
+     */
+    public function cancelLike(RequestInterface $request)
+    {
+        $this->validateParam($request, [
+            'id' => 'required|integer'
+        ]);
+
+        return $this->service->cancelLike($request);
+    }
+
+    /**
      * 收藏帖子
      * @param RequestInterface $request
      * @return mixed
@@ -89,5 +103,19 @@ class PostController extends BaseController
         ]);
 
         return $this->service->favorite($request);
+    }
+
+    /**
+     * 取消收藏帖子
+     * @param RequestInterface $request
+     * @return mixed
+     */
+    public function cancelFavorite(RequestInterface $request)
+    {
+        $this->validateParam($request, [
+            'id' => 'required|integer'
+        ]);
+
+        return $this->service->cancelFavorite($request);
     }
 }
