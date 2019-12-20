@@ -101,6 +101,10 @@ class BaseAuthMiddleware implements MiddlewareInterface
         $this->challenge();
         $header = $request->getHeader($this->header);
         $tokenInfo = $this->authenticate($header);
+        if (!$tokenInfo) {
+            self::$tokenInfo = [];
+            self::$authToken = '';
+        }
         $request = $this->withTokenAttributes($tokenInfo, $request);
         Context::set(ServerRequestInterface::class, $request);
         return $handler->handle($request);
