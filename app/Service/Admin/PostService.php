@@ -19,6 +19,12 @@ class PostService extends BaseService
     public $table;
 
     /**
+     * @Inject()
+     * @var UserService
+     */
+    public $userService;
+
+    /**
      * @param RequestInterface $request
      * @return \Hyperf\Contract\PaginatorInterface
      */
@@ -30,6 +36,18 @@ class PostService extends BaseService
         } else {
             $this->condition = [['status', '=', 1]];
         }
+        $tableName = $this->table->getTable();
+        $userTableName = $this->userService->table->getTable();
+        $this->joinTables = [
+            $userTableName => [$tableName . '.user_id', '=', $userTableName . '.id']
+        ];
+        $this->orderBy = [
+            $tableName => ['id' => 'DESC']
+        ];
+        $this->select = [
+            $tableName => ['*'],
+            $userTableName => ['id', 'uuid', 'user_name']
+        ];
         return parent::index($request);
     }
 
