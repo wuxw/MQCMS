@@ -3,10 +3,9 @@ declare(strict_types=1);
 
 namespace App\Service\Admin;
 
-use App\Constants\ErrorCode;
-use App\Exception\BusinessException;
 use App\Model\Attachment;
 use App\Service\BaseService;
+use App\Utils\Upload;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
 
@@ -44,7 +43,9 @@ class AttachmentService extends BaseService
      */
     public function store(RequestInterface $request)
     {
-        return parent::store($request);
+        $upload = new Upload();
+        return $upload->uploadFile($request);
+
     }
 
     /**
