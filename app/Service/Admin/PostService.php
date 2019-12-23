@@ -31,13 +31,15 @@ class PostService extends BaseService
     public function index(RequestInterface $request)
     {
         $type = $request->input('type', 'default');
-        if ($type === 'hot') {
-            $this->condition[] = ['is_hot', '=', 1];
-        } else {
-            $this->condition = [['status', '=', 1]];
-        }
         $tableName = $this->table->getTable();
         $userTableName = $this->userService->table->getTable();
+        $this->condition = [
+            [$tableName . '.status', '=', 1]
+        ];
+
+        if ($type === 'hot') {
+            $this->condition[] = [$tableName . '.is_hot', '=', 1];
+        }
         $this->joinTables = [
             $userTableName => [$tableName . '.user_id', '=', $userTableName . '.id']
         ];
