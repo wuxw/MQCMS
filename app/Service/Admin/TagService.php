@@ -52,6 +52,9 @@ class TagService extends BaseService
     {
         $data = [
             'tag_name' => $request->input('tag_name'),
+            'tag_title' => $request->input('tag_title'),
+            'tag_desc' => $request->input('tag_desc'),
+            'tag_keyword' => $request->input('tag_keyword'),
             'is_hot' => $request->input('is_hot', 0),
             'status' => $request->input('status', 0),
             'first_create_user_id' => $request->getAttribute('uid'),
@@ -77,16 +80,17 @@ class TagService extends BaseService
     public function update(RequestInterface $request)
     {
         $id = $request->input('id');
-        $data = [
+        $this->data = [
             'tag_name' => $request->input('tag_name'),
+            'tag_title' => $request->input('tag_title'),
+            'tag_desc' => $request->input('tag_desc'),
+            'tag_keyword' => $request->input('tag_keyword'),
             'is_hot' => $request->input('is_hot', 0),
             'status' => $request->input('status', 0),
-            'tag_type' => 1,
+            'tag_type' => $request->input('tag_type', 1),
             'updated_at' => time(),
         ];
-
         $this->condition = ['id' => $id];
-        $this->data = $data;
         return parent::update($request);
     }
 

@@ -65,9 +65,7 @@ class TagController extends BaseController
     {
         $this->validateParam($request, [
             'id' => 'required',
-            'tag_name' => 'required',
-            'is_hot' => 'required',
-            'status' => 'required',
+            'tag_name' => 'required'
         ]);
         return $this->service->update($request);
     }
