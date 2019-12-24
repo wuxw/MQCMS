@@ -95,6 +95,6 @@ class Upload
      */
     public function rename()
     {
-        return uniqid();
+        return md5(uniqid(randFloat(), true));
     }
 }
