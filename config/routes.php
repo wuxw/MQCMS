@@ -105,6 +105,7 @@ Router::addGroup('/admin/', function () {
         // 标签
         Router::addGroup('tag/', function () {
             Router::get('index', 'App\Controller\admin\v1\TagController@index');
+            Router::post('index', 'App\Controller\admin\v1\TagController@index');
             Router::get('show', 'App\Controller\admin\v1\TagController@show');
             Router::post('store', 'App\Controller\admin\v1\TagController@store');
             Router::post('delete', 'App\Controller\admin\v1\TagController@delete');

@@ -322,4 +322,28 @@ class BaseService
         return $query;
     }
 
+    /**
+     * 构建单表多条件查询
+     * @param $searchForm
+     * @return array
+     */
+    public function multiSingleTableSearchCondition($searchForm)
+    {
+        $type = $searchForm ? $searchForm['type'] : 'id';
+        $keyword = $searchForm ? $searchForm['keyword'] : '';
+        $condition = [];
+        $tableAttributes = $this->table->getFillable();
+        if ($keyword && in_array($type, $tableAttributes)) {
+            $condition[] = [$type, 'like', "%{$keyword}%"];
+        }
+        $searchKeys = array_intersect(array_keys($searchForm), $tableAttributes);
+        if (!empty($searchKeys)) {
+            array_walk($searchKeys, function ($item) use (&$condition, $searchForm) {
+                if (isset($searchForm[$item]) && $searchForm[$item] !== '') {
+                    array_push($condition, [$item, '=', $searchForm[$item]]);
+                }
+            });
+        }
+        return $condition;
+    }
 }

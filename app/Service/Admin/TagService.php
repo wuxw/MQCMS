@@ -24,11 +24,10 @@ class TagService extends BaseService
      */
     public function index(RequestInterface $request)
     {
-        $type = $request->input('type', 'default');
-        if ($type === 'hot') {
-            $this->condition[] = ['is_hot', '=', 1];
-        } else {
-            $this->condition = [['status', '=', 1]];
+        // 搜索
+        if ($request->has('search')) {
+            $searchForm = $request->input('search');
+            $this->condition = $this->multiSingleTableSearchCondition($searchForm);
         }
         return parent::index($request);
     }
