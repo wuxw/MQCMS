@@ -17,6 +17,7 @@ use App\Middleware\AuthMiddleware;
 
 /**
  * @Controller()
+ * @Middleware(AuthMiddleware::class)
  * Class BaseController
  * @package App\Controller\admin\v1
  */
@@ -30,7 +31,6 @@ class BaseController extends AbstractController
 
     /**
      * @RequestMapping(path="index", methods="get, post")
-     * @Middleware(AuthMiddleware::class)
      * @param RequestInterface $request
      * @return \Hyperf\Contract\PaginatorInterface
      */
@@ -41,7 +41,6 @@ class BaseController extends AbstractController
 
     /**
      * @RequestMapping(path="store", methods="post")
-     * @Middleware(AuthMiddleware::class)
      * @param RequestInterface $request
      * @return int
      */
@@ -52,7 +51,6 @@ class BaseController extends AbstractController
 
     /**
      * @RequestMapping(path="update", methods="post")
-     * @Middleware(AuthMiddleware::class)
      * @param RequestInterface $request
      * @return int
      */
@@ -63,7 +61,6 @@ class BaseController extends AbstractController
 
     /**
      * @RequestMapping(path="delete", methods="post")
-     * @Middleware(AuthMiddleware::class)
      * @param RequestInterface $request
      * @return int
      */
@@ -77,7 +74,6 @@ class BaseController extends AbstractController
 
     /**
      * @RequestMapping(path="show", methods="get")
-     * @Middleware(AuthMiddleware::class)
      * @param RequestInterface $request
      * @return \Hyperf\Database\Model\Model|\Hyperf\Database\Query\Builder|object|null
      */

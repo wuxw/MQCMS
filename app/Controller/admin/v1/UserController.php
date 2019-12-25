@@ -13,6 +13,7 @@ use App\Middleware\AuthMiddleware;
 
 /**
  * @Controller()
+ * @Middleware(AuthMiddleware::class)
  * Class UserController
  * @package App\Controller\admin\v1
  */
@@ -26,7 +27,6 @@ class UserController extends BaseController
 
     /**
      * @RequestMapping(path="store", methods="post")
-     * @Middleware(AuthMiddleware::class)
      * @param RequestInterface $request
      * @return int
      */
@@ -42,7 +42,6 @@ class UserController extends BaseController
 
     /**
      * @RequestMapping(path="update", methods="post")
-     * @Middleware(AuthMiddleware::class)
      * @param RequestInterface $request
      * @return int
      */

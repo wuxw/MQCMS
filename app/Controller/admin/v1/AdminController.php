@@ -6,9 +6,12 @@ namespace App\Controller\admin\v1;
 use App\Service\Admin\AdminService;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
+use Hyperf\HttpServer\Annotation\Middleware;
+use App\Middleware\AuthMiddleware;
 
 /**
  * @Controller()
+ * @Middleware(AuthMiddleware::class)
  * Class AdminController
  * @package App\Controller\admin\v1
  */

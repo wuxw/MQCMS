@@ -13,6 +13,7 @@ use App\Middleware\AuthMiddleware;
 
 /**
  * @Controller()
+ * @Middleware(AuthMiddleware::class)
  * Class AttachmentController
  * @package App\Controller\admin\v1
  */
@@ -26,7 +27,6 @@ class AttachmentController extends BaseController
 
     /**
      * @RequestMapping(path="update", methods="post")
-     * @Middleware(AuthMiddleware::class)
      * @param RequestInterface $request
      * @return int
      */
