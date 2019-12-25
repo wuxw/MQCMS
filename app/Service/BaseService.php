@@ -329,7 +329,7 @@ class BaseService
      */
     public function multiSingleTableSearchCondition($searchForm)
     {
-        $type = $searchForm ? $searchForm['type'] : 'id';
+        $type = $searchForm ? $searchForm['type'] : '';
         $keyword = $searchForm ? $searchForm['keyword'] : '';
         $condition = [];
         $tableAttributes = $this->table->getFillable();
