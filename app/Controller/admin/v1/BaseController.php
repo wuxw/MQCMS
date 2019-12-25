@@ -9,8 +9,17 @@ namespace App\Controller\admin\v1;
 use App\Controller\AbstractController;
 use App\Service\BaseService;
 use Hyperf\Di\Annotation\Inject;
+use Hyperf\HttpServer\Annotation\Controller;
+use Hyperf\HttpServer\Annotation\Middleware;
+use Hyperf\HttpServer\Annotation\RequestMapping;
 use Hyperf\HttpServer\Contract\RequestInterface;
+use App\Middleware\AuthMiddleware;
 
+/**
+ * @Controller()
+ * Class BaseController
+ * @package App\Controller\admin\v1
+ */
 class BaseController extends AbstractController
 {
     /**
@@ -20,6 +29,8 @@ class BaseController extends AbstractController
     public $service;
 
     /**
+     * @RequestMapping(path="index", methods="get, post")
+     * @Middleware(AuthMiddleware::class)
      * @param RequestInterface $request
      * @return \Hyperf\Contract\PaginatorInterface
      */
@@ -29,6 +40,8 @@ class BaseController extends AbstractController
     }
 
     /**
+     * @RequestMapping(path="store", methods="post")
+     * @Middleware(AuthMiddleware::class)
      * @param RequestInterface $request
      * @return int
      */
@@ -38,6 +51,8 @@ class BaseController extends AbstractController
     }
 
     /**
+     * @RequestMapping(path="update", methods="post")
+     * @Middleware(AuthMiddleware::class)
      * @param RequestInterface $request
      * @return int
      */
@@ -47,21 +62,30 @@ class BaseController extends AbstractController
     }
 
     /**
+     * @RequestMapping(path="delete", methods="post")
+     * @Middleware(AuthMiddleware::class)
      * @param RequestInterface $request
      * @return int
      */
     public function delete(RequestInterface $request)
     {
+        $this->validateParam($request, [
+            'id' => 'required|integer',
+        ]);
         return $this->service->delete($request);
     }
 
     /**
+     * @RequestMapping(path="show", methods="get")
+     * @Middleware(AuthMiddleware::class)
      * @param RequestInterface $request
      * @return \Hyperf\Database\Model\Model|\Hyperf\Database\Query\Builder|object|null
      */
     public function show(RequestInterface $request)
     {
+        $this->validateParam($request, [
+            'id' => 'required|integer'
+        ]);
         return $this->service->show($request);
     }
-
 }

@@ -5,8 +5,13 @@ namespace App\Controller\admin\v1;
 
 use App\Service\Admin\AdminService;
 use Hyperf\Di\Annotation\Inject;
-use Hyperf\HttpServer\Contract\RequestInterface;
+use Hyperf\HttpServer\Annotation\Controller;
 
+/**
+ * @Controller()
+ * Class AdminController
+ * @package App\Controller\admin\v1
+ */
 class AdminController extends BaseController
 {
     /**
@@ -14,9 +19,4 @@ class AdminController extends BaseController
      * @var AdminService
      */
     public $service;
-
-    public function index(RequestInterface $request)
-    {
-        return $this->service->index($request);
-    }
 }

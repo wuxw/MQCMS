@@ -5,9 +5,11 @@ namespace App\Controller\admin\v1;
 
 use App\Utils\Common;
 use App\Utils\Redis;
+use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Contract\RequestInterface;
 
 /**
+ * @AutoController()
  * Class TokenController
  * @package App\Controller\api\v1
  */

@@ -5,8 +5,17 @@ namespace App\Controller\admin\v1;
 
 use App\Service\Admin\AttachmentService;
 use Hyperf\Di\Annotation\Inject;
+use Hyperf\HttpServer\Annotation\Controller;
+use Hyperf\HttpServer\Annotation\Middleware;
+use Hyperf\HttpServer\Annotation\RequestMapping;
 use Hyperf\HttpServer\Contract\RequestInterface;
+use App\Middleware\AuthMiddleware;
 
+/**
+ * @Controller()
+ * Class AttachmentController
+ * @package App\Controller\admin\v1
+ */
 class AttachmentController extends BaseController
 {
     /**
@@ -16,45 +25,10 @@ class AttachmentController extends BaseController
     public $service;
 
     /**
+     * @RequestMapping(path="update", methods="post")
+     * @Middleware(AuthMiddleware::class)
      * @param RequestInterface $request
-     * @return mixed
-     */
-    public function show(RequestInterface $request)
-    {
-        $this->validateParam($request, [
-            'id' => 'required|integer'
-        ]);
-        return $this->service->show($request);
-    }
-
-    /**
-     * 新增
-     * @param RequestInterface $request
-     * @param array $data
-     * @return mixed
-     */
-    public function store(RequestInterface $request)
-    {
-        return $this->service->store($request);
-    }
-
-    /**
-     * @param RequestInterface $request
-     * @return mixed
-     */
-    public function delete(RequestInterface $request)
-    {
-        $this->validateParam($request, [
-            'id' => 'required|integer',
-        ]);
-        return $this->service->delete($request);
-    }
-
-    /**
-     * 编辑
-     * @param RequestInterface $request
-     * @param array $data
-     * @return mixed
+     * @return int
      */
     public function update(RequestInterface $request)
     {

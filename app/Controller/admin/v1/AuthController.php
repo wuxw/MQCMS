@@ -10,9 +10,14 @@ use App\Service\Admin\AuthService;
 use App\Utils\JWT;
 use App\Utils\Redis;
 use Hyperf\Di\Annotation\Inject;
+use Hyperf\HttpServer\Annotation\Controller;
+use Hyperf\HttpServer\Annotation\Middleware;
+use Hyperf\HttpServer\Annotation\RequestMapping;
 use Hyperf\HttpServer\Contract\RequestInterface;
+use App\Middleware\AuthMiddleware;
 
 /**
+ * @Controller()
  * Class AuthController
  * @package App\Controller\admin\v1
  */
@@ -25,7 +30,7 @@ class AuthController extends BaseController
     public $service;
 
     /**
-     * 注册
+     * @RequestMapping(path="register", methods="post")
      * @param RequestInterface $request
      * @return \Psr\Http\Message\ResponseInterface
      * @throws \Exception
@@ -52,7 +57,7 @@ class AuthController extends BaseController
     }
 
     /**
-     * 账号密码登录
+     * @RequestMapping(path="login", methods="post")
      * @param RequestInterface $request
      * @return \Psr\Http\Message\ResponseInterface
      */
@@ -80,8 +85,10 @@ class AuthController extends BaseController
     }
 
     /**
-     * 退出登录
+     * @RequestMapping(path="logout", methods="post")
+     * @Middleware(AuthMiddleware::class)
      * @param RequestInterface $request
+     * @return mixed
      */
     public function logout(RequestInterface $request)
     {

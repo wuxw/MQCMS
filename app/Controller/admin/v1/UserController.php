@@ -5,8 +5,17 @@ namespace App\Controller\admin\v1;
 
 use App\Service\Admin\UserService;
 use Hyperf\Di\Annotation\Inject;
+use Hyperf\HttpServer\Annotation\Controller;
+use Hyperf\HttpServer\Annotation\Middleware;
+use Hyperf\HttpServer\Annotation\RequestMapping;
 use Hyperf\HttpServer\Contract\RequestInterface;
+use App\Middleware\AuthMiddleware;
 
+/**
+ * @Controller()
+ * Class UserController
+ * @package App\Controller\admin\v1
+ */
 class UserController extends BaseController
 {
     /**
@@ -16,10 +25,10 @@ class UserController extends BaseController
     public $service;
 
     /**
-     * 创建用户
+     * @RequestMapping(path="store", methods="post")
+     * @Middleware(AuthMiddleware::class)
      * @param RequestInterface $request
-     * @param array $data
-     * @return mixed
+     * @return int
      */
     public function store(RequestInterface $request)
     {
@@ -32,9 +41,10 @@ class UserController extends BaseController
     }
 
     /**
-     * 更新用户
+     * @RequestMapping(path="update", methods="post")
+     * @Middleware(AuthMiddleware::class)
      * @param RequestInterface $request
-     * @return mixed
+     * @return int
      */
     public function update(RequestInterface $request)
     {

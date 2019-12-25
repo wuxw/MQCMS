@@ -31,7 +31,6 @@ class UserService extends BaseService
      * @param RequestInterface $request
      * @return \Hyperf\Contract\PaginatorInterface
      */
-
     public function index(RequestInterface $request)
     {
         try {
@@ -48,6 +47,12 @@ class UserService extends BaseService
             $this->joinTables = [
                 $userInfoTable => [$table . '.id', '=', $userInfoTable . '.user_id']
             ];
+
+            // 搜索
+            if ($request->has('search')) {
+                $searchForm = $request->input('search');
+                $this->condition = $this->multiSingleTableSearchCondition($searchForm);
+            }
             return parent::index($request);
 
         } catch (\Exception $e) {

@@ -274,8 +274,8 @@ class BaseService
                 $select = [];
                 if ($arrCount === 1) {
                     array_walk($this->select, function ($item) use (&$select) {
-                       if ($this->table instanceof Model) {
-                        $select[] = $this->table->getTable() . '.' . $item;
+                       if (!$this->table || $this->table instanceof Model) {
+                           $select[] = $this->table->getTable() . '.' . $item;
                        }
                     });
                 } else {
@@ -334,13 +334,17 @@ class BaseService
         $condition = [];
         $tableAttributes = $this->table->getFillable();
         if ($keyword && in_array($type, $tableAttributes)) {
-            $condition[] = [$type, 'like', "%{$keyword}%"];
+            if (!$this->table || $this->table instanceof Model) {
+                $condition[] = [$this->table->getTable() . '.' . $type, 'like', "%{$keyword}%"];
+            }
         }
         $searchKeys = array_intersect(array_keys($searchForm), $tableAttributes);
         if (!empty($searchKeys)) {
             array_walk($searchKeys, function ($item) use (&$condition, $searchForm) {
                 if (isset($searchForm[$item]) && $searchForm[$item] !== '') {
-                    array_push($condition, [$item, '=', $searchForm[$item]]);
+                    if (!$this->table || $this->table instanceof Model) {
+                        array_push($condition, [$this->table->getTable() . '.' . $item, '=', $searchForm[$item]]);
+                    }
                 }
             });
         }
