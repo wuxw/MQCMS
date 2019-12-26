@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Controller\admin\v1;
+namespace App\Controller\Admin\V1;
 
 use App\Service\Admin\TagService;
 use Hyperf\Di\Annotation\Inject;

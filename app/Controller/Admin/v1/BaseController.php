@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * 基类
  */
-namespace App\Controller\admin\v1;
+namespace App\Controller\Admin\V1;
 
 use App\Controller\AbstractController;
 use App\Service\BaseService;

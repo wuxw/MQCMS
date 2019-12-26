@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Controller\admin\v1;
+namespace App\Controller\Admin\V1;
 
-use App\Service\Admin\PostService;
+use App\Service\Admin\AttachmentService;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;
@@ -14,31 +14,16 @@ use App\Middleware\AuthMiddleware;
 /**
  * @Controller()
  * @Middleware(AuthMiddleware::class)
- * Class PostController
+ * Class AttachmentController
  * @package App\Controller\admin\v1
  */
-class PostController extends BaseController
+class AttachmentController extends BaseController
 {
     /**
      * @Inject()
-     * @var PostService
+     * @var AttachmentService
      */
     public $service;
-
-    /**
-     * @RequestMapping(path="store", methods="post")
-     * @param RequestInterface $request
-     * @return int
-     */
-    public function store(RequestInterface $request)
-    {
-        $this->validateParam($request, [
-            'tag_name' => 'required',
-            'is_hot' => 'required|integer',
-            'status' => 'required',
-        ]);
-        return $this->service->store($request);
-    }
 
     /**
      * @RequestMapping(path="update", methods="post")

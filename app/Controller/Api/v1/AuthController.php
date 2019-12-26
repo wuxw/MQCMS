@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * auth控制器
  */
-namespace App\Controller\api\v1;
+namespace App\Controller\Api\V1;
 
 use App\Service\AuthService;
 use App\Utils\JWT;

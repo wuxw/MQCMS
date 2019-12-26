@@ -155,25 +155,71 @@ class AuthService extends BaseService
         try {
             Db::beginTransaction();
             if ($userAuthInfo) {
-                // 更新用户
-                $this->data = [
-                    'user_name' => $nickName . generateRandomString(6),
-                    'nick_name' => $nickName,
-                    'avatar' => $avatarUrl,
-                    'login_time' => time(),
-                    'login_ip' => $ip,
-                    'updated_at' => time()
-                ];
-                $this->condition = ['id' => $userAuthInfo['user_id']];
-                $res = parent::update($request);
-                if (!$res) {
-                    throw new BusinessException(ErrorCode::BAD_REQUEST, '用户登录失败 code: 10001');
+                $this->condition = ['user_id' => $userAuthInfo['user_id']];
+                $userInfo = parent::show($request);
+                if ($userInfo) {
+                    // 更新用户
+                    $this->data = [
+                        'user_name' => $nickName . generateRandomString(6),
+                        'nick_name' => $nickName,
+                        'avatar' => $avatarUrl,
+                        'login_time' => time(),
+                        'login_ip' => $ip,
+                        'updated_at' => time()
+                    ];
+                    $this->condition = ['id' => $userAuthInfo['user_id']];
+                    $res = parent::update($request);
+                    if (!$res) {
+                        throw new BusinessException(ErrorCode::BAD_REQUEST, '用户登录失败 code: 10001');
+                    }
+                } else {
+                    // 新建用户
+                    $uuid = Common::generateSnowId();
+                    $this->data = [
+                        'uuid' => $uuid,
+                        'user_name' => $nickName,
+                        'real_name' => '',
+                        'nick_name' => $nickName . generateRandomString(6),
+                        'phone' => '',
+                        'avatar' => '',
+                        'password' => '',
+                        'salt' => '',
+                        'status' => 1,
+                        'register_time' => time(),
+                        'register_ip' => $ip,
+                        'login_time' => time(),
+                        'login_ip' => $ip,
+                        'created_at' => time(),
+                        'updated_at' => time(),
+                    ];
+                    $lastInsertId = parent::store($request);
+                    if (!$lastInsertId) {
+                        throw new BusinessException(ErrorCode::BAD_REQUEST, '用户登录失败 code: 10002');
+                    }
+
+                    $this->userInfoService->data = [
+                        'user_id' => $lastInsertId,
+                        'created_at' => time(),
+                        'updated_at' => time(),
+                    ];
+                    $res = $this->userInfoService->store($request);
+                    if (!$res) {
+                        throw new BusinessException(ErrorCode::BAD_REQUEST, '用户登录失败 code: 10003');
+                    }
+
                 }
             } else {
-                // 插入user_auth表
-                $this->userAuthService->data = [
-                    'user_id' => 0
-                ];
+                $this->condition = ['user_id' => $userAuthInfo['user_id']];
+                $userInfo = parent::show($request);
+
+                if ($userInfo) {
+                    // 插入user_auth表
+                    $this->userAuthService->data = [
+                        'user_id' => $userInfo['user_d'],
+                    ];
+
+                    $this->userAuthService->store($request);
+                }
             }
 
             Db::commit();

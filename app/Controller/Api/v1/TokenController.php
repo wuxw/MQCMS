@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Controller\api\v1;
+namespace App\Controller\Api\V1;
 
 use App\Utils\Common;
 use App\Utils\Redis;
