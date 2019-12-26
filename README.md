@@ -8,8 +8,8 @@ MQCMS中的MQ取麻雀拼音首字母。寓意麻雀虽小五脏俱全。
 文档正在在路上...
 
 ### 本地开发
-在docker环境下开发，window10环境安装docker desktop for window,
-window10以下环境安装docker toolbox。
+在docker环境下开发，window10环境安装`docker desktop for window`,
+window10以下环境安装`docker toolbox`。
 
 
 下载hyperf框架docker镜像
@@ -33,6 +33,21 @@ git clone https://github.com/MQEnergy/MQCMS mqcms
 php mqcms/bin/composer.phar config -g repo.packagist composer https://mirrors.aliyun.com/composer
 
 ```
+
+docker安装redis
+```php
+docker pull redis
+# 进入redis 配置redis可外部访问
+docker ps -a
+docker exec -it [redis的CONTAINER ID] /bin/sh
+vi /etc/redis.conf
+# 修改bind如下（根据自己熟悉程度配置）
+# bind 0.0.0.0
+
+# 可开启password（自行按需修改）
+# requirepass foobared
+```
+
 进入项目安装依赖启动项目
 ```php
 cd mqcms
