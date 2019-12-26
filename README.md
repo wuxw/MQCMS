@@ -38,9 +38,11 @@ docker安装redis
 ```php
 docker pull redis
 # 进入redis 配置redis可外部访问
+
 docker ps -a
 docker exec -it [redis的CONTAINER ID] /bin/sh
 vi /etc/redis.conf
+
 # 修改bind如下（根据自己熟悉程度配置）
 # bind 0.0.0.0
 
