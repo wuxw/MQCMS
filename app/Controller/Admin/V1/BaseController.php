@@ -19,7 +19,7 @@ use App\Middleware\AuthMiddleware;
  * @Controller()
  * @Middleware(AuthMiddleware::class)
  * Class BaseController
- * @package App\Controller\admin\v1
+ * @package App\Controller\Admin\V1
  */
 class BaseController extends AbstractController
 {

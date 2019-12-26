@@ -15,7 +15,7 @@ use App\Middleware\AuthMiddleware;
  * @Controller()
  * @Middleware(AuthMiddleware::class)
  * Class PostController
- * @package App\Controller\admin\v1
+ * @package App\Controller\Admin\V1
  */
 class PostController extends BaseController
 {

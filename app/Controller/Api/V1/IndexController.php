@@ -18,7 +18,7 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 /**
  * @Controller()
  * Class IndexController
- * @package App\Controller
+ * @package App\Controller\Api\V1
  */
 class IndexController extends BaseController
 {

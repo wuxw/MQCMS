@@ -9,7 +9,7 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 
 /**
  * Class TokenController
- * @package App\Controller\api\v1
+ * @package App\Controller\Api\V1
  */
 class TokenController extends BaseController
 {

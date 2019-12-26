@@ -16,7 +16,7 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 /**
  * @Controller
  * Class AuthController
- * @package App\Controller\api\v1
+ * @package App\Controller\Api\V1
  */
 class AuthController extends BaseController
 {
@@ -76,6 +76,11 @@ class AuthController extends BaseController
         ]);
     }
 
+    /**
+     * 小程序登录
+     * @param RequestInterface $request
+     * @return \Hyperf\Database\Model\Model|\Hyperf\Database\Query\Builder|object|null
+     */
     public function miniProgram(RequestInterface $request)
     {
         $this->validateParam($request, [

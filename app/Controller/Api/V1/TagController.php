@@ -7,6 +7,10 @@ use App\Service\TagService;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
 
+/**
+ * Class TagController
+ * @package App\Controller\Api\V1
+ */
 class TagController extends BaseController
 {
     /**
@@ -14,31 +18,6 @@ class TagController extends BaseController
      * @var TagService
      */
     public $service;
-
-
-    /**
-     * 标签列表
-     * @param RequestInterface $request
-     * @return \Psr\Http\Message\ResponseInterface
-     */
-    public function index(RequestInterface $request)
-    {
-        return $this->service->index($request);
-    }
-
-    /**
-     * 标签详情
-     * @param RequestInterface $request
-     * @return mixed
-     */
-    public function show(RequestInterface $request)
-    {
-        $this->validateParam($request, [
-            'id' => 'required|integer'
-        ]);
-
-        return $this->service->show($request);
-    }
 
     /**
      * 新增
@@ -52,19 +31,6 @@ class TagController extends BaseController
             'tag_name' => 'required',
         ]);
         return $this->service->store($request);
-    }
-
-    /**
-     * @param RequestInterface $request
-     * @return mixed
-     */
-    public function delete(RequestInterface $request)
-    {
-        $this->validateParam($request, [
-            'id' => 'required|integer',
-        ]);
-
-        return $this->service->delete($request);
     }
 
     /**

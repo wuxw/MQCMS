@@ -13,7 +13,7 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 /**
  * @Controller()
  * Class BaseController
- * @package App\Controller\api\v1
+ * @package App\Controller\Api\V1
  */
 class BaseController extends AbstractController
 {

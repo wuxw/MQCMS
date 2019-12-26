@@ -17,31 +17,6 @@ class UserController extends BaseController
      */
     public $service;
 
-
-    /**
-     * 推荐用户列表
-     * @param RequestInterface $request
-     * @return \Psr\Http\Message\ResponseInterface
-     */
-    public function index(RequestInterface $request)
-    {
-        return $this->service->index($request);
-    }
-
-    /**
-     * 用户信息（查看别人）
-     * @param RequestInterface $request
-     * @return mixed
-     */
-    public function show(RequestInterface $request)
-    {
-        $this->validateParam($request, [
-            'id' => 'required|integer'
-        ]);
-
-        return $this->service->show($request);
-    }
-
     /**
      * 用户信息（查看别人）
      * @param RequestInterface $request

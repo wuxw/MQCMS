@@ -7,6 +7,10 @@ use App\Service\PostService;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
 
+/**
+ * Class PostController
+ * @package App\Controller\Api\V1
+ */
 class PostController extends BaseController
 {
     /**
@@ -47,20 +51,6 @@ class PostController extends BaseController
             'is_publish' => 'required|integer',
         ]);
         return $this->service->store($request);
-    }
-
-    /**
-     * 帖子详情
-     * @param RequestInterface $request
-     * @return mixed
-     */
-    public function show(RequestInterface $request)
-    {
-        $this->validateParam($request, [
-            'id' => 'required|integer'
-        ]);
-
-        return $this->service->show($request);
     }
 
     /**

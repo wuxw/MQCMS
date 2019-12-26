@@ -11,7 +11,7 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 /**
  * @AutoController()
  * Class TokenController
- * @package App\Controller\api\v1
+ * @package App\Controller\Admin\V1
  */
 class TokenController extends BaseController
 {
