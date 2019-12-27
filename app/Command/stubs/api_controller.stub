@@ -1,0 +1,23 @@
+<?php
+
+declare(strict_types=1);
+
+namespace %NAMESPACE%;
+
+use Hyperf\Di\Annotation\Inject;
+use Hyperf\HttpServer\Annotation\Controller;
+use App\Service\%SERVICE%;
+
+/**
+ * @Controller()
+ * Class %CLASS%
+ * @package %NAMESPACE%
+ */
+class %CLASS% extends BaseController
+{
+    /**
+     * @Inject()
+     * @var %SERVICE%
+     */
+    public $service;
+}

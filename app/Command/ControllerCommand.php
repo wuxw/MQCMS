@@ -10,16 +10,18 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * @Command
+ * @Command()
+ * Class ControllerCommand
+ * @package App\Command
  */
-class ServiceCommand extends GeneratorCommand
+class ControllerCommand extends GeneratorCommand
 {
-    protected $name = 'mq:service';
+    protected $name = 'mq:controller';
 
     public function __construct()
     {
         parent::__construct($this->name);
-        $this->setDescription('Create a new mqcms service class');
+        $this->setDescription('Create a new mqcms controller class');
     }
 
     /**
@@ -45,26 +47,31 @@ class ServiceCommand extends GeneratorCommand
             return false;
         }
 
+        if (!$this->getStub()) {
+            $this->output->writeln(sprintf('<fg=red>%s</>', 'module ' . trim($this->input->getArgument('type')) . ' not exists!'));
+            return false;
+        }
+
         // Next, we will generate the path to the location where this class' file should get
         // written. Then, we will build the class and make the proper replacements on the
         // stub files so that it gets the correctly formatted namespace and class name.
         $this->makeDirectory($path);
 
-        file_put_contents($path, $this->buildModelClass($name, $inputs['model']));
+        file_put_contents($path, $this->buildModelClass($name, $inputs['service']));
 
         $output->writeln(sprintf('<info>%s</info>', $name . ' created successfully.'));
     }
 
     /**
      * @param $name
-     * @param $model
+     * @param $service
      * @return string|string[]
      */
-    protected function buildModelClass($name, $model)
+    protected function buildModelClass($name, $service)
     {
         $stub = file_get_contents($this->getStub());
         $stub = $this->replaceNamespace($stub, $name)->replaceClass($stub, $name);
-        return $this->replaceModel($stub, $model);
+        return $this->replaceService($stub, $service);
     }
 
     /**
@@ -72,9 +79,9 @@ class ServiceCommand extends GeneratorCommand
      * @param $name
      * @return string|string[]
      */
-    protected function replaceModel($stub, $name)
+    protected function replaceService($stub, $name)
     {
-        return str_replace('%MODEL%', $name, $stub);
+        return str_replace('%SERVICE%', $name, $stub);
     }
 
     /**
@@ -82,7 +89,11 @@ class ServiceCommand extends GeneratorCommand
      */
     protected function getStub(): string
     {
-        return $this->getConfig()['stub'] ?? __DIR__ . '/stubs/service.stub';
+        $type = strtolower(trim($this->input->getArgument('type')));
+        if (!in_array($type, ['api', 'admin'])) {
+            return '';
+        }
+        return $this->getConfig()['stub'] ?? __DIR__ . '/stubs/' . strtolower($type) . '_controller.stub';
     }
 
     /**
@@ -90,7 +101,7 @@ class ServiceCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace(): string
     {
-        return $this->getConfig()['namespace'] ?? 'App\\Service';
+        return $this->getConfig()['namespace'] ?? 'App\\Controller\\Admin';
     }
 
     /**
@@ -102,7 +113,8 @@ class ServiceCommand extends GeneratorCommand
     {
         return [
             'name' => trim($this->input->getArgument('name')),
-            'model' => trim($this->input->getArgument('model'))
+            'service' => trim($this->input->getArgument('service')),
+            'type' => trim($this->input->getArgument('type'))
         ];
     }
 
@@ -115,7 +127,8 @@ class ServiceCommand extends GeneratorCommand
     {
         return [
             ['name', InputArgument::REQUIRED, 'The name of the class'],
-            ['model', InputArgument::REQUIRED, 'The name of the model class'],
+            ['service', InputArgument::REQUIRED, 'The name of the service class'],
+            ['type', InputArgument::REQUIRED, 'module controller type, eg. admin or api ...'],
         ];
     }
 }

@@ -41,8 +41,13 @@ return [
         'Process' => [
             'namespace' => 'App\\Processes',
         ],
+    ],
+    'mqcms' => [
+        'controller' => [
+            'namespace' => 'App\\Controller',
+        ],
         'service' => [
             'namespace' => 'App\\Service',
         ],
-    ],
+    ]
 ];

@@ -24,12 +24,12 @@ class Common
 
         $multiple = (($limit / 3) - 1) / 2; // limit的数量 9 15 21 27...
         $suffix = $page % 2 === 0 ? 3 : 5;
-        $currentKey = floor($limit-$suffix * $multiple);
+        $currentKey = floor($limit - $suffix * $multiple);
         if (!empty($data)) {
             foreach ($data as $key => $value) {
                 $data[$key]['img_status'] = 0; // 小图
                 if (count($data) >= $limit) {
-                    $data[$currentKey-1]['img_status'] = 1; // 大图
+                    $data[$currentKey - 1]['img_status'] = 1; // 大图
                 }
             }
         }
@@ -43,7 +43,8 @@ class Common
      * @param string $salt
      * @return string
      */
-    public static function generatePasswordHash($password, $salt = '') {
+    public static function generatePasswordHash($password, $salt = '')
+    {
         return sha1(substr(md5($password), 0, 16) . $salt);
     }
 
@@ -55,7 +56,7 @@ class Common
      */
     public static function generateSalt($cost = 13)
     {
-        $cost = (int) $cost;
+        $cost = (int)$cost;
         if ($cost < 4 || $cost > 31) {
             return '';
         }
@@ -101,7 +102,8 @@ class Common
      * @param $methods
      * @return array|mixed|string
      */
-    public static function getCurrentActionName(RequestInterface $request, $methods) {
+    public static function getCurrentActionName(RequestInterface $request, $methods)
+    {
         $pathList = explode('/', $request->decodedPath());
         // $methods = get_class_methods(get_class($this));
         $method = $methods && !empty($pathList) ? array_values(array_intersect($pathList, $methods)) : [];
@@ -126,7 +128,8 @@ class Common
      * @param int $depth
      * @return int
      */
-    public static function getArrCountRecursive(array $array) {
+    public static function getArrCountRecursive(array $array)
+    {
         $maxDep = 1;
         $dep = 1;
         foreach ($array as $k => $v) {
@@ -138,5 +141,24 @@ class Common
             }
         }
         return $maxDep;
+    }
+
+    /**
+     * 获取目录下的子目录
+     * @param $path
+     * @return mixed
+     */
+    public static function getChildPath($path)
+    {
+        if (is_dir($path)) {
+            $dp = dir($path);
+            while ($file = $dp->read()) {
+                if ($file != "." && $file != "..") {
+                    self::getChildPath($path . "/" . $file);
+                }
+            }
+            $dp->close();
+        }
+        return $path;
     }
 }
