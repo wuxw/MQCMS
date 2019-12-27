@@ -41,5 +41,8 @@ return [
         'Process' => [
             'namespace' => 'App\\Processes',
         ],
+        'service' => [
+            'namespace' => 'App\\Service',
+        ],
     ],
 ];

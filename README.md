@@ -13,29 +13,29 @@ window10以下环境安装`docker toolbox`。
 
 
 下载hyperf框架docker镜像
-```php
+```
 docker pull hyperf/hyperf
 ```
 
 进入docker运行命令：
-```php
+```
 # 例如：将项目放在本地d:/web/mqcms
 docker run -it -v /d/web/mqcms:/mqcms -p 9501:9501 --entrypoint /bin/sh hyperf/hyperf
 ```
 
 下载mqcms系统
-```php
+```
 git clone https://github.com/MQEnergy/MQCMS mqcms
 ```
 
 将 Composer 镜像设置为阿里云镜像，加速国内下载速度
-```php
+```
 php mqcms/bin/composer.phar config -g repo.packagist composer https://mirrors.aliyun.com/composer
 
 ```
 
 docker安装redis
-```php
+```
 docker pull redis
 # 进入redis 配置redis可外部访问
 
@@ -51,7 +51,7 @@ vi /etc/redis.conf
 ```
 
 进入项目安装依赖启动项目
-```php
+```
 cd mqcms
 php bin/composer.phar install
 cp .env.example .env
@@ -59,6 +59,25 @@ php bin/hyperf.php start
 ```
 
 浏览器访问项目
-```php
+```
 http://127.0.0.1:9501
+```
+
+### 扩展功能
+commend创建service命令扩展
+```$xslt
+# 查看是否支持 gen:service命令
+php bin/hyperf.php gen
+
+# 查看service命令帮助
+php bin/hyperf.php gen:service --help
+
+# 创建App\Service命名空间的service
+php bin/hyperf.php gen:service FooService Foo
+# 注意：FooService是service名称 Foo为model名称
+
+# 创建其他命名空间的service
+php bin/hyperf.php gen:service -N App\\Service\\Admin FooAdminService FooAdmin
+# 注意：FooAdminService是service名称 FooAdmin为model名称
+ 
 ```

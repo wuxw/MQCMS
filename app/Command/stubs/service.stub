@@ -1,0 +1,17 @@
+<?php
+declare(strict_types=1);
+
+namespace %NAMESPACE%;
+
+use App\Model\%MODEL%;
+use App\Service\BaseService;
+use Hyperf\Di\Annotation\Inject;
+
+class %CLASS% extends BaseService
+{
+    /**
+     * @Inject()
+     * @var %MODEL%
+     */
+    public $table;
+}
