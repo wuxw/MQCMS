@@ -38,8 +38,7 @@ class TagService extends BaseService
      */
     public function show(RequestInterface $request)
     {
-        $id = $request->input('id');
-        $this->condition = ['id' => $id];
+        $this->condition = ['id' => $request->input('id')];
         return parent::show($request);
     }
 

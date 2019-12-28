@@ -142,6 +142,7 @@ class BaseService
     public function show(RequestInterface $request)
     {
         try {
+            $this->condition = ['id' => $request->input('id')];
             $data = $this->multiTableJoinQueryBuilder()->first();
             return (array)$data ?? [];
 
@@ -157,6 +158,7 @@ class BaseService
     public function delete(RequestInterface $request)
     {
         try {
+            $this->condition = ['id' => $request->input('id')];
             $res = $this->multiTableJoinQueryBuilder()->delete();
             return $res;
         } catch (\Exception $e) {
