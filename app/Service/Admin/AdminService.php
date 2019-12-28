@@ -30,4 +30,41 @@ class AdminService extends BaseService
         }
         return $data;
     }
+    /**
+     * @param RequestInterface $request
+     * @return \Hyperf\Database\Model\Model|\Hyperf\Database\Query\Builder|object|null
+     */
+    public function show(RequestInterface $request)
+    {
+        $this->condition = ['id' => $request->input('id')];
+        return parent::show($request);
+    }
+
+    /**
+     * @param RequestInterface $request
+     * @return int
+     */
+    public function update(RequestInterface $request)
+    {
+        $id = $request->input('id');
+        $this->data = [
+            'account' => $request->input('account'),
+            'real_name' => $request->input('real_name'),
+            'phone' => $request->input('phone'),
+            'status' => $request->input('status', 0),
+            'updated_at' => time(),
+        ];
+        $this->condition = ['id' => $id];
+        return parent::update($request);
+    }
+
+    /**
+     * @param RequestInterface $request
+     * @return int
+     */
+    public function delete(RequestInterface $request)
+    {
+        $this->condition = ['id' => $request->input('id')];
+        return parent::delete($request);
+    }
 }
