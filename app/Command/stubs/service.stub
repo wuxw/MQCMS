@@ -14,4 +14,24 @@ class %CLASS% extends BaseService
      * @var %MODEL%
      */
     public $table;
+
+    /**
+     * @param RequestInterface $request
+     * @return \Hyperf\Database\Model\Model|\Hyperf\Database\Query\Builder|object|null
+     */
+    public function show(RequestInterface $request)
+    {
+        $this->condition = ['id' => $request->input('id')];
+        return parent::show($request);
+    }
+
+    /**
+     * @param RequestInterface $request
+     * @return int
+     */
+    public function delete(RequestInterface $request)
+    {
+        $this->condition = ['id' => $request->input('id')];
+        return parent::delete($request);
+    }
 }
