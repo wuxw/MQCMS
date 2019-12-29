@@ -6,6 +6,7 @@ namespace %NAMESPACE%;
 use App\Model\%MODEL%;
 use App\Service\BaseService;
 use Hyperf\Di\Annotation\Inject;
+use Hyperf\HttpServer\Contract\RequestInterface;
 
 class %CLASS% extends BaseService
 {
