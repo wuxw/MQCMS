@@ -20,21 +20,21 @@ window10以下环境安装`docker toolbox`。
 docker pull hyperf/hyperf
 ```
 
-进入docker运行命令：
+
+下载mqcms系统到本地
 ```
 # 例如：将项目放在本地e:/web/MQCMS
-docker run -it -v /e/web/MQCMS:/mqcms -p 9501:9501 --name mqserver --entrypoint /bin/sh hyperf/hyperf
+git clone https://github.com/MQEnergy/MQCMS
 ```
 
-下载mqcms系统
+进入docker运行命令：
 ```
-git clone https://github.com/MQEnergy/MQCMS mqcms
+docker run -it -v /e/web/MQCMS:/mqcms -p 9501:9501 --name mqserver --entrypoint /bin/sh hyperf/hyperf
 ```
 
 将 Composer 镜像设置为阿里云镜像，加速国内下载速度
 ```
 php mqcms/bin/composer.phar config -g repo.packagist composer https://mirrors.aliyun.com/composer
-
 ```
 
 docker安装redis
