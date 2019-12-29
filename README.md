@@ -23,7 +23,7 @@ docker pull hyperf/hyperf
 进入docker运行命令：
 ```
 # 例如：将项目放在本地d:/web/mqcms
-docker run -it -v /d/web/mqcms:/mqcms -p 9501:9501 --entrypoint /bin/sh hyperf/hyperf
+docker run -it -v /d/web/mqcms:/mqcms -p 9501:9501 --name mqcms --entrypoint /bin/sh hyperf/hyperf
 ```
 
 下载mqcms系统
@@ -42,19 +42,23 @@ docker安装redis
 docker pull redis
 # 进入redis 配置redis可外部访问
 
-docker ps -a
-docker exec -it [redis的CONTAINER ID] /bin/sh
-vi /etc/redis.conf
+docker run -d --privileged=true -p 6379:6379 -v /e/web/MQCMS/mqredis/conf/redis.conf:/etc/redis/redis.conf --name mqredis redis redis-server /etc/redis/redis.conf --appendonly yes
+docker exec -it mqredis /bin/sh
 
+# 修改映射在本地的redis.conf
 # 修改bind如下（根据自己熟悉程度配置）
 # bind 0.0.0.0
 
 # 可开启password（自行按需修改）
 # requirepass foobared
+
+# 重启redis
+docker restart mqredis
 ```
 
 进入项目安装依赖启动项目
 ```
+docker exec -it mqcms /bin/sh
 cd mqcms
 php bin/composer.phar install
 cp .env.example .env
