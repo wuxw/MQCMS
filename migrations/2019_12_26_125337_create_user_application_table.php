@@ -24,6 +24,7 @@ class CreateUserApplicationTable extends Migration
                 $table->string('app_desc', 128)->nullable(false)->default('')->comment('应用描述');
                 $table->string('app_intro', 255)->nullable(false)->default('')->comment('应用简介');
                 $table->string('app_link', 64)->nullable(false)->default('')->comment('应用官网');
+                $table->string('app_type', 64)->nullable(false)->default('')->comment('应用类型 1：组件 2：应用');
                 $table->string('app_version', 16)->nullable(false)->comment('应用版本');
                 $table->string('app_hash', 64)->nullable(false)->comment('应用hash值');
                 $table->unsignedTinyInteger('status')->nullable(false)->default(1)->comment('状态 1：正常 0：禁用');
