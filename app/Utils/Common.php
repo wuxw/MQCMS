@@ -161,4 +161,52 @@ class Common
         }
         return $path;
     }
+
+    /**
+     * 清空文件夹函数和清空文件夹后删除空文件夹函数的处理
+     * @param $path
+     * @return bool
+     */
+    public static function delDirFile($path)
+    {
+        if (is_dir($path)) {
+            $dh = opendir($path);
+            while ($file = readdir($dh)) {
+                if ($file != "." && $file != "..") {
+                    $fullpath = $path . "/" . $file;
+                    if (!is_dir($fullpath)) {
+                        unlink($fullpath);
+                    } else {
+                        self::delDirFile($fullpath);
+                    }
+                }
+            }
+            closedir($dh);
+            if (rmdir($path)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 创建多级目录
+     * @param $path
+     * @return bool
+     */
+    public static function mkDir($path)
+    {
+        return is_dir($path) or (self::mkDir(dirname($path)) and mkdir($path, 0777));
+    }
+
+    /**
+     * 初始化一个不重复的uuid
+     * @return string
+     */
+    public static function generateUniqid()
+    {
+        return md5(uniqid(randFloat(), true));
+    }
 }

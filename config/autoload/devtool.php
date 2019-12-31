@@ -50,7 +50,7 @@ return [
             'namespace' => 'App\\Service',
         ],
         'component' => [
-            'namespace' => 'App\\Service\\Components',
+            'namespace' => 'App\\Controller\\Components',
         ],
     ]
 ];

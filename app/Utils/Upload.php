@@ -65,11 +65,11 @@ class Upload
         }
         $basePath = dirname(__DIR__) . '/../';
         $filePath = $this->uploadPath . DIRECTORY_SEPARATOR . date('Y') . DIRECTORY_SEPARATOR . date('m') . DIRECTORY_SEPARATOR . date('d') . DIRECTORY_SEPARATOR;
-        $res = $this->mkDir($basePath . $filePath);
+        $res = Common::mkDir($basePath . $filePath);
         if (!$res) {
             return false;
         }
-        $fileUrl = $filePath . $this->rename() . '.' . $request->file($this->name)->getExtension();
+        $fileUrl = $filePath . Common::generateUniqid() . '.' . $request->file($this->name)->getExtension();
         $request->file($this->name)->moveTo($basePath . $fileUrl);
 
         if (!$request->file($this->name)->isMoved()) {
@@ -81,20 +81,4 @@ class Upload
         ];
     }
 
-    /**
-     * @param $path
-     * @return bool
-     */
-    public function mkDir($path)
-    {
-        return is_dir($path) or ($this->mkDir(dirname($path)) and mkdir($path, 0777));
-    }
-
-    /**
-     * @return string
-     */
-    public function rename()
-    {
-        return md5(uniqid(randFloat(), true));
-    }
 }
