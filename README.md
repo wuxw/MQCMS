@@ -97,7 +97,7 @@ php bin/hyperf.php mq:controller FooController FooService admin
 # FooController：controller名称 FooService：service名称 admin：模块名称（后台，接口 可扩展，eg.可写成：Admin ADMIN admin ...）
 
 # 创建其他命名空间的controller
-php bin/hyperf.php mq:controller -N App\\Controller\\Admin\\V1 FooController FooService api
+php bin/hyperf.php mq:controller -N App\\Controller\\Api\\V1 FooController FooService api
 # FooController：controller名称 FooService：service名称 api：模块名称（后台，接口 可扩展，eg.可写成：Api API api ...）
 
 ```
