@@ -54,14 +54,25 @@ if ($appEnv === 'dev') {
         ],
         'formatter' => $infoFormatter
     ];
-} else {
-    $debugFormatter = [
-        'class' => Formatter\JsonFormatter::class,
-        'constructor' => [
-            'batchMode' => Formatter\JsonFormatter::BATCH_MODE_JSON,
-            'appendNewline' => true,
+
+    return [
+        'default' => [
+            'handlers' => [
+                $debugHandler,
+                $infoHandler,
+                [
+                    'class' => Handler\StreamHandler::class,
+                    'constructor' => [
+                        'stream' => BASE_PATH . '/runtime/logs/mqcms-error-' . date('Y-m-d') . '.log',
+                        'level' => Logger::ERROR
+                    ],
+                    'formatter' => $errorFormatter
+                ]
+            ]
         ],
     ];
+
+} else {
     $errorFormatter = [
         'class' => Formatter\LineFormatter::class,
         'constructor' => [
@@ -71,25 +82,34 @@ if ($appEnv === 'dev') {
     ];
     $infoFormatter = [
         'class' => Formatter\LineFormatter::class,
-        'constructor' => [],
+        'constructor' => [
+            'allowInlineLineBreaks' => true,
+            'includeStacktraces' => false,
+        ],
     ];
-    $debugHandler = [];
-    $infoHandler = [];
+    $infoHandler = [
+        'class' => Handler\StreamHandler::class,
+        'constructor' => [
+            'stream' => BASE_PATH . '/runtime/logs/mqcms-info-' . date('Y-m-d') . '.log',
+            'level' => Logger::INFO
+        ],
+        'formatter' => $infoFormatter
+    ];
+
+    return [
+        'default' => [
+            'handlers' => [
+                $infoHandler,
+                [
+                    'class' => Handler\StreamHandler::class,
+                    'constructor' => [
+                        'stream' => BASE_PATH . '/runtime/logs/mqcms-error-' . date('Y-m-d') . '.log',
+                        'level' => Logger::ERROR
+                    ],
+                    'formatter' => $errorFormatter
+                ]
+            ]
+        ],
+    ];
 }
 
-return [
-    'default' => [
-        'handlers' => [
-            $debugHandler,
-            $infoHandler,
-            [
-                'class' => Handler\StreamHandler::class,
-                'constructor' => [
-                    'stream' => BASE_PATH . '/runtime/logs/mqcms-error-' . date('Y-m-d') . '.log',
-                    'level' => Logger::ERROR
-                ],
-                'formatter' => $errorFormatter
-            ]
-        ]
-    ],
-];

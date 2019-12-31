@@ -126,7 +126,7 @@ class ControllerCommand extends GeneratorCommand
     protected function getArguments()
     {
         return [
-            ['name', InputArgument::REQUIRED, 'The name of the class'],
+            ['name', InputArgument::REQUIRED, 'The name of the controller class'],
             ['service', InputArgument::REQUIRED, 'The name of the service class'],
             ['type', InputArgument::REQUIRED, 'module controller type, eg. admin or api ...'],
         ];

@@ -114,7 +114,7 @@ class ServiceCommand extends GeneratorCommand
     protected function getArguments()
     {
         return [
-            ['name', InputArgument::REQUIRED, 'The name of the class'],
+            ['name', InputArgument::REQUIRED, 'The name of the service class'],
             ['model', InputArgument::REQUIRED, 'The name of the model class'],
         ];
     }

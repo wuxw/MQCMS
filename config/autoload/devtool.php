@@ -49,5 +49,8 @@ return [
         'service' => [
             'namespace' => 'App\\Service',
         ],
+        'component' => [
+            'namespace' => 'App\\Service\\Components',
+        ],
     ]
 ];
