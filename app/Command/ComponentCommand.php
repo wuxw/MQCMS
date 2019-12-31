@@ -59,7 +59,7 @@ class ComponentCommand extends HyperfCommand
         $this->line('component ' . $hashId . ' installed successfully! ', 'info');
     }
 
-    public function unzip($hashId)
+    protected function unzip($hashId)
     {
         // 获取压缩包根据hash id
         try {
