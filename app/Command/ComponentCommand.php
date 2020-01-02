@@ -93,7 +93,6 @@ class ComponentCommand extends HyperfCommand
                 if ($entriesMatcherKey !== false) {
                     unset($entriesMatcher[$entriesMatcherKey]);
                 }
-                print_r($entriesMatcher);
                 if ($key === 'controller/') {
                     $zipFile->extractTo($installControllerPath, $entriesMatcher);
                 } else if ($key === 'service/') {
