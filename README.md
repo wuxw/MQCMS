@@ -1,6 +1,6 @@
 # MQCMS
 [![License](https://img.shields.io/github/license/MQEnergy/MQCMS)](https://github.com/MQEnergy/MQCMS)
-[![star](https://img.shields.io/github/stars/MQEnergy/MQCMS)](https://github.com/MQEnergy/MQCMS)
+[![Stars](https://img.shields.io/github/stars/MQEnergy/MQCMS)](https://github.com/MQEnergy/MQCMS)
 
 MQCMS是一款现代化，快速，高效，灵活，前后端分离，扩展性强的CMS系统。
 MQCMS中的MQ取麻雀拼音首字母。寓意麻雀虽小五脏俱全。
