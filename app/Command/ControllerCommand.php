@@ -89,11 +89,11 @@ class ControllerCommand extends GeneratorCommand
      */
     protected function getStub(): string
     {
-        $type = strtolower(trim($this->input->getArgument('type')));
-        if (!in_array($type, ['api', 'admin'])) {
+        $module = strtolower(trim($this->input->getArgument('module')));
+        if (!in_array($module, ['api', 'admin'])) {
             return '';
         }
-        return $this->getConfig()['stub'] ?? __DIR__ . '/stubs/' . strtolower($type) . '_controller.stub';
+        return $this->getConfig()['stub'] ?? __DIR__ . '/stubs/' . strtolower($module) . '_controller.stub';
     }
 
     /**
@@ -114,7 +114,7 @@ class ControllerCommand extends GeneratorCommand
         return [
             'name' => trim($this->input->getArgument('name')),
             'service' => trim($this->input->getArgument('service')),
-            'type' => trim($this->input->getArgument('type'))
+            'module' => trim($this->input->getArgument('module'))
         ];
     }
 
@@ -128,7 +128,7 @@ class ControllerCommand extends GeneratorCommand
         return [
             ['name', InputArgument::REQUIRED, 'The name of the controller class'],
             ['service', InputArgument::REQUIRED, 'The name of the service class'],
-            ['type', InputArgument::REQUIRED, 'module controller type, eg. admin or api ...'],
+            ['module', InputArgument::REQUIRED, 'module type, eg. admin or api ...'],
         ];
     }
 }
