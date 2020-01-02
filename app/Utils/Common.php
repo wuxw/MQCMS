@@ -150,16 +150,20 @@ class Common
      */
     public static function getChildPath($path)
     {
+        $list = [];
         if (is_dir($path)) {
             $dp = dir($path);
             while ($file = $dp->read()) {
                 if ($file != "." && $file != "..") {
+                    if (is_dir($path . "/" . $file)) {
+                        array_push($list, $file);
+                    }
                     self::getChildPath($path . "/" . $file);
                 }
             }
             $dp->close();
         }
-        return $path;
+        return $list;
     }
 
     /**

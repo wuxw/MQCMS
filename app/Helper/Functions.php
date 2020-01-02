@@ -31,24 +31,46 @@ if (!function_exists('randFloat')) {
  */
 if (!function_exists('requireDirScript')) {
     function requireDirScript($dir, $filename='') {
-        //打开文件夹
-        $handler = opendir($dir);
-        //遍历脚本文件夹下的所有文件
-        while (false !== ($file = readdir($handler))) {
-            if ($file != "." && $file != "..") {
-                $fullpath = $dir . "/" . $file;
-                if (!is_dir($fullpath) && substr($file,-4) == '.php') {
-                    if ($filename !== '' && basename($fullpath, '.php') === $filename) {
-                        require_once($fullpath);
+        if (is_dir($dir)) {
+            $handler = opendir($dir);
+            //遍历脚本文件夹下的所有文件
+            while (false !== ($file = readdir($handler))) {
+                if ($file != "." && $file != "..") {
+                    $fullpath = $dir . "/" . $file;
+                    if (!is_dir($fullpath) && substr($file,-4) == '.php') {
+                        if ($filename !== '' && basename($fullpath, '.php') === $filename) {
+                            require_once($fullpath);
+                        } else {
+                            require_once($fullpath);
+                        }
                     } else {
-                        require_once($fullpath);
+                        requireDirScript($fullpath);
                     }
-                } else {
-                    requireDirScript($fullpath);
+                }
+            }
+            //关闭文件夹
+            closedir($handler);
+        }
+    }
+}
+
+/**
+ * copy
+ */
+if (!function_exists('recurseCopy')) {
+    function recurseCopy($src, $dst) {
+        $dir = opendir($src);
+        @mkdir($dst);
+        while(false !== ($file = readdir($dir))) {
+            if ($file != '.' && $file != '..') {
+                if (is_dir($src . '/' . $file)) {
+                    recurseCopy($src . '/' . $file,$dst . '/' . $file);
+                }
+                else {
+                    copy($src . '/' . $file,$dst . '/' . $file);
                 }
             }
         }
-        //关闭文件夹
-        closedir($handler);
+        closedir($dir);
     }
 }

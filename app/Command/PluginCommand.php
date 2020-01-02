@@ -8,27 +8,28 @@ use App\Utils\Common;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\CodeGen\Project;
 use Hyperf\Utils\Str;
 use PhpZip\Exception\ZipException;
 use PhpZip\ZipFile;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
 /**
  * @Command
  */
-class PluginsCommand extends HyperfCommand
+class PluginCommand extends HyperfCommand
 {
-    protected $name = 'mq:plugins';
+    protected $name = 'mq:plugin';
 
     protected $regRules = [
         'controller/' => 'controller+[*]?',
         'service/' => 'service+[*]?',
         'migration/' => 'migration+[*]?',
+        'model/' => 'model+[*]?',
     ];
 
     /**
@@ -46,7 +47,7 @@ class PluginsCommand extends HyperfCommand
     public function configure()
     {
         parent::configure();
-        $this->setDescription('Install the downloaded components');
+        $this->setDescription('Install Uninstall the downloaded plugins or Create initialization plugins');
     }
 
     public function handle()
@@ -55,21 +56,18 @@ class PluginsCommand extends HyperfCommand
         $name = $this->input->getArgument('name'); // 包名
 
         if (!in_array(strtolower($action), ['up', 'down', 'create'])) {
-            $this->error('wrong action. the action only contains up, down and create');
+            $this->error('wrong action. the action only contains up, down or create');
             return false;
         }
         switch (strtolower($action)) {
             case 'up':
                 $this->unzipInstallPlugin($name);
-                $this->line('plugin ' . $name . ' installed successfully! ', 'info');
                 break;
             case 'down':
                 $this->uninstallPlugin($name);
-                $this->line('plugin ' . $name . ' uninstalled successfully! ', 'info');
                 break;
             case 'create':
                 $this->generateCreatePlugin($name);
-                $this->line('plugin ' . $name . ' created successfully! ', 'info');
                 break;
         }
     }
@@ -80,7 +78,7 @@ class PluginsCommand extends HyperfCommand
      */
     protected function generateCreatePlugin($name)
     {
-
+        $this->line('plugin ' . $name . ' created successfully! ', 'info');
     }
 
     /**
@@ -89,7 +87,7 @@ class PluginsCommand extends HyperfCommand
      */
     protected function uninstallPlugin($name)
     {
-
+        $this->line('plugin ' . $name . ' uninstalled successfully! ', 'info');
     }
 
     /**
@@ -100,35 +98,58 @@ class PluginsCommand extends HyperfCommand
     {
         // 获取压缩包根据name
         try {
-            $componentTempPath = dirname(__DIR__) . DIRECTORY_SEPARATOR . '../' . 'upload' . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . $name;
-            $zipFile = new ZipFile();
-            $zipFile->openFile($componentTempPath . '.zip');
-            if ($zipFile->count() === 0) {
-                throw new ZipException('The compressed package is Empty.');
-            }
+            $this->line("start install plugin {$name} ...", 'info');
+            $basePath = dirname(__DIR__) . DIRECTORY_SEPARATOR . '../';
+            $pluginTempPath = $basePath . 'upload' . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . $name;
+            $migrationsPath = $basePath . 'migrations';
 
-            $classControllerName = $this->qualifyClass($name);
-            $classServiceName = $this->qualifyClass($name, 'serviceNamespace');
-            $installControllerPath = $this->getPath($classControllerName, '');
-            $installServicePath = $this->getPath($classServiceName, '');
-            $controllerRes = Common::mkDir($installControllerPath);
-            $serviceRes = Common::mkDir($installServicePath);
+            $zipFile = new ZipFile();
+            $zipFile->openFile($pluginTempPath . '.zip');
+            if ($zipFile->count() === 0) {
+                throw new ZipException('The compressed plugins is Empty.');
+            }
+            $res = Common::mkDir($pluginTempPath);
+            if (!$res) {
+                throw new ZipException(sprintf('Directory %s creation failed, Please check permissions.', $name));
+            }
+            $zipFile->extractTo($pluginTempPath);
+
+            $classControllerName    = $this->qualifyClass(ucfirst(strtolower($name)), 'controllerNamespace');
+            $classServiceName       = $this->qualifyClass(ucfirst(strtolower($name)), 'serviceNamespace');
+            $installControllerPath  = $this->getPath($classControllerName, '');
+            $installServicePath     = $this->getPath($classServiceName, '');
+            $controllerRes          = Common::mkDir($installControllerPath);
+            $serviceRes             = Common::mkDir($installServicePath);
+
             if (!$controllerRes || !$serviceRes) {
                 throw new ZipException(sprintf('Directory %s creation failed, Please check permissions.', $name));
             }
-            foreach ($this->regRules as $key => $value) {
-                $entriesMatcher = $zipFile->matcher()->match("/{$value}/si")->getMatches();
-                $entriesMatcherKey = array_search($key, $entriesMatcher);
-                if ($entriesMatcherKey !== false) {
-                    unset($entriesMatcher[$entriesMatcherKey]);
+            $headers = ['插件临时路径', $pluginTempPath];
+            $rows = [
+                ['控制器路径', $installControllerPath],
+                new TableSeparator(),
+                ['服务层路径', $installServicePath],
+                new TableSeparator(),
+                ['数据库迁移路径', $migrationsPath]
+            ];
+            $this->table($headers, $rows, 'symfony-style-guide');
+
+            $childPathList = Common::getChildPath($pluginTempPath);
+            foreach ($childPathList as $key => $value) {
+                if (strtolower($value) === 'controller') {
+                    recurseCopy($pluginTempPath . DIRECTORY_SEPARATOR . $value, $installControllerPath);
                 }
-                if ($key === 'controller/') {
-                    $zipFile->extractTo($installControllerPath, $entriesMatcher);
-                } else if ($key === 'service/') {
-                    $zipFile->extractTo($installServicePath, $entriesMatcher);
+                if (strtolower($value) === 'service') {
+                    recurseCopy($pluginTempPath . DIRECTORY_SEPARATOR . $value, $installServicePath);
+                }
+                if (strtolower($value) === 'migrations') {
+                    recurseCopy($pluginTempPath . DIRECTORY_SEPARATOR . $value, $migrationsPath);
                 }
             }
+
             $zipFile->close();
+            Common::delDirFile($pluginTempPath);
+            $this->line('plugin ' . $name . ' installed successfully! ', 'info');
 
         } catch (ZipException $e) {
             $this->line($e->getMessage(), 'error');
@@ -138,8 +159,8 @@ class PluginsCommand extends HyperfCommand
     protected function getArguments()
     {
         return [
-            ['action', InputArgument::REQUIRED, 'The operations for installing components eg. up or down'],
-            ['name', InputArgument::REQUIRED, 'The name of the commponent']
+            ['action', InputArgument::REQUIRED, 'The operations for installing plugin e.g. up, down or create'],
+            ['name', InputArgument::REQUIRED, 'The name of the plugin']
         ];
     }
 
@@ -163,20 +184,12 @@ class PluginsCommand extends HyperfCommand
     }
 
     /**
-     * @return ContainerInterface
-     */
-    protected function getContainer(): ContainerInterface
-    {
-        return ApplicationContext::getContainer();
-    }
-
-    /**
      * @return string
      */
     protected function getDefaultNamespace($namespace='controllerNamespace'): string
     {
         $appNamespace = $namespace === 'controllerNamespace' ? 'Controller' : 'Service';
-        return $this->getConfig()[$namespace] ?? "App\\{$appNamespace}\\Components";
+        return $this->getConfig()[$namespace] ?? "App\\{$appNamespace}\\Plugins";
     }
 
     /**
