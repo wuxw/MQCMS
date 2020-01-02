@@ -114,3 +114,17 @@ php bin/hyperf.php mq:controller -N App\\Controller\\Api\\V1 FooController FooSe
 # FooController：controller名称 FooService：service名称 api：模块名称（后台，接口 可扩展，eg.可写成：Api API api ...）
 
 ```
+
+2、安装plugin
+```
+# 查看mq:plugin命令帮助
+php bin/hyperf.php mq:plugin --help
+
+# 创建默认命名空间的plugin
+php bin/hyperf.php mq:plugin up demo
+# up：代表安装操作 demo：代表插件打包名称
+
+# 创建其他命名空间的plugin
+php bin/hyperf.php mq:plugin -CN App\\Controller\\Admin\\Plugins -SN App\\Service\\Plugins up demo
+# CN：controller namespace  SN：service namespace
+```
