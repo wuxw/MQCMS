@@ -10,6 +10,16 @@ MQCMS中的MQ取麻雀拼音首字母。寓意麻雀虽小五脏俱全。
 前端项目仓库：
 https://github.com/MQEnergy/MQCMS-admin
 
+### 应用截图
+#### 1、登录页面
+![](./screenshot/login.png)
+#### 2、平台首页
+![](./screenshot/user.png)
+#### 3、系统管理
+![](./screenshot/system.png)
+#### 4、应用中心
+![](./screenshot/application.png)
+
 ### 本地开发
 在docker环境下开发，window10环境安装`docker desktop for window`,
 window10以下环境安装`docker toolbox`。
