@@ -24,6 +24,13 @@ use Symfony\Component\Console\Input\InputOption;
 class ComponentCommand extends HyperfCommand
 {
     protected $name = 'mq:component';
+
+    protected $regRules = [
+        'controller/' => 'controller+[*]?',
+        'service/' => 'service+[*]?',
+        'migration/' => 'migration+[*]?',
+    ];
+
     /**
      * @var ContainerInterface
      */
@@ -45,38 +52,54 @@ class ComponentCommand extends HyperfCommand
     public function handle()
     {
         $action = $this->input->getArgument('action');
-        $hashId = $this->input->getArgument('hash'); // fI7Dxj6289Bg9X
-        $namespace = $this->input->getOption('namespace');
+        $name = $this->input->getArgument('name'); // fI7Dxj6289Bg9X
 
         if (!in_array(strtolower($action), ['up', 'down'])) {
             $this->error('wrong action. the action only contains up and down');
             return false;
         }
-        $this->unzip($hashId);
-        $name = $this->qualifyClass($hashId);
-        $path = $this->getPath($name, '');
-        Common::mkDir($path);
-        $this->line('component ' . $hashId . ' installed successfully! ', 'info');
+        $this->unzipInstallComponent($name);
+
+        $this->line('component ' . $name . ' installed successfully! ', 'info');
     }
 
-    protected function unzip($hashId)
+    /**
+     * unzip and install component
+     * @param $name
+     */
+    protected function unzipInstallComponent($name)
     {
-        // 获取压缩包根据hash id
+        // 获取压缩包根据name
         try {
+            $componentTempPath = dirname(__DIR__) . DIRECTORY_SEPARATOR . '../' . 'upload' . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . $name;
             $zipFile = new ZipFile();
-            $basePath = dirname(__DIR__) . '/../';
-            $componentPath = $basePath . 'upload/components/' . $hashId;
-            $zipFile->openFile($componentPath . '.zip');
+            $zipFile->openFile($componentTempPath . '.zip');
             if ($zipFile->count() === 0) {
                 throw new ZipException('The compressed package is Empty.');
             }
-            Common::delDirFile($componentPath);
-            $res = Common::mkDir($componentPath);
-            if (!$res) {
-                throw new ZipException('Directory creation failed, Please check permissions.');
-            }
 
-            $zipFile->extractTo($componentPath);
+            $classControllerName = $this->qualifyClass($name);
+            $classServiceName = $this->qualifyClass($name, 'serviceNamespace');
+            $installControllerPath = $this->getPath($classControllerName, '');
+            $installServicePath = $this->getPath($classServiceName, '');
+            $controllerRes = Common::mkDir($installControllerPath);
+            $serviceRes = Common::mkDir($installServicePath);
+            if (!$controllerRes || !$serviceRes) {
+                throw new ZipException(sprintf('Directory %s creation failed, Please check permissions.', $name));
+            }
+            foreach ($this->regRules as $key => $value) {
+                $entriesMatcher = $zipFile->matcher()->match("/{$value}/si")->getMatches();
+                $entriesMatcherKey = array_search($key, $entriesMatcher);
+                if ($entriesMatcherKey !== false) {
+                    unset($entriesMatcher[$entriesMatcherKey]);
+                }
+                print_r($entriesMatcher);
+                if ($key === 'controller/') {
+                    $zipFile->extractTo($installControllerPath, $entriesMatcher);
+                } else if ($key === 'service/') {
+                    $zipFile->extractTo($installServicePath, $entriesMatcher);
+                }
+            }
             $zipFile->close();
 
         } catch (ZipException $e) {
@@ -88,14 +111,15 @@ class ComponentCommand extends HyperfCommand
     {
         return [
             ['action', InputArgument::REQUIRED, 'The operations for installing components eg. up or down'],
-            ['hash', InputArgument::REQUIRED, 'The name of the commponent hash id']
+            ['name', InputArgument::REQUIRED, 'The name of the commponent']
         ];
     }
 
     protected function getOptions()
     {
         return [
-            ['namespace', 'N', InputOption::VALUE_OPTIONAL, 'The namespace for class.', $this->getDefaultNamespace()]
+            ['cnamespace', 'CN', InputOption::VALUE_OPTIONAL, 'The controller namespace for class.', $this->getDefaultNamespace('controllerNamespace')],
+            ['snamespace', 'SN', InputOption::VALUE_OPTIONAL, 'The service namespace for class.', $this->getDefaultNamespace('serviceNamespace')]
         ];
     }
 
@@ -107,7 +131,7 @@ class ComponentCommand extends HyperfCommand
         $class = Arr::last(explode('\\', static::class));
         $class = Str::replaceLast('Command', '', $class);
         $key = 'devtool.mqcms.' . Str::snake($class, '.');
-        return $this->getContainer()->get(ConfigInterface::class)->get($key) ?? [];
+        return $this->container->get(ConfigInterface::class)->get($key) ?? [];
     }
 
     /**
@@ -121,9 +145,10 @@ class ComponentCommand extends HyperfCommand
     /**
      * @return string
      */
-    protected function getDefaultNamespace(): string
+    protected function getDefaultNamespace($namespace='controllerNamespace'): string
     {
-        return $this->getConfig()['namespace'] ?? 'App\\Controller\\Components';
+        $appNamespace = $namespace === 'controllerNamespace' ? 'Controller' : 'Service';
+        return $this->getConfig()[$namespace] ?? "App\\{$appNamespace}\\Components";
     }
 
     /**
@@ -132,15 +157,22 @@ class ComponentCommand extends HyperfCommand
      * @param string $name
      * @return string
      */
-    protected function qualifyClass($name)
+    protected function qualifyClass($name, $namespace = 'controllerNamespace')
     {
         $name = ltrim($name, '\\/');
 
         $name = str_replace('/', '\\', $name);
 
-        $namespace = $this->input->getOption('namespace');
+        if ($namespace === 'controllerNamespace') {
+            $namespace = $this->input->getOption('cnamespace');
+        } else {
+            $namespace = $this->input->getOption('snamespace');
+        }
         if (empty($namespace)) {
-            $namespace = $this->getDefaultNamespace();
+            $namespace = $this->getDefaultNamespace('controllerNamespace');
+        }
+        if (empty($namespace)) {
+            $namespace = $this->getDefaultNamespace('serviceNamespace');
         }
 
         return $namespace . '\\' . $name;
@@ -152,9 +184,9 @@ class ComponentCommand extends HyperfCommand
      * @param string $rawName
      * @return bool
      */
-    protected function alreadyExists($rawName)
+    protected function alreadyExists($rawName, $namespace = 'controllerNamespace')
     {
-        return is_file($this->getPath($this->qualifyClass($rawName)));
+        return is_file($this->getPath($this->qualifyClass($rawName, $namespace)));
     }
 
     /**
