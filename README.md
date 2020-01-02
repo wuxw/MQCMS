@@ -25,29 +25,29 @@ https://github.com/MQEnergy/MQCMS-admin
 window10以下环境安装`docker toolbox`。
 
 
-下载hyperf框架docker镜像
+##### 下载hyperf框架docker镜像
 ```
 docker pull hyperf/hyperf
 ```
 
 
-下载mqcms系统到本地
+##### 下载mqcms系统到本地
 ```
 # 例如：将项目放在本地e:/web/MQCMS
 git clone https://github.com/MQEnergy/MQCMS
 ```
 
-进入docker运行命令：
+##### 进入docker运行命令：
 ```
 docker run -it -v /e/web/MQCMS:/mqcms -p 9501:9501 --name mqserver --entrypoint /bin/sh hyperf/hyperf
 ```
 
-将 Composer 镜像设置为阿里云镜像，加速国内下载速度
+##### 将Composer镜像设置为阿里云镜像，加速国内下载速度
 ```
 php mqcms/bin/composer.phar config -g repo.packagist composer https://mirrors.aliyun.com/composer
 ```
 
-docker安装redis
+##### docker安装redis
 ```
 docker pull redis
 # 进入redis 配置redis可外部访问
@@ -66,7 +66,7 @@ docker exec -it mqredis /bin/sh
 docker restart mqredis
 ```
 
-进入项目安装依赖启动项目
+##### 进入项目安装依赖启动项目
 ```
 docker exec -it mqserver /bin/sh
 cd mqcms
@@ -75,7 +75,7 @@ cp .env.example .env
 php bin/hyperf.php start
 ```
 
-浏览器访问项目
+##### 浏览器访问项目
 ```
 http://127.0.0.1:9501
 ```
