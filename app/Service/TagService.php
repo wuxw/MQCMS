@@ -45,13 +45,7 @@ class TagService extends BaseService
     {
         $this->condition = ['status' => 1];
         $this->orderBy = 'is_hot DESC, id DESC';
-        $data = parent::index($request);
-
-        foreach ($data['data'] as $key => &$value) {
-            $value['created_at'] = $value['created_at'] ? date('Y-m-d H:i:s', $value['created_at']) : '';
-            $value['updated_at'] = $value['updated_at'] ? date('Y-m-d H:i:s', $value['updated_at']) : '';
-        }
-        return $data;
+        return parent::index($request);
     }
 
     /**

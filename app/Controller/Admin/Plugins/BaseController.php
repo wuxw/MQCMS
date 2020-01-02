@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * 基类
  */
-namespace App\Controller\Components;
+namespace App\Controller\Admin\Plugins;
 
 use App\Controller\AbstractController;
 use App\Service\BaseService;
@@ -19,7 +19,7 @@ use App\Middleware\AuthMiddleware;
  * @Controller()
  * @Middleware(AuthMiddleware::class)
  * Class BaseController
- * @package App\Controller\admin\v1
+ * @package App\Controller\Admin\Plugins
  */
 class BaseController extends AbstractController
 {

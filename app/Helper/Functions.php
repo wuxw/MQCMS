@@ -25,3 +25,30 @@ if (!function_exists('randFloat')) {
         return $min + mt_rand() / mt_getrandmax() * ($max - $min);
     }
 }
+
+/**
+ * 调用文件夹所有的php文件
+ */
+if (!function_exists('requireDirScript')) {
+    function requireDirScript($dir, $filename='') {
+        //打开文件夹
+        $handler = opendir($dir);
+        //遍历脚本文件夹下的所有文件
+        while (false !== ($file = readdir($handler))) {
+            if ($file != "." && $file != "..") {
+                $fullpath = $dir . "/" . $file;
+                if (!is_dir($fullpath) && substr($file,-4) == '.php') {
+                    if ($filename !== '' && basename($fullpath, '.php') === $filename) {
+                        require_once($fullpath);
+                    } else {
+                        require_once($fullpath);
+                    }
+                } else {
+                    requireDirScript($fullpath);
+                }
+            }
+        }
+        //关闭文件夹
+        closedir($handler);
+    }
+}

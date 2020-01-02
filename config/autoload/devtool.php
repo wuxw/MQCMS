@@ -49,9 +49,9 @@ return [
         'service' => [
             'namespace' => 'App\\Service',
         ],
-        'component' => [
-            'controllerNamespace' => 'App\\Controller\\Components',
-            'serviceNamespace' => 'App\\Service\\Components',
+        'plugins' => [
+            'controllerNamespace' => 'App\\Controller\\Admin\\Plugins',
+            'serviceNamespace' => 'App\\Service\\Admin\\Plugins',
         ],
     ]
 ];

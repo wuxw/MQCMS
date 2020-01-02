@@ -21,9 +21,9 @@ use Symfony\Component\Console\Input\InputOption;
 /**
  * @Command
  */
-class ComponentCommand extends HyperfCommand
+class PluginsCommand extends HyperfCommand
 {
-    protected $name = 'mq:component';
+    protected $name = 'mq:plugins';
 
     protected $regRules = [
         'controller/' => 'controller+[*]?',
@@ -51,23 +51,52 @@ class ComponentCommand extends HyperfCommand
 
     public function handle()
     {
-        $action = $this->input->getArgument('action');
-        $name = $this->input->getArgument('name'); // fI7Dxj6289Bg9X
+        $action = $this->input->getArgument('action'); // 动作
+        $name = $this->input->getArgument('name'); // 包名
 
-        if (!in_array(strtolower($action), ['up', 'down'])) {
-            $this->error('wrong action. the action only contains up and down');
+        if (!in_array(strtolower($action), ['up', 'down', 'create'])) {
+            $this->error('wrong action. the action only contains up, down and create');
             return false;
         }
-        $this->unzipInstallComponent($name);
-
-        $this->line('component ' . $name . ' installed successfully! ', 'info');
+        switch (strtolower($action)) {
+            case 'up':
+                $this->unzipInstallPlugin($name);
+                $this->line('plugin ' . $name . ' installed successfully! ', 'info');
+                break;
+            case 'down':
+                $this->uninstallPlugin($name);
+                $this->line('plugin ' . $name . ' uninstalled successfully! ', 'info');
+                break;
+            case 'create':
+                $this->generateCreatePlugin($name);
+                $this->line('plugin ' . $name . ' created successfully! ', 'info');
+                break;
+        }
     }
 
     /**
-     * unzip and install component
+     * generate create plugin
      * @param $name
      */
-    protected function unzipInstallComponent($name)
+    protected function generateCreatePlugin($name)
+    {
+
+    }
+
+    /**
+     * uninstall plugin
+     * @param $name
+     */
+    protected function uninstallPlugin($name)
+    {
+
+    }
+
+    /**
+     * unzip and install plugin
+     * @param $name
+     */
+    protected function unzipInstallPlugin($name)
     {
         // 获取压缩包根据name
         try {
