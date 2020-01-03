@@ -44,8 +44,30 @@ class AttachmentService extends BaseService
     public function store(RequestInterface $request)
     {
         $upload = new Upload();
-        return $upload->uploadFile($request);
+        $pathList = $upload->uploadFile($request);
 
+        if (in_array($upload->extension, ['jpg', 'jpeg', 'png', 'gif', 'bmp'])) {
+            $attachType = 1;
+
+        } else if (in_array($upload->extension, ['mp4', 'avi'])) {
+            $attachType = 2;
+
+        } else {
+            $attachType = 3;
+        }
+        $this->data = [
+            'user_id' => $request->getAttribute('uid'),
+            'attach_url' => $pathList['path'],
+            'attach_type' => $attachType,
+            'attach_minetype' => $upload->mineType,
+            'attach_extension' => $upload->extension,
+            'attach_size' => $upload->fileInfo['size'],
+            'status' => 1,
+            'created_at' => time(),
+            'updated_at' => time()
+        ];
+        parent::store($request);
+        return $pathList;
     }
 
     /**
