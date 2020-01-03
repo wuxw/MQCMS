@@ -149,6 +149,21 @@ class PluginCommand extends HyperfCommand
             $zipFile->close();
             Common::delDirFile($pluginTempPath);
             $this->line('plugin ' . $name . ' installed successfully! ', 'info');
+            $this->line('restart hot reload server ...', 'info');
+
+            if (!function_exists('system')) {
+                throw new ZipException('请在php.ini配置中取消禁用system方法');
+            }
+            define('PHP', @system('which php'));
+            if (!file_exists(PHP) || !is_executable(PHP)) {
+                throw new ZipException('PHP bin (" ' . PHP . ' ") 路径没有找到或无法执行，请确认路径正确?' . PHP_EOL);
+            }
+            $hotStatus = $this->input->getOption('hot');
+            if ($hotStatus['hot'] !== '0') {
+                echo @system(PHP . ' ' . BASE_PATH . '/watch');
+            } else {
+                echo @system(PHP . ' ' . BASE_PATH . '/bin/hyperf.php start');
+            }
 
         } catch (ZipException $e) {
             $this->line($e->getMessage(), 'error');
@@ -159,7 +174,7 @@ class PluginCommand extends HyperfCommand
     {
         return [
             ['action', InputArgument::REQUIRED, 'The operations for installing plugin e.g. up, down or create'],
-            ['name', InputArgument::REQUIRED, 'The name of the plugin']
+            ['name', InputArgument::REQUIRED, 'The name of the plugin'],
         ];
     }
 
@@ -167,7 +182,8 @@ class PluginCommand extends HyperfCommand
     {
         return [
             ['cnamespace', 'CN', InputOption::VALUE_OPTIONAL, 'The controller namespace for class.', $this->getDefaultNamespace('controllerNamespace')],
-            ['snamespace', 'SN', InputOption::VALUE_OPTIONAL, 'The service namespace for class.', $this->getDefaultNamespace('serviceNamespace')]
+            ['snamespace', 'SN', InputOption::VALUE_OPTIONAL, 'The service namespace for class.', $this->getDefaultNamespace('serviceNamespace')],
+            ['hot', 'H', InputOption::VALUE_OPTIONAL, 'service hot reload type.', '0']
         ];
     }
 
