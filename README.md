@@ -121,7 +121,7 @@ php bin/hyperf.php mq:controller -N App\\Controller\\Api\\V1 FooController FooSe
 
 3、安装plugin
 
-本项目支持安装开发的插件分为前后端，插件路由建议使用依赖注入方式实现，目录结构查看upload/plugins/demo.zip文件
+本项目支持安装开发的插件分为前后端，插件后台路由建议使用依赖注入方式实现，目录结构查看upload/plugins/demo.zip文件
 ```
 demo                             // 插件名称（一般为用户名）
 ├─ service                       // command命令
