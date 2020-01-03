@@ -101,14 +101,15 @@ class Upload
         if ($this->fileInfo['size'] > $this->limitSize) {
             throw new BusinessException(ErrorCode::UNAUTHORIZED, '文件上传大小不能超过10M');
         }
-
-        $fileUrl = $filePath . Common::generateUniqid() . '.' . $this->extension;
+        $fileName = Common::generateUniqid();
+        $fileUrl = $filePath . $fileName . '.' . $this->extension;
         $request->file($this->name)->moveTo(BASE_PATH . DIRECTORY_SEPARATOR . $fileUrl);
 
         if (!$request->file($this->name)->isMoved()) {
             throw new BusinessException(ErrorCode::UNAUTHORIZED, '文件上传失败');
         }
         return [
+            'name' => $fileName,
             'fullpath' => $fileUrl,
             'path' => $fileUrl
         ];
