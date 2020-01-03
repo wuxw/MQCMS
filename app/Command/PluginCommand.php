@@ -159,7 +159,7 @@ class PluginCommand extends HyperfCommand
                 throw new ZipException('PHP bin (" ' . PHP . ' ") 路径没有找到或无法执行，请确认路径正确?' . PHP_EOL);
             }
             $hotStatus = $this->input->getOption('hot');
-            if ($hotStatus['hot'] !== '0') {
+            if ($hotStatus !== '0') {
                 echo @system(PHP . ' ' . BASE_PATH . '/watch');
             } else {
                 echo @system(PHP . ' ' . BASE_PATH . '/bin/hyperf.php start');
