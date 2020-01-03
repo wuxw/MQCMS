@@ -146,8 +146,8 @@ php bin/hyperf.php mq:plugin up demo
 # up：代表安装操作 demo：代表插件打包名称
 
 # 创建其他命名空间的plugin
-php bin/hyperf.php mq:plugin -CN App\\Controller\\Admin\\Plugins -SN App\\Service\\Plugins up demo
-# CN：controller namespace  SN：service namespace
+php bin/hyperf.php mq:plugin -CN App\\Controller\\Admin\\Plugins -SN App\\Service\\Plugins up demo [-H(--hot)]
+# CN：controller namespace  SN：service namespace  -H：为热更新参数
 
 运行如下：
 start install plugin demo ...
@@ -162,7 +162,6 @@ start install plugin demo ...
  ---------------- ----------------------------------------------------
 plugin demo installed successfully!
 
-手动执行：php bin/hyperf.php start
 
 # 访问地址
 http://127.0.0.1:9501/admin/plugins/demo/index/index
