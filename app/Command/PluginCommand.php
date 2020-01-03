@@ -99,9 +99,8 @@ class PluginCommand extends HyperfCommand
         // 获取压缩包根据name
         try {
             $this->line("start install plugin {$name} ...", 'info');
-            $basePath = dirname(__DIR__) . DIRECTORY_SEPARATOR . '../';
-            $pluginTempPath = $basePath . 'upload' . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . $name;
-            $migrationsPath = $basePath . 'migrations';
+            $pluginTempPath = BASE_PATH . DIRECTORY_SEPARATOR . 'upload' . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . $name;
+            $migrationsPath = BASE_PATH . DIRECTORY_SEPARATOR . 'migrations';
 
             $zipFile = new ZipFile();
             $zipFile->openFile($pluginTempPath . '.zip');
