@@ -63,14 +63,13 @@ class Upload
         if (!$request->hasFile($this->name)) {
             return false;
         }
-        $basePath = dirname(__DIR__) . '/../';
         $filePath = $this->uploadPath . DIRECTORY_SEPARATOR . date('Y') . DIRECTORY_SEPARATOR . date('m') . DIRECTORY_SEPARATOR . date('d') . DIRECTORY_SEPARATOR;
-        $res = Common::mkDir($basePath . $filePath);
+        $res = Common::mkDir(BASE_PATH . DIRECTORY_SEPARATOR . $filePath);
         if (!$res) {
             return false;
         }
         $fileUrl = $filePath . Common::generateUniqid() . '.' . $request->file($this->name)->getExtension();
-        $request->file($this->name)->moveTo($basePath . $fileUrl);
+        $request->file($this->name)->moveTo(BASE_PATH . DIRECTORY_SEPARATOR . $fileUrl);
 
         if (!$request->file($this->name)->isMoved()) {
             return false;
