@@ -36,8 +36,8 @@ return [
         'open_http2_protocol' => true,
         'max_request' => 100000,
         'socket_buffer_size' => 2 * 1024 * 1024,
-        'task_worker_num' => env('TASK_WORKER_NUM', 4),
-        'task_enable_coroutine' => false,
+        // 'task_worker_num' => env('TASK_WORKER_NUM', 4),
+        // 'task_enable_coroutine' => false,
     ],
     'callbacks' => [
         SwooleEvent::ON_BEFORE_START => [Hyperf\Framework\Bootstrap\ServerStartCallback::class, 'beforeStart'],
