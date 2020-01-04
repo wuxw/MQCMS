@@ -152,13 +152,13 @@ php bin/hyperf.php mq:plugin -CN App\\Controller\\Admin\\Plugins -SN App\\Servic
 运行如下：
 start install plugin demo ...
  ---------------- ----------------------------------------------------
-  插件临时路径     /hyperf-skeleton/upload/plugins/demo
+  插件临时路径     /mqcms/upload/plugins/demo
  ---------------- ----------------------------------------------------
-  控制器路径       /hyperf-skeleton/app/Controller/Admin/Plugins/Demo
+  控制器路径       /mqcms/app/Controller/Admin/Plugins/Demo
  ---------------- ----------------------------------------------------
-  服务层路径       /hyperf-skeleton/app/Service/Plugins/Demo
+  服务层路径       /mqcms/app/Service/Plugins/Demo
  ---------------- ----------------------------------------------------
-  数据库迁移路径   /hyperf-skeleton/migrations
+  数据库迁移路径   /mqcms/migrations
  ---------------- ----------------------------------------------------
 plugin demo installed successfully!
 
