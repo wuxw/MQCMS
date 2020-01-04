@@ -8,7 +8,7 @@ MQCMS中的MQ取麻雀拼音首字母。寓意麻雀虽小五脏俱全。
 本项目基于hyperf框架开发的应用，感谢hyperf的作者提供了这么优秀的框架
 
 ### 开发文档
-文档正在在路上...
+文档正在路上...
 
 前端项目仓库：
 https://github.com/MQEnergy/MQCMS-admin
