@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 use Hyperf\HttpServer\Router\Router;
 
+Router::addRoute(['GET', 'POST', 'HEAD'], '/', 'App\Controller\Api\V1\IndexController@index');
+
 // api接口
 Router::addGroup('/api/', function () {
     require_once './config/routes/api.php';
