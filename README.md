@@ -14,8 +14,7 @@ MQCMS中的MQ取麻雀拼音首字母。寓意麻雀虽小五脏俱全。
 https://github.com/MQEnergy/MQCMS-admin
 
 demo访问：
-http://47.100.160.102/mqcms  
-demo/123456
+https://url.cn/5MQFZ3U（账号密码：demo/123456）
 
 ### 应用截图
 #### 1、登录页面
