@@ -78,12 +78,16 @@ docker exec -it mqserver /bin/sh
 cd mqcms
 php bin/composer.phar install
 cp .env.example .env
-php bin/hyperf.php start
+php bin/hyperf.php start 或者 php watch (热更新)
 ```
 
 ##### 浏览器访问项目
 ```
 http://127.0.0.1:9501
+{
+    "method": "GET",
+    "message": "Hello MQCMS"
+}
 ```
 
 ### 扩展功能
