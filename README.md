@@ -121,7 +121,7 @@ php bin/hyperf.php mq:controller -N App\\Controller\\Api\\V1 FooController FooSe
 
 3、安装plugin
 
-本项目支持安装开发的插件分为前后端，插件路由建议使用依赖注入方式实现，目录结构查看upload/plugins/demo.zip文件
+本项目支持安装开发的插件分为前后端，插件后台路由建议使用依赖注入方式实现，目录结构查看upload/plugins/demo.zip文件
 ```
 demo                             // 插件名称（一般为用户名）
 ├─ service                       // command命令
@@ -146,8 +146,8 @@ php bin/hyperf.php mq:plugin up demo
 # up：代表安装操作 demo：代表插件打包名称
 
 # 创建其他命名空间的plugin
-php bin/hyperf.php mq:plugin -CN App\\Controller\\Admin\\Plugins -SN App\\Service\\Plugins up demo
-# CN：controller namespace  SN：service namespace
+php bin/hyperf.php mq:plugin -CN App\\Controller\\Admin\\Plugins -SN App\\Service\\Plugins up demo [-H(--hot)]
+# CN：controller namespace  SN：service namespace  -H：为热更新参数
 
 运行如下：
 start install plugin demo ...
@@ -162,7 +162,6 @@ start install plugin demo ...
  ---------------- ----------------------------------------------------
 plugin demo installed successfully!
 
-手动执行：php bin/hyperf.php start
 
 # 访问地址
 http://127.0.0.1:9501/admin/plugins/demo/index/index

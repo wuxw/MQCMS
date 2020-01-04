@@ -34,7 +34,8 @@ class AttachmentController extends BaseController
     {
         $this->validateParam($request, [
             'id' => 'required',
-            'content' => 'required',
+            'name' => 'required',
+            'attach_url' => 'required',
             'status' => 'required',
         ]);
         return $this->service->update($request);
