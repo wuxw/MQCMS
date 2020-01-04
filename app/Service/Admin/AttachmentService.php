@@ -83,6 +83,14 @@ class AttachmentService extends BaseService
      */
     public function update(RequestInterface $request)
     {
+        $id = $request->input('id');
+        $this->data = [
+            'attach_name' => $request->input('attach_name'),
+            'attach_url' => $request->input('attach_url'),
+            'status' => $request->input('status', 1),
+            'updated_at' => time(),
+        ];
+        $this->condition = ['id' => $id];
         return parent::update($request);
     }
 
@@ -92,6 +100,7 @@ class AttachmentService extends BaseService
      */
     public function delete(RequestInterface $request)
     {
+        $this->condition = ['id' => $request->input('id')];
         return parent::delete($request);
     }
 }
