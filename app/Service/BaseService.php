@@ -119,8 +119,8 @@ class BaseService
         try {
             $page = $request->input('page', 1);
             $limit = $request->input('limit', 10);
-            $page = $page < 1 ? 1 : $page;
-            $limit = $limit > 100 ? 100 : $limit;
+            $page < 1 && $page = 1;
+            $limit > 100 && $limit = 100;
 
             $pagination = $this->getListByPage((int) $page, (int) $limit);
 

@@ -19,7 +19,7 @@ Router::addGroup('/api/', function () {
     require_once './config/routes/api.php';
 
     Router::addGroup('plugins/', function () {
-        requireDirScript(dirname(__DIR__) . '/config/routes/plugins', 'api');
+        require_dir_script(dirname(__DIR__) . '/config/routes/plugins', 'api');
     });
 });
 
@@ -30,6 +30,6 @@ Router::addGroup('/admin/', function () {
     require_once './config/routes/admin.php';
 
     Router::addGroup('plugins/', function () {
-        requireDirScript(dirname(__DIR__) . '/config/routes/plugins', 'admin');
+        require_dir_script(dirname(__DIR__) . '/config/routes/plugins', 'admin');
     });
 });

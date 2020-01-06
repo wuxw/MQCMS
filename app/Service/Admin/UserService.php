@@ -85,7 +85,7 @@ class UserService extends BaseService
             'uuid' => Common::generateSnowId(),
             'user_name' => $userName,
             'real_name' => $realName,
-            'nick_name' => $userName . generateRandomString(6),
+            'nick_name' => $userName . generate_random_string(6),
             'phone' => $phone,
             'avatar' => '',
             'password' => Common::generatePasswordHash($phone, $salt),
@@ -132,7 +132,7 @@ class UserService extends BaseService
         $this->data = [
             'user_name' => $userName,
             'real_name' => $realName,
-            'nick_name' => $userName . generateRandomString(6),
+            'nick_name' => $userName . generate_random_string(6),
             'phone' => $phone,
             'status' => $status,
             'updated_at' => time(),

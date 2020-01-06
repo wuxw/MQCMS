@@ -61,7 +61,7 @@ class AuthService extends BaseService
             'uuid' => $uuid,
             'user_name' => $userName,
             'real_name' => '',
-            'nick_name' => $userName . generateRandomString(6),
+            'nick_name' => $userName . generate_random_string(6),
             'phone' => '',
             'avatar' => '',
             'password' => Common::generatePasswordHash($password, $salt),
@@ -88,7 +88,7 @@ class AuthService extends BaseService
 
         } catch (\Exception $e) {
             Db::rollBack();
-            throw new BusinessException((int)$e->getCode(), '注册失败');
+            throw new BusinessException((int)$e->getCode(), $e->getMessage());
         }
     }
 
@@ -160,7 +160,7 @@ class AuthService extends BaseService
                 if ($userInfo) {
                     // 更新用户
                     $this->data = [
-                        'user_name' => $nickName . generateRandomString(6),
+                        'user_name' => $nickName . generate_random_string(6),
                         'nick_name' => $nickName,
                         'avatar' => $avatarUrl,
                         'login_time' => time(),
@@ -179,7 +179,7 @@ class AuthService extends BaseService
                         'uuid' => $uuid,
                         'user_name' => $nickName,
                         'real_name' => '',
-                        'nick_name' => $nickName . generateRandomString(6),
+                        'nick_name' => $nickName . generate_random_string(6),
                         'phone' => '',
                         'avatar' => '',
                         'password' => '',

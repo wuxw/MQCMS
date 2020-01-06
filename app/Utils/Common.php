@@ -211,6 +211,6 @@ class Common
      */
     public static function generateUniqid()
     {
-        return md5(uniqid((string) randFloat(), true));
+        return md5(uniqid((string) rand_float(), true));
     }
 }

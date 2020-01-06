@@ -182,8 +182,8 @@ class UserService extends BaseService
             $type = $request->input('type', 1);
             $page = $request->input('page', 1);
             $limit = $request->input('limit', 10);
-            $page = $page < 1 ? 1 : $page;
-            $limit = $limit > 100 ? 100 : $limit;
+            $page < 1 && $page = 1;
+            $limit > 100 && $limit = 100;
 
             $this->postService->condition = [
                 ['status', '=', 1],
@@ -247,8 +247,8 @@ class UserService extends BaseService
         try {
             $page = $request->input('page', 1);
             $limit = $request->input('limit', 10);
-            $page = $page < 1 ? 1 : $page;
-            $limit = $limit > 100 ? 100 : $limit;
+            $page < 1 && $page = 1;
+            $limit > 100 && $limit = 100;
             $uid = $request->getAttribute('uid');
 
             $this->userFollowService->condition = ['user_id' => $uid];
@@ -278,8 +278,8 @@ class UserService extends BaseService
         try {
             $page = $request->input('page', 1);
             $limit = $request->input('limit', 10);
-            $page = $page < 1 ? 1 : $page;
-            $limit = $limit > 100 ? 100 : $limit;
+            $page < 1 && $page = 1;
+            $limit > 100 && $limit = 100;
             $uid = $request->getAttribute('uid');
 
             $this->userTagService->condition = ['user_id' => $uid];

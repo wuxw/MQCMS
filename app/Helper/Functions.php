@@ -6,8 +6,8 @@
 /**
  * 随机字符串
  */
-if (!function_exists('generateRandomString')) {
-    function generateRandomString($length = 10) {
+if (!function_exists('generate_random_string')) {
+    function generate_random_string($length = 10) {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $randomString = '';
         for ($i = 0; $i < $length; $i++) {
@@ -20,8 +20,8 @@ if (!function_exists('generateRandomString')) {
 /**
  * Generate random decimals
  */
-if (!function_exists('randFloat')) {
-    function randFloat($min = 0, $max = 1) {
+if (!function_exists('rand_float')) {
+    function rand_float($min = 0, $max = 1) {
         return $min + mt_rand() / mt_getrandmax() * ($max - $min);
     }
 }
@@ -29,8 +29,8 @@ if (!function_exists('randFloat')) {
 /**
  * 调用文件夹所有的php文件
  */
-if (!function_exists('requireDirScript')) {
-    function requireDirScript($dir, $filename='') {
+if (!function_exists('require_dir_script')) {
+    function require_dir_script($dir, $filename='') {
         if (is_dir($dir)) {
             $handler = opendir($dir);
             //遍历脚本文件夹下的所有文件
@@ -44,7 +44,7 @@ if (!function_exists('requireDirScript')) {
                             require_once($fullpath);
                         }
                     } else {
-                        requireDirScript($fullpath);
+                        require_dir_script($fullpath);
                     }
                 }
             }
@@ -57,14 +57,14 @@ if (!function_exists('requireDirScript')) {
 /**
  * copy
  */
-if (!function_exists('recurseCopy')) {
-    function recurseCopy($src, $dst) {
+if (!function_exists('recurse_copy')) {
+    function recurse_copy($src, $dst) {
         $dir = opendir($src);
         @mkdir($dst);
         while(false !== ($file = readdir($dir))) {
             if ($file != '.' && $file != '..') {
                 if (is_dir($src . '/' . $file)) {
-                    recurseCopy($src . '/' . $file,$dst . '/' . $file);
+                    recurse_copy($src . '/' . $file,$dst . '/' . $file);
                 }
                 else {
                     copy($src . '/' . $file,$dst . '/' . $file);

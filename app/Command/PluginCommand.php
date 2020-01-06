@@ -136,13 +136,13 @@ class PluginCommand extends HyperfCommand
             $childPathList = Common::getChildPath($pluginTempPath);
             foreach ($childPathList as $key => $value) {
                 if (strtolower($value) === 'controller') {
-                    recurseCopy($pluginTempPath . DIRECTORY_SEPARATOR . $value, $installControllerPath);
+                    recurse_copy($pluginTempPath . DIRECTORY_SEPARATOR . $value, $installControllerPath);
                 }
                 if (strtolower($value) === 'service') {
-                    recurseCopy($pluginTempPath . DIRECTORY_SEPARATOR . $value, $installServicePath);
+                    recurse_copy($pluginTempPath . DIRECTORY_SEPARATOR . $value, $installServicePath);
                 }
                 if (strtolower($value) === 'migrations') {
-                    recurseCopy($pluginTempPath . DIRECTORY_SEPARATOR . $value, $migrationsPath);
+                    recurse_copy($pluginTempPath . DIRECTORY_SEPARATOR . $value, $migrationsPath);
                 }
             }
 
