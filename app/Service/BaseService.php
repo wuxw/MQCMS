@@ -349,8 +349,8 @@ class BaseService
                 }
             });
         }
-        if (!empty($timeForm)) {
-            $searchKeys = array_intersect(array_keys($timeForm), $tableAttributes);
+        $searchKeys = array_intersect(array_keys($timeForm), $tableAttributes);
+        if (!empty($searchKeys)) {
             array_walk($searchKeys, function ($item) use (&$condition, $timeForm) {
                 if (isset($timeForm[$item]) && ($timeForm[$item] || !empty($timeForm[$item]))) {
                     if (!$this->table || $this->table instanceof Model) {
