@@ -104,7 +104,7 @@ class TagService extends BaseService
     public function store(RequestInterface $request)
     {
         $this->data = [
-            'tag_name' => $request->input('tag_name'),
+            'tag_name' => trim($request->input('tag_name')),
             'is_hot' => 0,
             'status' => 1,
             'first_create_user_id' => $request->getAttribute('uid'),

@@ -329,8 +329,9 @@ class BaseService
      */
     public function multiSingleTableSearchCondition($searchForm)
     {
-        $type = $searchForm ? $searchForm['type'] : '';
-        $keyword = $searchForm ? $searchForm['keyword'] : '';
+        $type = $searchForm && isset($searchForm['type']) ? trim($searchForm['type']) : '';
+        $keyword = $searchForm && isset($searchForm['keyword']) ? trim($searchForm['keyword']) : '';
+        $timeForm = $searchForm && isset($searchForm['time']) ? $searchForm['time'] : [];
         $condition = [];
         $tableAttributes = $this->table->getFillable();
         if ($keyword && in_array($type, $tableAttributes)) {
@@ -343,7 +344,24 @@ class BaseService
             array_walk($searchKeys, function ($item) use (&$condition, $searchForm) {
                 if (isset($searchForm[$item]) && $searchForm[$item] !== '') {
                     if (!$this->table || $this->table instanceof Model) {
-                        array_push($condition, [$this->table->getTable() . '.' . $item, '=', $searchForm[$item]]);
+                        array_push($condition, [$this->table->getTable() . '.' . $item, '=', trim($searchForm[$item])]);
+                    }
+                }
+            });
+        }
+        if (!empty($timeForm)) {
+            $searchKeys = array_intersect(array_keys($timeForm), $tableAttributes);
+            array_walk($searchKeys, function ($item) use (&$condition, $timeForm) {
+                if (isset($timeForm[$item]) && ($timeForm[$item] || !empty($timeForm[$item]))) {
+                    if (!$this->table || $this->table instanceof Model) {
+                        if (is_array($timeForm[$item]) && count($timeForm[$item]) === 2) {
+                            if ($timeForm[$item][0] !== '' && $timeForm[$item][1] !== '') {
+                                array_push($condition, [$this->table->getTable() . '.' . $item, '>=', strtotime($timeForm[$item][0])]);
+                                array_push($condition, [$this->table->getTable() . '.' . $item, '<=', strtotime($timeForm[$item][1])]);
+                            }
+                        } else {
+                            array_push($condition, [$this->table->getTable() . '.' . $item, '>=', strtotime($timeForm[$item])]);
+                        }
                     }
                 }
             });

@@ -50,7 +50,7 @@ class PostService extends BaseService
     public function index(RequestInterface $request)
     {
         // 类型： recommend: 推荐 default: 默认
-        $type = $request->input('type', 'default');
+        $type = trim($request->input('type', 'default'));
 
         $this->condition = [
             ['status', '=', 1],
@@ -78,22 +78,22 @@ class PostService extends BaseService
     {
         $relationTagIds = explode(',', $request->input('relation_tag_ids', ''));
         $uid = $request->getAttribute('uid', 0);
-        $isPublish = $request->input('is_publish', 1);
+        $isPublish = trim($request->input('is_publish', 1));
         $this->data = [
-            'user_id' => $uid,
-            'post_content' => $request->input('post_content'),
-            'link_url' => $request->input('link_url', ''),
-            'label_type' => $request->input('label_type', 1),
-            'is_good' => $request->has('link_url') ? 1 : 0,
-            'relation_tags' => $request->input('relation_tags', ''),
-            'address' => $request->input('address', ''),
-            'addr_lat' => $request->input('addr_lat', ''),
-            'addr_lng' => $request->input('addr_lng', ''),
-            'attach_urls' => $request->input('attach_urls', ''),
-            'attach_ids' => $request->input('attach_ids', ''),
-            'is_publish' => $isPublish,
-            'created_at' => time(),
-            'updated_at' => time(),
+            'user_id'       => $uid,
+            'post_content'  => trim($request->input('post_content')),
+            'link_url'      => trim($request->input('link_url', '')),
+            'label_type'    => trim($request->input('label_type', 1)),
+            'is_good'       => $request->has('link_url') ? 1 : 0,
+            'relation_tags' => trim($request->input('relation_tags', '')),
+            'address'       => trim($request->input('address', '')),
+            'addr_lat'      => trim($request->input('addr_lat', '')),
+            'addr_lng'      => trim($request->input('addr_lng', '')),
+            'attach_urls'   => trim($request->input('attach_urls', '')),
+            'attach_ids'    => trim($request->input('attach_ids', '')),
+            'is_publish'    => $isPublish,
+            'created_at'    => time(),
+            'updated_at'    => time(),
         ];
         Db::beginTransaction();
         try {
@@ -102,6 +102,7 @@ class PostService extends BaseService
             // 存储tag
             if ($request->has('relation_tag_ids') && $request->has('relation_tags')) {
                 foreach ($relationTagIds as $value) {
+                    // todo
                     $this->tagPostRelationService->data = [
                         'user_id' => $uid,
                         'tag_id' => $value,

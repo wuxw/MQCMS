@@ -40,8 +40,8 @@ class AuthService extends BaseService
      */
     public function register(RequestInterface $request)
     {
-        $userName = $request->input('user_name');
-        $password = $request->input('password');
+        $userName = trim($request->input('user_name'));
+        $password = trim($request->input('password'));
         $ip = $request->getServerParams()['remote_addr'];
 
         $this->select = ['id', 'status', 'avatar'];
@@ -99,8 +99,8 @@ class AuthService extends BaseService
      */
     public function login(RequestInterface $request)
     {
-        $userName = $request->input('user_name');
-        $password = $request->input('password');
+        $userName = trim($request->input('user_name'));
+        $password = trim($request->input('password'));
 
         $this->select = ['id', 'uuid', 'salt', 'password'];
         $this->condition = ['status' => 1, 'user_name' => $userName];
