@@ -30,16 +30,11 @@ class PostService extends BaseService
      */
     public function index(RequestInterface $request)
     {
-        $type = $request->input('type', 'default');
         $tableName = $this->table->getTable();
         $userTableName = $this->userService->table->getTable();
         $this->condition = [
             [$tableName . '.status', '=', 1]
         ];
-
-        if ($type === 'hot') {
-            $this->condition[] = [$tableName . '.is_hot', '=', 1];
-        }
         $this->joinTables = [
             $userTableName => [$tableName . '.user_id', '=', $userTableName . '.id']
         ];
@@ -50,6 +45,12 @@ class PostService extends BaseService
             $tableName => ['*'],
             $userTableName => ['id', 'uuid', 'user_name']
         ];
+
+        // 搜索
+        if ($request->has('search')) {
+            $searchForm = $request->input('search');
+            $this->condition[] = $this->multiSingleTableSearchCondition($searchForm);
+        }
         return parent::index($request);
     }
 
