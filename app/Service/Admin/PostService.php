@@ -75,7 +75,7 @@ class PostService extends BaseService
             throw new BusinessException(ErrorCode::BAD_REQUEST, '用户不存在');
         }
         $data = [
-            'tag_name' => $request->input('tag_name'),
+            'tag_name' => trim($request->input('tag_name')),
             'is_hot' => $request->input('is_hot', 0),
             'status' => $request->input('status', 0),
             'first_create_user_id' => $request->getAttribute('uid'),
@@ -102,7 +102,7 @@ class PostService extends BaseService
     {
         $id = $request->input('id');
         $data = [
-            'tag_name' => $request->input('tag_name'),
+            'tag_name' => trim($request->input('tag_name')),
             'is_hot' => $request->input('is_hot', 0),
             'status' => $request->input('status', 0),
             'tag_type' => 1,
