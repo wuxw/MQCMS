@@ -16,7 +16,7 @@ class CreatePostTable extends Migration
         if (!Schema::hasTable('post')) {
             Schema::create('post', function (Blueprint $table) {
                 $table->bigIncrements('id');
-                $table->unsignedInteger('user_id')->nullable(false)->comment('发布者id');
+                $table->unsignedBigInteger('user_id')->nullable(false)->comment('发布者id');
                 $table->string('post_content', 200)->nullable(false)->default('')->comment('内容');
                 $table->string('link_url', 200)->nullable(false)->default('')->comment('发布内容绑定的url');
                 $table->unsignedTinyInteger('label_type')->nullable(false)->default(0)->comment('资源类型 1：单图，2：视频，3：多类别（视频，图片）');

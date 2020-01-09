@@ -16,7 +16,7 @@ class CreateUserInfoTable extends Migration
         if (!Schema::hasTable('user_info')) {
             Schema::create('user_info', function (Blueprint $table) {
                 $table->bigIncrements('id');
-                $table->unsignedInteger('user_id')->nullable(false)->comment('用户id');
+                $table->unsignedBigInteger('user_id')->nullable(false)->comment('用户id');
                 $table->string('intro', '200')->nullable()->default('')->comment('简介');
                 $table->unsignedInteger('like_num')->nullable(false)->default(0)->comment('获赞数');
                 $table->unsignedInteger('follow_num')->nullable(false)->default(0)->comment('关注数');

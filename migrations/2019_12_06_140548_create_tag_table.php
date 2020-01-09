@@ -16,7 +16,7 @@ class CreateTagTable extends Migration
         if (!Schema::hasTable('tag')) {
             Schema::create('tag', function (Blueprint $table) {
                 $table->bigIncrements('id');
-                $table->unsignedInteger('first_create_user_id')->nullable(false)->comment('第一个创建的人的用户id');
+                $table->unsignedBigInteger('first_create_user_id')->nullable(false)->comment('第一个创建的人的用户id');
                 $table->string('tag_name', 64)->nullable(false)->comment('标签名称');
                 $table->string('tag_title', 64)->nullable(false)->comment('标签标题（seo）');
                 $table->string('tag_desc', 128)->nullable(false)->comment('标签描述（seo）');

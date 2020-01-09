@@ -16,7 +16,7 @@ class CreateUserAuthTable extends Migration
         if (!Schema::hasTable('user_auth')) {
             Schema::create('user_auth', function (Blueprint $table) {
                 $table->bigIncrements('id');
-                $table->unsignedInteger('user_id')->nullable(false)->comment('用户id');
+                $table->unsignedBigInteger('user_id')->nullable(false)->comment('用户id');
                 $table->string('oauth_id', 64)->nullable(false)->default('')->comment('第三方 uid 、openid 等');
                 $table->string('union_id', 64)->nullable(false)->default('')->comment('QQ / 微信同一主体下 Unionid 相同');
                 $table->string('auth_type', 16)->nullable(false)->default('')->comment('登录类型 email phone weibo username weixin...');

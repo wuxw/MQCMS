@@ -16,8 +16,8 @@ class CreateUserFavoriteTable extends Migration
         if (!Schema::hasTable('user_favorite')) {
             Schema::create('user_favorite', function (Blueprint $table) {
                 $table->bigIncrements('id');
-                $table->unsignedInteger('user_id')->nullable(false)->comment('用户id');
-                $table->unsignedInteger('post_id')->nullable(false)->comment('帖子id');
+                $table->unsignedBigInteger('user_id')->nullable(false)->comment('用户id');
+                $table->unsignedBigInteger('post_id')->nullable(false)->comment('帖子id');
                 $table->unsignedBigInteger('created_at')->nullable();
                 $table->unsignedBigInteger('updated_at')->nullable();
             });

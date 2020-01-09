@@ -16,6 +16,7 @@ class CreateUserApplicationTable extends Migration
         if (!Schema::hasTable('user_application')) {
             Schema::create('user_application', function (Blueprint $table) {
                 $table->bigIncrements('id');
+                $table->unsignedInteger('user_id')->nullable(false)->comment('用户id');
                 $table->string('app_name', 64)->nullable(false)->comment('应用名称');
                 $table->string('app_package_name', 64)->nullable(false)->comment('应用包名');
                 $table->string('app_package_path', 128)->nullable(false)->comment('应用包安装路径');

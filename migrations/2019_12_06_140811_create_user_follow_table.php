@@ -16,8 +16,8 @@ class CreateUserFollowTable extends Migration
         if (!Schema::hasTable('user_follow')) {
             Schema::create('user_follow', function (Blueprint $table) {
                 $table->bigIncrements('id');
-                $table->unsignedInteger('user_id')->nullable(false)->comment('用户id');
-                $table->unsignedInteger('be_user_id')->nullable(false)->comment('被关注者用户id');
+                $table->unsignedBigInteger('user_id')->nullable(false)->comment('用户id');
+                $table->unsignedBigInteger('be_user_id')->nullable(false)->comment('被关注者用户id');
                 $table->unsignedBigInteger('created_at')->nullable();
                 $table->unsignedBigInteger('updated_at')->nullable();
             });
