@@ -33,9 +33,8 @@ class PostController extends BaseController
     public function store(RequestInterface $request)
     {
         $this->validateParam($request, [
-            'tag_name' => 'required',
-            'is_hot' => 'required|integer',
-            'status' => 'required',
+            'post_content' => 'required',
+            'link_url' => 'required',
         ]);
         return $this->service->store($request);
     }
@@ -49,8 +48,8 @@ class PostController extends BaseController
     {
         $this->validateParam($request, [
             'id' => 'required',
-            'content' => 'required',
-            'status' => 'required',
+            'post_content' => 'required',
+            'link_url' => 'required',
         ]);
         return $this->service->update($request);
     }

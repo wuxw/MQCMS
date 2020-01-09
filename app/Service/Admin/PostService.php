@@ -60,8 +60,7 @@ class PostService extends BaseService
      */
     public function show(RequestInterface $request)
     {
-        $id = $request->input('id');
-        $this->condition = ['id' => $id];
+        $this->condition = ['id' => $request->input('id')];
         return parent::show($request);
     }
 
@@ -71,25 +70,26 @@ class PostService extends BaseService
      */
     public function store(RequestInterface $request)
     {
-        if (!$request->getAttribute('uid')) {
-            throw new BusinessException(ErrorCode::BAD_REQUEST, '用户不存在');
-        }
         $data = [
-            'tag_name' => trim($request->input('tag_name')),
-            'is_hot' => $request->input('is_hot', 0),
-            'status' => $request->input('status', 0),
-            'first_create_user_id' => $request->getAttribute('uid'),
-            'tag_type' => 1,
-            'created_at' => time(),
-            'updated_at' => time(),
+            'user_id'           => $request->getAttribute('uid'),
+            'post_content'      => trim($request->input('post_content')),
+            'link_url'          => trim($request->input('link_url')),
+            'label_type'        => $request->input('label_type', 0),
+            'is_good'           => $request->input('is_good', 0),
+            'relation_tags'     => $request->input('relation_tags', ''),
+            'address'           => $request->input('address', ''),
+            'addr_lat'          => $request->input('addr_lat', ''),
+            'addr_lng'          => $request->input('addr_lng', ''),
+            'attach_urls'       => $request->input('attach_urls', ''),
+            'is_publish'        => $request->input('is_publish', 0),
+            'status'            => $request->input('status', 0),
+            'is_recommand'      => $request->input('is_recommand', 0),
+            'like_total'        => $request->input('like_total', 0),
+            'favorite_total'    => $request->input('favorite_total', 0),
+            'comment_total'     => $request->input('comment_total', 0),
+            'created_at'        => time(),
+            'updated_at'        => time(),
         ];
-
-        $this->select = ['id'];
-        $this->condition = ['tag_name' => $data['tag_name']];
-        $tagInfo = parent::show($request);
-        if ($tagInfo) {
-            throw new BusinessException(ErrorCode::BAD_REQUEST, '标签名已经存在');
-        }
         $this->data = $data;
         return parent::store($request);
     }
@@ -102,11 +102,23 @@ class PostService extends BaseService
     {
         $id = $request->input('id');
         $data = [
-            'tag_name' => trim($request->input('tag_name')),
-            'is_hot' => $request->input('is_hot', 0),
-            'status' => $request->input('status', 0),
-            'tag_type' => 1,
-            'updated_at' => time(),
+            'user_id'           => $request->getAttribute('uid'),
+            'post_content'      => trim($request->input('post_content')),
+            'link_url'          => trim($request->input('link_url')),
+            'label_type'        => $request->input('label_type', 0),
+            'is_good'           => $request->input('is_good', 0),
+            'relation_tags'     => $request->input('relation_tags', ''),
+            'address'           => $request->input('address', ''),
+            'addr_lat'          => $request->input('addr_lat', ''),
+            'addr_lng'          => $request->input('addr_lng', ''),
+            'attach_urls'       => $request->input('attach_urls', ''),
+            'is_publish'        => $request->input('is_publish', 0),
+            'status'            => $request->input('status', 0),
+            'is_recommand'      => $request->input('is_recommand', 0),
+            'like_total'        => $request->input('like_total', 0),
+            'favorite_total'    => $request->input('favorite_total', 0),
+            'comment_total'     => $request->input('comment_total', 0),
+            'updated_at'        => time(),
         ];
 
         $this->condition = ['id' => $id];
