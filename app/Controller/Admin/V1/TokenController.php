@@ -3,8 +3,10 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin\V1;
 
+use App\Service\Admin\UserService;
 use App\Utils\Common;
 use App\Utils\Redis;
+use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Contract\RequestInterface;
 
@@ -15,6 +17,12 @@ use Hyperf\HttpServer\Contract\RequestInterface;
  */
 class TokenController extends BaseController
 {
+    /**
+     * @Inject()
+     * @var UserService
+     */
+    public $service;
+
     /**
      * 获取token信息
      * @return array|bool|object|string
@@ -54,4 +62,8 @@ class TokenController extends BaseController
         ];
     }
 
+    public function test(RequestInterface $request)
+    {
+        return $this->service->test($request);
+    }
 }

@@ -50,6 +50,12 @@ class BaseService
      * 单表（如果连表查单表数据）：
      * ['*']
      * ['字段', ...]
+     * 关联模型使用以下方式：
+     * [
+     *    关联模型名称1 => ['字段', ....],
+     *    关联模型名称2 => ['字段', ....],
+     * ]
+     * 多变join方式：
      * [
      *    表名 => ['字段', ....],
      * ]
@@ -89,6 +95,14 @@ class BaseService
     public $data = [];
 
     /**
+     * Relations
+     * @var array
+     * 用法：
+     * [relationsName1，relationsName2...]
+     */
+    public $with = [];
+
+    /**
      * BaseService constructor.
      */
     public function __construct()
@@ -107,6 +121,7 @@ class BaseService
         $this->orderBy = 'id desc';
         $this->groupBy = [];
         $this->data = [];
+        $this->with = [];
     }
 
     /**
@@ -259,45 +274,57 @@ class BaseService
         if (!$this->table || !($this->table instanceof Model)) {
             throw new BusinessException(ErrorCode::SERVER_ERROR);
         }
-        $query = Db::table($this->table->getTable());
+        $query = $this->table::query();
 
-        if (is_array($this->joinTables) && !empty($this->joinTables)) {
-            array_walk($this->joinTables, function (&$item) use (&$query) {
-                $key = array_search($item, $this->joinTables);
-                if (count($item) === 3) {
-                    $query = $query->leftJoin($key, $item[0], $item[1], $item[2]);
-                }
-            });
-
-            if (is_array($this->select) && !empty($this->select)) {
-                $arrCount = Common::getArrCountRecursive($this->select);
-                $select = [];
-                if ($arrCount === 1) {
-                    array_walk($this->select, function ($item) use (&$select) {
-                       if (!$this->table || $this->table instanceof Model) {
-                           $select[] = $this->table->getTable() . '.' . $item;
-                       }
-                    });
-                } else {
-                    foreach ($this->select as $key => $value) {
-                        if (is_array($value)) {
-                            array_walk($value, function ($item) use ($key, &$select) {
-                                $select[] = $key . '.' . $item;
-                            });
-                        } else {
-                            $select[] = $key . '.' . $value;
-                        }
+        if (!empty($this->with)) {
+            $baseSelect = $this->select;
+            array_walk($this->with, function ($item) use (&$query, $baseSelect) {
+                $query = $query->with([$item => function ($query) use ($item, $baseSelect) {
+                    if (isset($baseSelect[$item])) {
+                        $query->select($baseSelect[$item]);
                     }
-                    $select = !empty($select) ? $select : $this->select;
-                }
-                $query = $query->select($select);
-            }
+                }]);
+            });
+            print_r($query->toSql());
         } else {
-            $query = $query->select($this->select);
+            if (is_array($this->joinTables) && !empty($this->joinTables)) {
+                array_walk($this->joinTables, function (&$item) use (&$query) {
+                    $key = array_search($item, $this->joinTables);
+                    if (count($item) === 3) {
+                        $query = $query->leftJoin($key, $item[0], $item[1], $item[2]);
+                    }
+                });
+
+                if (is_array($this->select) && !empty($this->select)) {
+                    $arrCount = Common::getArrCountRecursive($this->select);
+                    $select = [];
+                    if ($arrCount === 1) {
+                        array_walk($this->select, function ($item) use (&$select) {
+                            $select[] = $this->table->getTable() . '.' . $item;
+                        });
+                    } else {
+                        foreach ($this->select as $key => $value) {
+                            if (is_array($value)) {
+                                array_walk($value, function ($item) use ($key, &$select) {
+                                    $select[] = $key . '.' . $item;
+                                });
+                            } else {
+                                $select[] = $key . '.' . $value;
+                            }
+                        }
+                        $select = !empty($select) ? $select : $this->select;
+                    }
+                    $query = $query->select($select);
+                }
+            } else {
+                $query = $query->select($this->select);
+            }
         }
+
         if (!empty($this->condition)) {
             $query = $query->where($this->condition);
         }
+
         if (is_array($this->orderBy) && !empty($this->orderBy)) {
             $orderBy = [];
             foreach ($this->orderBy as $key => $value) {
@@ -311,8 +338,7 @@ class BaseService
             $orderBy = !empty($orderBy) ? implode(',', $orderBy) : $this->orderBy;
             $query = $query->orderByRaw($orderBy);
         } else {
-            $orderBy = $this->orderBy;
-            $query = $query->orderByRaw($orderBy);
+            $query = $query->orderByRaw($this->orderBy);
         }
 
         if (!empty($this->groupBy)) {
@@ -329,23 +355,23 @@ class BaseService
      */
     public function multiSingleTableSearchCondition($searchForm)
     {
+        if (!$this->table || !($this->table instanceof Model)) {
+            throw new BusinessException(ErrorCode::SERVER_ERROR);
+        }
         $type = $searchForm && isset($searchForm['type']) ? trim($searchForm['type']) : '';
         $keyword = $searchForm && isset($searchForm['keyword']) ? trim($searchForm['keyword']) : '';
         $timeForm = $searchForm && isset($searchForm['time']) ? $searchForm['time'] : [];
         $condition = [];
         $tableAttributes = $this->table->getFillable();
+
         if ($keyword && in_array($type, $tableAttributes)) {
-            if (!$this->table || $this->table instanceof Model) {
-                $condition[] = [$this->table->getTable() . '.' . $type, 'like', "%{$keyword}%"];
-            }
+            $condition[] = [$this->table->getTable() . '.' . $type, 'like', "%{$keyword}%"];
         }
         $searchKeys = array_intersect(array_keys($searchForm), $tableAttributes);
         if (!empty($searchKeys)) {
             array_walk($searchKeys, function ($item) use (&$condition, $searchForm) {
                 if (isset($searchForm[$item]) && $searchForm[$item] !== '') {
-                    if (!$this->table || $this->table instanceof Model) {
-                        array_push($condition, [$this->table->getTable() . '.' . $item, '=', trim($searchForm[$item])]);
-                    }
+                    array_push($condition, [$this->table->getTable() . '.' . $item, '=', trim($searchForm[$item])]);
                 }
             });
         }
@@ -353,15 +379,13 @@ class BaseService
         if (!empty($searchKeys)) {
             array_walk($searchKeys, function ($item) use (&$condition, $timeForm) {
                 if (isset($timeForm[$item]) && ($timeForm[$item] || !empty($timeForm[$item]))) {
-                    if (!$this->table || $this->table instanceof Model) {
-                        if (is_array($timeForm[$item]) && count($timeForm[$item]) === 2) {
-                            if ($timeForm[$item][0] !== '' && $timeForm[$item][1] !== '') {
-                                array_push($condition, [$this->table->getTable() . '.' . $item, '>=', strtotime($timeForm[$item][0])]);
-                                array_push($condition, [$this->table->getTable() . '.' . $item, '<=', strtotime($timeForm[$item][1])]);
-                            }
-                        } else {
-                            array_push($condition, [$this->table->getTable() . '.' . $item, '>=', strtotime($timeForm[$item])]);
+                    if (is_array($timeForm[$item]) && count($timeForm[$item]) === 2) {
+                        if ($timeForm[$item][0] !== '' && $timeForm[$item][1] !== '') {
+                            array_push($condition, [$this->table->getTable() . '.' . $item, '>=', strtotime($timeForm[$item][0])]);
+                            array_push($condition, [$this->table->getTable() . '.' . $item, '<=', strtotime($timeForm[$item][1])]);
                         }
+                    } else {
+                        array_push($condition, [$this->table->getTable() . '.' . $item, '>=', strtotime($timeForm[$item])]);
                     }
                 }
             });

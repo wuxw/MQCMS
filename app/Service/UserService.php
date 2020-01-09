@@ -5,9 +5,7 @@ namespace App\Service;
 
 use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
-use App\Model\User;
-use App\Utils\Common;
-use Hyperf\DbConnection\Db;
+use App\Model\Entity\User;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
 
@@ -298,4 +296,5 @@ class UserService extends BaseService
             throw new BusinessException((int)$e->getCode(), $e->getMessage());
         }
     }
+
 }
