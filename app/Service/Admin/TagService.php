@@ -27,7 +27,7 @@ class TagService extends BaseService
         // 搜索
         if ($request->has('search')) {
             $searchForm = $request->input('search');
-            $this->condition = $this->multiSingleTableSearchCondition($searchForm);
+            $this->multiSingleTableSearchCondition($searchForm);
         }
         return parent::index($request);
     }

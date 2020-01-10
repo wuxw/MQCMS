@@ -338,7 +338,7 @@ class BaseService
         $type = $searchForm && isset($searchForm['type']) ? trim($searchForm['type']) : '';
         $keyword = $searchForm && isset($searchForm['keyword']) ? trim($searchForm['keyword']) : '';
         $timeForm = $searchForm && isset($searchForm['time']) ? $searchForm['time'] : [];
-        $condition = [];
+        $condition = $this->condition;
         $tableAttributes = $this->table->getFillable();
 
         if ($keyword && in_array($type, $tableAttributes)) {
@@ -366,6 +366,9 @@ class BaseService
                     }
                 }
             });
+        }
+        if (!empty($condition)) {
+            $this->condition = $condition;
         }
         return $condition;
     }
