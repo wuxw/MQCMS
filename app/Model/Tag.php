@@ -19,7 +19,11 @@ namespace App\Model;
  */
 class Tag extends Model
 {
-    public $timestamps = false;
+    /**
+     * @var bool
+     */
+    public $timestamps = true;
+
     /**
      * The table associated with the model.
      *

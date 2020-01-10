@@ -7,7 +7,6 @@ use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
 use App\Model\Model;
 use App\Utils\Common;
-use Hyperf\DbConnection\Db;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Paginator\Paginator;
 
@@ -137,13 +136,7 @@ class BaseService
             $page < 1 && $page = 1;
             $limit > 100 && $limit = 100;
 
-            $pagination = $this->getListByPage((int) $page, (int) $limit);
-
-            foreach ($pagination['data'] as $key => &$value) {
-                $value['created_at'] = $value['created_at'] ? date('Y-m-d H:i:s', $value['created_at']) : '';
-                $value['updated_at'] = $value['updated_at'] ? date('Y-m-d H:i:s', $value['updated_at']) : '';
-            }
-            return $pagination;
+            return $this->getListByPage((int) $page, (int) $limit);
 
         } catch (\Exception $e) {
             throw new BusinessException((int)$e->getCode(), $e->getMessage());
@@ -157,8 +150,7 @@ class BaseService
     public function show(RequestInterface $request)
     {
         try {
-            $data = $this->multiTableJoinQueryBuilder()->first();
-            return (array)$data ?? [];
+            return $this->multiTableJoinQueryBuilder()->first();
 
         } catch (\Exception $e) {
             throw new BusinessException((int)$e->getCode(), $e->getMessage());
@@ -172,8 +164,8 @@ class BaseService
     public function delete(RequestInterface $request)
     {
         try {
-            $res = $this->multiTableJoinQueryBuilder()->delete();
-            return $res;
+            return $this->multiTableJoinQueryBuilder()->delete();
+
         } catch (\Exception $e) {
             throw new BusinessException((int)$e->getCode(), $e->getMessage());
         }
@@ -187,12 +179,8 @@ class BaseService
     public function update(RequestInterface $request)
     {
         try {
-            if (!$this->table || !($this->table instanceof Model)) {
-                throw new BusinessException(ErrorCode::SERVER_ERROR);
-            }
-            $res = Db::table($this->table->getTable())->where($this->condition)->update($this->data);
-            $this->resetAttributes();
-            return $res;
+
+            return $this->multiTableJoinQueryBuilder()->update($this->data);
 
         } catch (\Exception $e) {
             throw new BusinessException((int)$e->getCode(), $e->getMessage());
@@ -206,12 +194,7 @@ class BaseService
     public function store(RequestInterface $request)
     {
         try {
-            if (!$this->table || !($this->table instanceof Model)) {
-                throw new BusinessException(ErrorCode::SERVER_ERROR);
-            }
-            $res = Db::table($this->table->getTable())->insertGetId($this->data);
-            $this->resetAttributes();
-            return $res;
+            return $this->multiTableJoinQueryBuilder()->insertGetId($this->data);
 
         } catch (\Exception $e) {
             throw new BusinessException((int)$e->getCode(), $e->getMessage());
@@ -225,12 +208,7 @@ class BaseService
     public function insert(RequestInterface $request)
     {
         try {
-            if (!$this->table || !($this->table instanceof Model)) {
-                throw new BusinessException(ErrorCode::SERVER_ERROR);
-            }
-            $res = Db::table($this->table->getTable())->insert($this->data);
-            $this->resetAttributes();
-            return $res;
+            return $this->multiTableJoinQueryBuilder()->insert($this->data);
 
         } catch (\Exception $e) {
             throw new BusinessException((int)$e->getCode(), $e->getMessage());
@@ -285,7 +263,6 @@ class BaseService
                     }
                 }]);
             });
-            print_r($query->toSql());
         } else {
             if (is_array($this->joinTables) && !empty($this->joinTables)) {
                 array_walk($this->joinTables, function (&$item) use (&$query) {

@@ -5,7 +5,7 @@ namespace App\Service\Admin;
 
 use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
-use App\Model\Admin;
+use App\Model\Entity\Admin;
 use App\Service\BaseService;
 use App\Utils\Common;
 use Hyperf\Di\Annotation\Inject;
@@ -76,8 +76,8 @@ class AuthService extends BaseService
      */
     public function login(RequestInterface $request)
     {
-        $account = $request->input('account');
-        $password = $request->input('password');
+        $account = trim($request->input('account'));
+        $password = trim($request->input('password'));
 
         $this->select = ['id', 'uuid', 'salt', 'avatar', 'password'];
         $this->condition = ['status' => 1, 'account' => $account];
@@ -87,7 +87,7 @@ class AuthService extends BaseService
             throw new BusinessException(ErrorCode::BAD_REQUEST, '账号不存在或被限制登录');
         }
 
-        if ($adminInfo['password'] != Common::generatePasswordHash($password, $adminInfo['salt'])) {
+        if ($adminInfo->password != Common::generatePasswordHash($password, $adminInfo->salt)) {
             throw new BusinessException(ErrorCode::BAD_REQUEST, '密码不正确');
         }
         return $adminInfo;

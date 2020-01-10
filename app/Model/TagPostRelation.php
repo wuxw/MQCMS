@@ -14,6 +14,11 @@ namespace App\Model;
 class TagPostRelation extends Model
 {
     /**
+     * @var bool
+     */
+    public $timestamps = true;
+
+    /**
      * The table associated with the model.
      *
      * @var string

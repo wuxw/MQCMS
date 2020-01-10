@@ -23,7 +23,11 @@ namespace App\Model;
  */
 class User extends Model
 {
+    /**
+     * @var bool
+     */
     public $timestamps = true;
+
     /**
      * The table associated with the model.
      *

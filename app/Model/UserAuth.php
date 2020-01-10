@@ -16,6 +16,11 @@ namespace App\Model;
 class UserAuth extends Model
 {
     /**
+     * @var bool
+     */
+    public $timestamps = true;
+
+    /**
      * The table associated with the model.
      *
      * @var string

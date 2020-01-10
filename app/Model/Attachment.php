@@ -18,6 +18,11 @@ namespace App\Model;
 class Attachment extends Model
 {
     /**
+     * @var bool
+     */
+    public $timestamps = true;
+
+    /**
      * The table associated with the model.
      *
      * @var string
