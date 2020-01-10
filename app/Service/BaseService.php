@@ -335,9 +335,10 @@ class BaseService
         if (!$this->table || !($this->table instanceof Model)) {
             throw new BusinessException(ErrorCode::SERVER_ERROR);
         }
-        $type = $searchForm && isset($searchForm['type']) ? $searchForm['type'] : '';
-        $keyword = $searchForm && isset($searchForm['keyword']) ? trim($searchForm['keyword']) : '';
-        $timeForm = $searchForm && isset($searchForm['time']) ? $searchForm['time'] : [];
+        $searchForm = is_array($searchForm) ? $searchForm : json_decode($searchForm, true);
+        $type = isset($searchForm['type']) ? $searchForm['type'] : '';
+        $keyword = isset($searchForm['keyword']) ? trim($searchForm['keyword']) : '';
+        $timeForm = isset($searchForm['time']) ? $searchForm['time'] : [];
         $condition = $this->condition;
         $tableAttributes = $this->table->getFillable();
 

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Service\Admin;
 
-use App\Model\Admin;
+use App\Model\Entity\Admin;
 use App\Service\BaseService;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
@@ -22,6 +22,12 @@ class AdminService extends BaseService
      */
     public function index(RequestInterface $request)
     {
+        // 搜索
+        if ($request->has('search')) {
+            $searchForm = $request->input('search');
+            $this->multiSingleTableSearchCondition($searchForm);
+        }
+
         $data = parent::index($request);
 
         foreach ($data['data'] as $key => &$value) {
