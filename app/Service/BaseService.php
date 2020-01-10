@@ -179,8 +179,8 @@ class BaseService
     public function update(RequestInterface $request)
     {
         try {
-
-            return $this->multiTableJoinQueryBuilder()->update($this->data);
+            $data = $this->data;
+            return $this->multiTableJoinQueryBuilder()->update($data);
 
         } catch (\Exception $e) {
             throw new BusinessException((int)$e->getCode(), $e->getMessage());
@@ -194,7 +194,8 @@ class BaseService
     public function store(RequestInterface $request)
     {
         try {
-            return $this->multiTableJoinQueryBuilder()->insertGetId($this->data);
+            $data = $this->data;
+            return $this->multiTableJoinQueryBuilder()->insertGetId($data);
 
         } catch (\Exception $e) {
             throw new BusinessException((int)$e->getCode(), $e->getMessage());
@@ -208,7 +209,8 @@ class BaseService
     public function insert(RequestInterface $request)
     {
         try {
-            return $this->multiTableJoinQueryBuilder()->insert($this->data);
+            $data = $this->data;
+            return $this->multiTableJoinQueryBuilder()->insert($data);
 
         } catch (\Exception $e) {
             throw new BusinessException((int)$e->getCode(), $e->getMessage());
@@ -259,7 +261,7 @@ class BaseService
             array_walk($this->with, function ($item) use (&$query, $baseSelect) {
                 $query = $query->with([$item => function ($query) use ($item, $baseSelect) {
                     if (isset($baseSelect[$item])) {
-                        $query->select($baseSelect[$item]);
+                        return $query->select($baseSelect[$item]);
                     }
                 }]);
             });

@@ -16,7 +16,7 @@ class CreateAttachmentTable extends Migration
         if (!Schema::hasTable('attachment')) {
             Schema::create('attachment', function (Blueprint $table) {
                 $table->bigIncrements('id');
-                $table->unsignedBigInteger('user_id')->nullable(false)->comment('附件上传的用户id');
+                $table->unsignedBigInteger('user_id')->nullable(false)->default(0)->comment('附件上传的用户id');
                 $table->string('attach_name', 64)->nullable(false)->default('')->comment('附件新名称');
                 $table->string('attach_origin_name', 64)->nullable(false)->default('')->comment('附件原名称');
                 $table->string('attach_url', 255)->nullable(false)->comment('附件地址');
