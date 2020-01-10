@@ -247,6 +247,7 @@ class BaseService
 
     /**
      * 单多表关联查询构造器
+     * 注意：此方法因为在构造完成会重置参数(resetAttributes)，如再次使用condition, select, orderBy等参数，请在构造之前用变量存储
      * @return \Hyperf\Database\Query\Builder
      */
     public function multiTableJoinQueryBuilder()
