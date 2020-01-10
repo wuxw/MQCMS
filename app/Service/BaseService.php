@@ -335,7 +335,7 @@ class BaseService
         if (!$this->table || !($this->table instanceof Model)) {
             throw new BusinessException(ErrorCode::SERVER_ERROR);
         }
-        $type = $searchForm && isset($searchForm['type']) ? trim($searchForm['type']) : '';
+        $type = $searchForm && isset($searchForm['type']) ? $searchForm['type'] : '';
         $keyword = $searchForm && isset($searchForm['keyword']) ? trim($searchForm['keyword']) : '';
         $timeForm = $searchForm && isset($searchForm['time']) ? $searchForm['time'] : [];
         $condition = $this->condition;
@@ -348,7 +348,7 @@ class BaseService
         if (!empty($searchKeys)) {
             array_walk($searchKeys, function ($item) use (&$condition, $searchForm) {
                 if (isset($searchForm[$item]) && $searchForm[$item] !== '') {
-                    array_push($condition, [$this->table->getTable() . '.' . $item, '=', trim($searchForm[$item])]);
+                    array_push($condition, [$this->table->getTable() . '.' . $item, '=', $searchForm[$item]]);
                 }
             });
         }
