@@ -62,8 +62,8 @@ class AttachmentService extends BaseService
         }
         $this->data = [
             'user_id' => $request->getAttribute('uid'),
-            'attach_name' => $upload->fileInfo['name'],
-            'attach_origin_name' => $pathInfo['name'],
+            'attach_origin_name' => $upload->fileInfo['name'],
+            'attach_name' => $pathInfo['name'],
             'attach_url' => $pathInfo['path'],
             'attach_type' => $attachType,
             'attach_minetype' => $upload->mineType,
