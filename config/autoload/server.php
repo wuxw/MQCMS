@@ -36,6 +36,7 @@ return [
         'open_http2_protocol' => true,
         'max_request' => 100000,
         'socket_buffer_size' => 2 * 1024 * 1024,
+        'package_max_length' => 10 * 1024 * 1024,
         // 'task_worker_num' => env('TASK_WORKER_NUM', 4),
         // 'task_enable_coroutine' => false,
     ],
