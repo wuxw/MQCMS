@@ -13,6 +13,11 @@ namespace App\Model;
 class UserLike extends Model
 {
     /**
+     * @var string
+     */
+    protected $dateFormat = 'U';
+
+    /**
      * @var bool
      */
     public $timestamps = true;

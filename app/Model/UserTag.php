@@ -13,6 +13,11 @@ namespace App\Model;
 class UserTag extends Model
 {
     /**
+     * @var string
+     */
+    protected $dateFormat = 'U';
+
+    /**
      * @var bool
      */
     public $timestamps = true;

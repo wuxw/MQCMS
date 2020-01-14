@@ -20,6 +20,11 @@ namespace App\Model;
 class Attachment extends Model
 {
     /**
+     * @var string
+     */
+    protected $dateFormat = 'U';
+
+    /**
      * @var bool
      */
     public $timestamps = true;

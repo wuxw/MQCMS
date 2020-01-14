@@ -22,6 +22,11 @@ namespace App\Model;
 class UserApplication extends Model
 {
     /**
+     * @var string
+     */
+    protected $dateFormat = 'U';
+
+    /**
      * @var bool
      */
     public $timestamps = true;

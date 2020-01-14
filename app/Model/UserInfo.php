@@ -18,6 +18,11 @@ namespace App\Model;
 class UserInfo extends Model
 {
     /**
+     * @var string
+     */
+    protected $dateFormat = 'U';
+
+    /**
      * @var bool
      */
     public $timestamps = true;

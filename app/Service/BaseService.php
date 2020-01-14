@@ -124,8 +124,8 @@ class BaseService
     }
 
     /**
+     * 获取分页列表
      * @param RequestInterface $request
-     * @param int $type  1：单表查询分页，2：多表查询分页
      * @return \Hyperf\Contract\PaginatorInterface|mixed
      */
     public function index(RequestInterface $request)
@@ -136,7 +136,12 @@ class BaseService
             $page < 1 && $page = 1;
             $limit > 100 && $limit = 100;
 
-            return $this->getListByPage((int) $page, (int) $limit);
+            $pagination = $this->getListByPage((int) $page, (int) $limit);
+            foreach ($pagination['data'] as $key => &$value) {
+                $value['created_at'] && $value['created_at'] = date('Y-m-d H:i:s', (int) $value['created_at']);
+                $value['updated_at'] && $value['updated_at'] = date('Y-m-d H:i:s', (int) $value['updated_at']);
+            }
+            return $pagination;
 
         } catch (\Exception $e) {
             throw new BusinessException((int)$e->getCode(), $e->getMessage());
@@ -144,13 +149,19 @@ class BaseService
     }
 
     /**
+     * 展示详情
      * @param RequestInterface $request
      * @return \Hyperf\Database\Model\Model|\Hyperf\Database\Query\Builder|object|null
      */
     public function show(RequestInterface $request)
     {
         try {
-            return $this->multiTableJoinQueryBuilder()->first();
+            $info = $this->multiTableJoinQueryBuilder()->first()->toArray();
+            if ($info) {
+                $info['created_at'] && $info['created_at'] = date('Y-m-d H:i:s', (int) $info['created_at']);
+                $info['updated_at'] && $info['updated_at'] = date('Y-m-d H:i:s', (int) $info['updated_at']);
+            }
+            return $info;
 
         } catch (\Exception $e) {
             throw new BusinessException((int)$e->getCode(), $e->getMessage());
@@ -158,6 +169,7 @@ class BaseService
     }
 
     /**
+     * 删除
      * @param RequestInterface $request
      * @return int
      */
@@ -172,6 +184,7 @@ class BaseService
     }
 
     /**
+     * 更新
      * @param RequestInterface $request
      * @param $data
      * @return int
@@ -188,6 +201,7 @@ class BaseService
     }
 
     /**
+     * 存储或更新
      * @param RequestInterface $request
      * @return int
      */
@@ -195,7 +209,21 @@ class BaseService
     {
         try {
             $data = $this->data;
-            return $this->multiTableJoinQueryBuilder()->insertGetId($data);
+            if (!empty($this->condition)) {
+                $model = $this->multiTableJoinQueryBuilder()->first();
+                if (!$model->toArray()) {
+                    $model = new $this->model;
+                }
+            } else {
+                $model = new $this->model;
+            }
+            $tableAttributes = $this->model->getFillable();
+            $searchKeys = array_intersect(array_keys($data), $tableAttributes);
+
+            foreach ($searchKeys as $key => $value) {
+                $model->$value = $data[$value];
+            }
+            return $model->save();
 
         } catch (\Exception $e) {
             throw new BusinessException((int)$e->getCode(), $e->getMessage());
@@ -203,6 +231,7 @@ class BaseService
     }
 
     /**
+     * 存储获取最新ID
      * @param RequestInterface $request
      * @return bool
      */
@@ -210,7 +239,7 @@ class BaseService
     {
         try {
             $data = $this->data;
-            return $this->multiTableJoinQueryBuilder()->insert($data);
+            return $this->multiTableJoinQueryBuilder()->insertGetId($data);
 
         } catch (\Exception $e) {
             throw new BusinessException((int)$e->getCode(), $e->getMessage());

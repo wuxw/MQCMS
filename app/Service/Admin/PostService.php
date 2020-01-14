@@ -116,7 +116,6 @@ class PostService extends BaseService
             'like_total'        => $request->input('like_total', 0),
             'favorite_total'    => $request->input('favorite_total', 0),
             'comment_total'     => $request->input('comment_total', 0),
-            'updated_at'        => time(),
         ];
 
         $this->condition = ['id' => $id];

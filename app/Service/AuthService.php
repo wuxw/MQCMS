@@ -71,16 +71,12 @@ class AuthService extends BaseService
             'register_ip' => $ip,
             'login_time' => time(),
             'login_ip' => $ip,
-            'created_at' => time(),
-            'updated_at' => time(),
         ];
         Db::beginTransaction();
         try {
             $lastInsertId = parent::store($request);
             $this->userInfoService->data = [
                 'user_id' => $lastInsertId,
-                'created_at' => time(),
-                'updated_at' => time(),
             ];
             $this->userInfoService->store($request);
             Db::commit();
@@ -165,7 +161,6 @@ class AuthService extends BaseService
                         'avatar' => $avatarUrl,
                         'login_time' => time(),
                         'login_ip' => $ip,
-                        'updated_at' => time()
                     ];
                     $this->condition = ['id' => $userAuthInfo['user_id']];
                     $res = parent::update($request);
@@ -189,8 +184,6 @@ class AuthService extends BaseService
                         'register_ip' => $ip,
                         'login_time' => time(),
                         'login_ip' => $ip,
-                        'created_at' => time(),
-                        'updated_at' => time(),
                     ];
                     $lastInsertId = parent::store($request);
                     if (!$lastInsertId) {
@@ -199,8 +192,6 @@ class AuthService extends BaseService
 
                     $this->userInfoService->data = [
                         'user_id' => $lastInsertId,
-                        'created_at' => time(),
-                        'updated_at' => time(),
                     ];
                     $res = $this->userInfoService->store($request);
                     if (!$res) {

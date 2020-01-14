@@ -57,9 +57,7 @@ class AuthService extends BaseService
             'register_time' => time(),
             'register_ip' => $ip,
             'login_time' => time(),
-            'login_ip' => $ip,
-            'created_at' => time(),
-            'updated_at' => time(),
+            'login_ip' => $ip
         ];
         $lastInsertId = parent::store($request);
 
