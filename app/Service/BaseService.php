@@ -219,10 +219,9 @@ class BaseService
 
     /**
      * 根据查询结果获取分页列表
-     * @param string $table
+     * @param int $page
      * @param int $limit
-     * @param array $condition
-     * @return \Hyperf\Contract\PaginatorInterface
+     * @return mixed
      */
     public function getListByPage(int $page, int $limit)
     {

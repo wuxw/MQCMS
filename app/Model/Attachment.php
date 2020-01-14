@@ -6,6 +6,8 @@ namespace App\Model;
 /**
  * @property int $id 
  * @property int $user_id 
+ * @property string $attach_name 
+ * @property string $attach_origin_name 
  * @property string $attach_url 
  * @property int $attach_type 
  * @property string $attach_minetype 
@@ -21,7 +23,6 @@ class Attachment extends Model
      * @var bool
      */
     public $timestamps = true;
-
     /**
      * The table associated with the model.
      *
@@ -33,7 +34,7 @@ class Attachment extends Model
      *
      * @var array
      */
-    protected $fillable = ['id', 'user_id', 'attach_url', 'attach_type', 'attach_minetype', 'attach_extension', 'attach_size', 'status', 'created_at', 'updated_at'];
+    protected $fillable = ['id', 'user_id', 'attach_name', 'attach_origin_name', 'attach_url', 'attach_type', 'attach_minetype', 'attach_extension', 'attach_size', 'status', 'created_at', 'updated_at'];
     /**
      * The attributes that should be cast to native types.
      *
