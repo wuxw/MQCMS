@@ -16,7 +16,7 @@ class PostService extends BaseService
      * @Inject()
      * @var Post
      */
-    public $table;
+    public $model;
 
     /**
      * @Inject()
@@ -233,7 +233,7 @@ class PostService extends BaseService
             $this->userFavoriteService->insert($request);
             //更新帖子收藏数 +1
             $this->condition = ['id' => $id];
-            Db::table($this->table->getTable())->where($this->condition)->increment('favorite_total');
+            Db::table($this->model->getTable())->where($this->condition)->increment('favorite_total');
 
             Db::commit();
             return true;
@@ -263,7 +263,7 @@ class PostService extends BaseService
             $this->userFavoriteService->delete($request);
             //更新帖子收藏数 -1
             $this->condition = ['id' => $id];
-            Db::table($this->table->getTable())->where($this->condition)->decrement('favorite_total');
+            Db::table($this->model->getTable())->where($this->condition)->decrement('favorite_total');
 
             Db::commit();
             return true;

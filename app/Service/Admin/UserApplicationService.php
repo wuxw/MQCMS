@@ -13,5 +13,5 @@ class UserApplicationService extends BaseService
      * @Inject()
      * @var UserApplication
      */
-    public $table;
+    public $model;
 }

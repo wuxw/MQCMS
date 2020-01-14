@@ -15,7 +15,7 @@ class UserService extends BaseService
      * @Inject()
      * @var User
      */
-    public $table;
+    public $model;
 
     /**
      * @Inject()
@@ -68,19 +68,19 @@ class UserService extends BaseService
     public function index(RequestInterface $request)
     {
         try {
-            $table = $this->table->getTable();
-            $userInfoTable = $this->userInfoService->table->getTable();
+            $model = $this->model->getTable();
+            $userInfoTable = $this->userInfoService->model->getTable();
 
             $this->select = [
-                $table => ['id', 'created_at', 'updated_at', 'user_name', 'nick_name', 'real_name', 'phone', 'avatar'],
+                $model => ['id', 'created_at', 'updated_at', 'user_name', 'nick_name', 'real_name', 'phone', 'avatar'],
                 $userInfoTable => ['intro', 'like_num', 'follow_num', 'fans_num', 'post_num', 'my_like_num'],
             ];
             $this->condition = [
-                [$table . '.status', '=', 1]
+                [$model . '.status', '=', 1]
             ];
             $this->joinTables = [
                 $userInfoTable => [
-                    $table . '.id', '=', $userInfoTable . '.user_id'
+                    $model . '.id', '=', $userInfoTable . '.user_id'
                 ]
             ];
             return parent::index($request);
@@ -100,19 +100,19 @@ class UserService extends BaseService
         try {
             $uid = $request->getAttribute('uid', 0);
             $id = $request->input('id');
-            $table = $this->table->getTable();
-            $userInfoTable = $this->userInfoService->table->getTable();
+            $model = $this->model->getTable();
+            $userInfoTable = $this->userInfoService->model->getTable();
 
             $this->select = [
-                $table => ['id', 'user_name', 'nick_name', 'real_name', 'phone', 'avatar'],
+                $model => ['id', 'user_name', 'nick_name', 'real_name', 'phone', 'avatar'],
                 $userInfoTable => ['intro', 'like_num', 'follow_num', 'fans_num', 'post_num', 'my_like_num'],
             ];
             $this->condition = [
-                [$table . '.status', '=', 1],
-                [$table . '.id', '=', $id],
+                [$model . '.status', '=', 1],
+                [$model . '.id', '=', $id],
             ];
             $this->joinTables = [
-                $userInfoTable => [$table . '.id', '=', $userInfoTable . '.user_id']
+                $userInfoTable => [$model . '.id', '=', $userInfoTable . '.user_id']
             ];
             $data = parent::show($request);
 
@@ -144,19 +144,19 @@ class UserService extends BaseService
     {
         try {
             $uid = $request->getAttribute('uid', 0);
-            $table = $this->table->getTable();
-            $userInfoTable = $this->userInfoService->table->getTable();
+            $model = $this->model->getTable();
+            $userInfoTable = $this->userInfoService->model->getTable();
 
             $this->select = [
-                $table => ['id', 'user_name', 'real_name', 'phone', 'avatar', 'intro'],
+                $model => ['id', 'user_name', 'real_name', 'phone', 'avatar', 'intro'],
                 $userInfoTable => ['like_num', 'follow_num', 'fans_num', 'post_num', 'my_like_num'],
             ];
             $this->condition = [
-                [$table . '.status', '=', 1],
-                [$table . '.id', '=', $uid],
+                [$model . '.status', '=', 1],
+                [$model . '.id', '=', $uid],
             ];
             $this->joinTables = [
-                $userInfoTable => [$table . '.id', '=', $userInfoTable . '.user_id']
+                $userInfoTable => [$model . '.id', '=', $userInfoTable . '.user_id']
             ];
 
             $data = parent::show($request);

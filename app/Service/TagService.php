@@ -15,7 +15,7 @@ class TagService extends BaseService
      * @Inject()
      * @var Tag
      */
-    public $table;
+    public $model;
 
     /**
      * @Inject()

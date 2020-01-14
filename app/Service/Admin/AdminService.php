@@ -14,7 +14,7 @@ class AdminService extends BaseService
      * @Inject()
      * @var Admin
      */
-    public $table;
+    public $model;
 
     /**
      * @param RequestInterface $request

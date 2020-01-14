@@ -15,7 +15,7 @@ class BaseService
     /**
      * @var string
      */
-    public $table = '';
+    public $model = '';
 
     /**
      * join表查询参数
@@ -252,10 +252,10 @@ class BaseService
      */
     public function multiTableJoinQueryBuilder()
     {
-        if (!$this->table || !($this->table instanceof Model)) {
+        if (!$this->model || !($this->model instanceof Model)) {
             throw new BusinessException(ErrorCode::SERVER_ERROR);
         }
-        $query = $this->table::query();
+        $query = $this->model::query();
 
         if (!empty($this->with)) {
             $baseSelect = $this->select;
@@ -280,7 +280,7 @@ class BaseService
                     $select = [];
                     if ($arrCount === 1) {
                         array_walk($this->select, function ($item) use (&$select) {
-                            $select[] = $this->table->getTable() . '.' . $item;
+                            $select[] = $this->model->getTable() . '.' . $item;
                         });
                     } else {
                         foreach ($this->select as $key => $value) {
@@ -335,7 +335,7 @@ class BaseService
      */
     public function multiSingleTableSearchCondition($searchForm)
     {
-        if (!$this->table || !($this->table instanceof Model)) {
+        if (!$this->model || !($this->model instanceof Model)) {
             throw new BusinessException(ErrorCode::SERVER_ERROR);
         }
         $searchForm = is_array($searchForm) ? $searchForm : json_decode($searchForm, true);
@@ -343,16 +343,16 @@ class BaseService
         $keyword = isset($searchForm['keyword']) ? trim($searchForm['keyword']) : '';
         $timeForm = isset($searchForm['time']) ? $searchForm['time'] : [];
         $condition = $this->condition;
-        $tableAttributes = $this->table->getFillable();
+        $tableAttributes = $this->model->getFillable();
 
         if ($keyword && in_array($type, $tableAttributes)) {
-            $condition[] = [$this->table->getTable() . '.' . $type, 'like', "%{$keyword}%"];
+            $condition[] = [$this->model->getTable() . '.' . $type, 'like', "%{$keyword}%"];
         }
         $searchKeys = array_intersect(array_keys($searchForm), $tableAttributes);
         if (!empty($searchKeys)) {
             array_walk($searchKeys, function ($item) use (&$condition, $searchForm) {
                 if (isset($searchForm[$item]) && $searchForm[$item] !== '') {
-                    array_push($condition, [$this->table->getTable() . '.' . $item, '=', $searchForm[$item]]);
+                    array_push($condition, [$this->model->getTable() . '.' . $item, '=', $searchForm[$item]]);
                 }
             });
         }
@@ -362,11 +362,11 @@ class BaseService
                 if (isset($timeForm[$item]) && ($timeForm[$item] || !empty($timeForm[$item]))) {
                     if (is_array($timeForm[$item]) && count($timeForm[$item]) === 2) {
                         if ($timeForm[$item][0] !== '' && $timeForm[$item][1] !== '') {
-                            array_push($condition, [$this->table->getTable() . '.' . $item, '>=', strtotime($timeForm[$item][0])]);
-                            array_push($condition, [$this->table->getTable() . '.' . $item, '<=', strtotime($timeForm[$item][1])]);
+                            array_push($condition, [$this->model->getTable() . '.' . $item, '>=', strtotime($timeForm[$item][0])]);
+                            array_push($condition, [$this->model->getTable() . '.' . $item, '<=', strtotime($timeForm[$item][1])]);
                         }
                     } else {
-                        array_push($condition, [$this->table->getTable() . '.' . $item, '>=', strtotime($timeForm[$item])]);
+                        array_push($condition, [$this->model->getTable() . '.' . $item, '>=', strtotime($timeForm[$item])]);
                     }
                 }
             });

@@ -12,5 +12,5 @@ class UserFollowService extends BaseService
      * @Inject()
      * @var UserFollow
      */
-    public $table;
+    public $model;
 }

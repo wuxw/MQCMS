@@ -12,5 +12,5 @@ class UserTagService extends BaseService
      * @Inject()
      * @var UserTag
      */
-    public $table;
+    public $model;
 }

@@ -19,7 +19,7 @@ class UserService extends BaseService
      * @Inject()
      * @var User
      */
-    public $table;
+    public $model;
 
     /**
      * @Inject()
@@ -34,18 +34,18 @@ class UserService extends BaseService
     public function index(RequestInterface $request)
     {
         try {
-            $table = $this->table->getTable();
-            $userInfoTable = $this->userInfoService->table->getTable();
+            $model = $this->model->getTable();
+            $userInfoTable = $this->userInfoService->model->getTable();
 
             $this->select = [
-                $table => ['*'],
+                $model => ['*'],
                 $userInfoTable => ['intro', 'like_num', 'follow_num', 'fans_num', 'post_num', 'my_like_num'],
             ];
             $this->orderBy = [
-                $table => ['id' => 'DESC']
+                $model => ['id' => 'DESC']
             ];
             $this->joinTables = [
-                $userInfoTable => [$table . '.id', '=', $userInfoTable . '.user_id']
+                $userInfoTable => [$model . '.id', '=', $userInfoTable . '.user_id']
             ];
 
             // 搜索

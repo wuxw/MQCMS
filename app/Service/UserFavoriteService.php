@@ -12,5 +12,5 @@ class UserFavoriteService extends BaseService
      * @Inject()
      * @var UserFavorite
      */
-    public $table;
+    public $model;
 }

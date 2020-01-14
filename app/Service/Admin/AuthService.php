@@ -17,7 +17,7 @@ class AuthService extends BaseService
      * @Inject()
      * @var Admin
      */
-    public $table;
+    public $model;
 
     /**
      * 注册

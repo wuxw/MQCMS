@@ -108,6 +108,8 @@ class Upload
         if (!$request->file($this->name)->isMoved()) {
             throw new BusinessException(ErrorCode::UNAUTHORIZED, '文件上传失败');
         }
+        @chmod(BASE_PATH . DIRECTORY_SEPARATOR . $fileUrl,0777);
+
         return [
             'name' => $fileName,
             'fullpath' => $fileUrl,

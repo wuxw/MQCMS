@@ -18,7 +18,7 @@ class AuthService extends BaseService
      * @Inject()
      * @var User
      */
-    public $table;
+    public $model;
 
     /**
      * @Inject()

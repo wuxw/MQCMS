@@ -12,5 +12,5 @@ class UserInfoService extends BaseService
      * @Inject()
      * @var UserInfo
      */
-    public $table;
+    public $model;
 }

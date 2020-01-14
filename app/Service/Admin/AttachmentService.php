@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace App\Service\Admin;
 
-use App\Model\Attachment;
+use App\Constants\ErrorCode;
+use App\Exception\BusinessException;
+use App\Model\Entity\Attachment;
 use App\Service\BaseService;
 use App\Utils\Upload;
 use Hyperf\Di\Annotation\Inject;
@@ -15,7 +17,7 @@ class AttachmentService extends BaseService
      * @Inject()
      * @var Attachment
      */
-    public $table;
+    public $model;
 
     /**
      * @param RequestInterface $request
@@ -28,7 +30,11 @@ class AttachmentService extends BaseService
             $searchForm = $request->input('search');
             $this->multiSingleTableSearchCondition($searchForm);
         }
-        return parent::index($request);
+        $attachList = parent::index($request);
+        foreach ($attachList['data'] as $key => &$value) {
+            $value['attach_full_url'] = env('APP_UPLOAD_HOST_URL', '') . $value['attach_url'];
+        }
+        return $attachList;
     }
 
     /**
@@ -60,7 +66,7 @@ class AttachmentService extends BaseService
         } else {
             $attachType = 3;
         }
-        $this->data = [
+        $data = [
             'user_id' => $request->getAttribute('uid'),
             'attach_origin_name' => $upload->fileInfo['name'],
             'attach_name' => $pathInfo['name'],
@@ -70,11 +76,14 @@ class AttachmentService extends BaseService
             'attach_extension' => $upload->extension,
             'attach_size' => $upload->fileInfo['size'],
             'status' => 1,
-            'created_at' => time(),
-            'updated_at' => time()
         ];
-        parent::store($request);
-        return $pathInfo;
+        $this->data = $data;
+        $res = parent::store($request);
+        if (!$res) {
+            throw new BusinessException(ErrorCode::BAD_REQUEST, '上传失败');
+        }
+        $data['attach_full_url'] = env('APP_UPLOAD_HOST_URL', '') . $data['attach_url'];
+        return $data;
     }
 
     /**

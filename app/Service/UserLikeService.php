@@ -12,5 +12,5 @@ class UserLikeService extends BaseService
      * @Inject()
      * @var UserLike
      */
-    public $table;
+    public $model;
 }

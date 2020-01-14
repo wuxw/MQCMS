@@ -12,5 +12,5 @@ class AttachmentService extends BaseService
      * @Inject()
      * @var Attachment
      */
-    public $table;
+    public $model;
 }

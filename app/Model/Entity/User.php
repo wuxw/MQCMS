@@ -32,4 +32,20 @@ class User extends \App\Model\User
     {
         return $this->hasMany(UserFavorite::class, 'user_id', 'id');
     }
+
+    /**
+     * @return \Hyperf\Database\Model\Relations\HasMany
+     */
+    public function postList()
+    {
+        return $this->hasMany(Post::class, 'user_id', 'id');
+    }
+
+    /**
+     * @return \Hyperf\Database\Model\Relations\HasMany
+     */
+    public function tagInfo()
+    {
+        return $this->hasMany(Tag::class, 'first_create_user_id', 'id');
+    }
 }

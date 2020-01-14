@@ -16,7 +16,7 @@ class PostService extends BaseService
      * @Inject()
      * @var Post
      */
-    public $table;
+    public $model;
 
     /**
      * @Inject()
@@ -30,19 +30,19 @@ class PostService extends BaseService
      */
     public function index(RequestInterface $request)
     {
-        $tableName = $this->table->getTable();
-        $userTableName = $this->userService->table->getTable();
+        $modelName = $this->model->getTable();
+        $userTableName = $this->userService->model->getTable();
         $this->condition = [
-            [$tableName . '.status', '=', 1]
+            [$modelName . '.status', '=', 1]
         ];
         $this->joinTables = [
-            $userTableName => [$tableName . '.user_id', '=', $userTableName . '.id']
+            $userTableName => [$modelName . '.user_id', '=', $userTableName . '.id']
         ];
         $this->orderBy = [
-            $tableName => ['id' => 'DESC']
+            $modelName => ['id' => 'DESC']
         ];
         $this->select = [
-            $tableName => ['*'],
+            $modelName => ['*'],
             $userTableName => ['uuid', 'user_name']
         ];
 
@@ -87,8 +87,6 @@ class PostService extends BaseService
             'like_total'        => $request->input('like_total', 0),
             'favorite_total'    => $request->input('favorite_total', 0),
             'comment_total'     => $request->input('comment_total', 0),
-            'created_at'        => time(),
-            'updated_at'        => time(),
         ];
         $this->data = $data;
         return parent::store($request);

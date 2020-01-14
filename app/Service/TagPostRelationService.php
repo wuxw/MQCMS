@@ -12,5 +12,5 @@ class TagPostRelationService extends BaseService
      * @Inject()
      * @var TagPostRelation
      */
-    public $table;
+    public $model;
 }
